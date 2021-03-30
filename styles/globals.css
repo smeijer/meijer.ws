@@ -1,0 +1,33 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.fade-out {
+  transition: opacity 0.3s ease;
+  opacity: 0;
+  background: #ffffff !important;
+}
+
+[data-stacked] {
+  /* make it a grid so we can stack the children */
+  display: inline-grid;
+  grid-template: 1fr / 1fr;
+}
+
+[data-stacked] > * {
+  /* stack all states on top of each other */
+  grid-area: 1/1;
+}
