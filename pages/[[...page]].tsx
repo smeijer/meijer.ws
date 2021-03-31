@@ -5,6 +5,8 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { memo, useState } from 'react';
 
+import { absoluteUrl } from '~/lib/absoluteUrl';
+
 import data from '../data/data.json';
 
 const entities = {
@@ -59,7 +61,7 @@ function navigateAway(cb: () => void): void {
 
 const transition = { type: 'spring', stiffness: 500, damping: 50, mass: 1 };
 
-function Page({ page, isLast, small }) {
+function Page({ page, isLast, small = false }) {
   const openUrl = (event) => {
     if (!page.url) {
       return;
@@ -152,29 +154,22 @@ function FilterButton({ children, img, type, current }) {
 function SocialButtons() {
   return (
     <div className="flex space-x-4">
-      <SocialButton
-        href="https://twitter.com/meijer_s"
-        icon="/logos/twitter.svg"
-      />
-      <SocialButton
-        href="https://github.com/smeijer"
-        icon="/logos/github.svg"
-      />
-      <SocialButton
-        href="https://linkedin.com/in/s-meijer"
-        icon="/logos/linkedin.svg"
-      />
+      <SocialButton href="/twitter" icon="/logos/twitter.svg" />
+      <SocialButton href="/github" icon="/logos/github.svg" />
+      <SocialButton href="/linkedin" icon="/logos/linkedin.svg" />
     </div>
   );
 }
 
 function SocialButton({ href, icon }) {
+  const url = absoluteUrl(href);
+
   const openUrl = (event) => {
     event.preventDefault();
 
     navigateAway(() => {
-      document.body.dataset.target = new URL(href).hostname;
-      window.location.href = href;
+      document.body.dataset.target = new URL(url).hostname;
+      window.location.href = url;
     });
 
     return false;
@@ -183,7 +178,7 @@ function SocialButton({ href, icon }) {
   return (
     <a
       className="opacity-100 hover:opacity-75 transition"
-      href={href}
+      href={url}
       onClick={openUrl}
     >
       <img className="w-6 h-6" src={icon} />
@@ -305,7 +300,6 @@ export default function Home({ pages }) {
                           key={page.published + page.url}
                           page={page}
                           isLast={idx === filtered.length - 1}
-                          small={!filter && page.type === 'release'}
                         />
                       ))}
                     </motion.ul>
@@ -332,18 +326,9 @@ export const getStaticPaths = async () => {
   };
 };
 
-export const getStaticProps = async ({ params: { page } }) => {
+export const getStaticProps = async ({ params }) => {
   const pages = [];
   const cache = {};
-
-  // if (!page) {
-  //   return {
-  //     redirect: {
-  //       destination: '/projects',
-  //       permanent: false,
-  //     },
-  //   };
-  // }
 
   for (const d of data) {
     const page = { ...d };
