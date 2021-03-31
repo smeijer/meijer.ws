@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && next export",
+    "build": "next build",
     "start": "next start"
   },
   "dependencies": {
@@ -24,6 +24,7 @@
     "twind": "^0.16.10"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "^3.0.3",
     "@types/react": "^17.0.3",
     "@typescript-eslint/eslint-plugin": "^4.20.0",
     "@typescript-eslint/parser": "^4.20.0",
