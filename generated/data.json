@@ -1,48 +1,26 @@
 [
   {
     "type": "webapp",
-    "image": "/img/projects/gowion.png",
     "title": "GoWion",
-    "icon": "/logos/gowion/logo-48.svg",
-    "published": "2011-09-17",
     "description": "A pipeline management system for owners and maintainers of underground infrastructures.",
-    "tags": [
-      "founder",
-      "saas",
-      "csharp",
-      "rest"
-    ]
+    "published": "2011-09-17",
+    "tags": ["founder", "saas", "csharp", "rest"]
   },
   {
     "type": "library",
     "url": "https://github.com/smeijer/leaflet-geosearch",
-    "image": "/img/projects/leaflet-geosearch.png",
-    "icon": "/logos/leaflet-geosearch/logo-48.svg",
     "title": "Leaflet-GeoSearch",
     "description": "A geocoding/address-lookup library supporting various api providers.",
-    "tags": [
-      "leaflet.js",
-      "geosearch"
-    ],
+    "tags": ["leaflet.js", "geosearch"],
     "published": "2012-12-04",
-    "repo": "smeijer/leaflet-geosearch",
-    "packages": [
-      "leaflet-geosearch"
-    ]
+    "packages": ["leaflet-geosearch"]
   },
   {
     "type": "webapp",
     "url": "https://futureinsight.nl/clearly",
-    "image": "/img/projects/clearly.png",
-    "icon": "/logos/clearly/logo-48.svg",
     "title": "Clearly",
     "description": "A business-to-business collaboration platform for projects in the living environment.",
-    "tags": [
-      "founder",
-      "saas",
-      "node.js",
-      "graphql"
-    ],
+    "tags": ["founder", "saas", "node.js", "graphql"],
     "published": "2014-09-17"
   },
   {
@@ -206,29 +184,16 @@
     "description": "The costs of Optional Chaining in performance and bundle size.",
     "canonical": "https://dev.to/smeijer/the-costs-of-optional-chaining-5bno",
     "published": "2019-07-31T12:50:04.523Z",
-    "tags": [
-      "javascript",
-      "babel",
-      "webdev",
-      "discuss"
-    ]
+    "tags": ["javascript", "babel", "webdev", "discuss"]
   },
   {
     "type": "library",
     "url": "https://github.com/smeijer/unimported",
-    "image": "/img/projects/unimported.png",
     "title": "unimported",
     "description": "A CLI utility that scans node/javascript projects to report dangling files and unused dependencies.",
-    "tags": [
-      "cli",
-      "node.js",
-      "npm"
-    ],
+    "tags": ["cli", "node.js", "npm"],
     "published": "2020-04-26",
-    "repo": "smeijer/unimported",
-    "packages": [
-      "unimported"
-    ]
+    "packages": ["unimported"]
   },
   {
     "type": "release",
@@ -297,16 +262,9 @@
   {
     "type": "webapp",
     "url": "https://testing-playground.com",
-    "image": "/img/projects/testing-playground.jpg",
-    "icon": "/logos/testing-playground/logo-48.svg",
     "title": "Testing-Playground",
     "description": "Simple and complete DOM testing playground that encourage good testing practices.",
-    "tags": [
-      "founder",
-      "webapp",
-      "testing",
-      "a11y"
-    ],
+    "tags": ["founder", "webapp", "testing", "a11y"],
     "published": "2020-05-18",
     "repo": "smeijer/testing-playground"
   },
@@ -404,16 +362,9 @@
     "image": "/img/projects/where-broke.png",
     "title": "where-broke",
     "description": "A CLI utility that helps finding breaking module versions using binary search and automated tests.",
-    "tags": [
-      "cli",
-      "node.js",
-      "tests"
-    ],
+    "tags": ["cli", "node.js", "tests"],
     "published": "2020-07-03",
-    "repo": "smeijer/where-broke",
-    "packages": [
-      "where-broke"
-    ]
+    "packages": ["where-broke"]
   },
   {
     "type": "release",
@@ -506,16 +457,9 @@
   {
     "type": "webapp",
     "url": "https://issupported.com/",
-    "image": "/img/projects/issupported.png",
-    "icon": "/logos/issupported/logo-48.svg",
     "title": "IsSupported",
     "description": "Check if your browser is still supported by your favorite websites.",
-    "tags": [
-      "founder",
-      "webapp",
-      "node.js",
-      "serverless"
-    ],
+    "tags": ["founder", "webapp", "node.js", "serverless"],
     "published": "2020-08-27"
   },
   {
@@ -529,34 +473,19 @@
   {
     "type": "webapp",
     "url": "https://updrafts.app",
-    "image": "/img/projects/updrafts.png",
-    "icon": "/logos/updrafts.app/logo-48.svg",
     "title": "Updrafts.app",
     "description": "Build responsive websites in your browser, without writing code.",
-    "tags": [
-      "founder",
-      "saas",
-      "node.js",
-      "graphql"
-    ],
+    "tags": ["founder", "saas", "node.js", "graphql"],
     "published": "2020-09-05"
   },
   {
     "type": "library",
     "url": "https://github.com/smeijer/jest-partial",
-    "image": "/img/projects/jest-partial.png",
     "title": "jest-partial",
     "description": "A partial matcher for Jest to simplify validation of complex structures.",
-    "tags": [
-      "node.js",
-      "jest",
-      "tests"
-    ],
+    "tags": ["node.js", "jest", "tests"],
     "published": "2020-09-28",
-    "repo": "smeijer/jest-partial",
-    "packages": [
-      "jest-partial"
-    ]
+    "packages": ["jest-partial"]
   },
   {
     "type": "release",
@@ -577,19 +506,11 @@
   {
     "type": "library",
     "url": "https://github.com/smeijer/graphql-args",
-    "image": "/img/projects/graphql-args.png",
     "title": "graphql-args",
     "description": "A lib that parses the resolver ast, to return the requested object fields and provided params, at any nested level.",
-    "tags": [
-      "node.js",
-      "graphql",
-      "mongodb"
-    ],
+    "tags": ["node.js", "graphql", "mongodb"],
     "published": "2020-09-29",
-    "repo": "smeijer/graphql-args",
-    "packages": [
-      "graphql-args"
-    ]
+    "packages": ["graphql-args"]
   },
   {
     "type": "release",
@@ -640,10 +561,7 @@
     "description": "The launch of Updrafts.app - A Tailwind Studio.",
     "canonical": "https://dev.to/smeijer/the-launch-of-updrafts-app-22fn",
     "published": "2020-10-02T14:37:06.015Z",
-    "tags": [
-      "tailwindcss",
-      "indiehackers"
-    ]
+    "tags": ["tailwindcss", "indiehackers"]
   },
   {
     "type": "article",
@@ -654,12 +572,7 @@
     "description": "Working from Home isn't the same anymore.",
     "canonical": "https://dev.to/smeijer/work-from-home-the-struggle-of-2020-46ca",
     "published": "2020-11-03T12:03:05.027Z",
-    "tags": [
-      "wfh",
-      "covid",
-      "2020",
-      "struggle"
-    ]
+    "tags": ["wfh", "covid", "2020", "struggle"]
   },
   {
     "type": "release",
@@ -702,6 +615,39 @@
     "published": "2020-11-18T11:13:00.172Z"
   },
   {
+    "type": "library",
+    "url": "https://github.com/smeijer/spin-delay",
+    "title": "spin-delay",
+    "description": "Smart spinner helper for React, to manage the duration of loading states.",
+    "tags": ["react", "spinner"],
+    "published": "2020-11-25",
+    "packages": ["spin-delay"]
+  },
+  {
+    "type": "release",
+    "url": "https://npmjs.com/spin-delay",
+    "title": "spin-delay",
+    "description": "Smart spinner helper for React, to manage the duration of loading states.",
+    "version": "0.0.1",
+    "published": "2020-11-25T15:19:11.574Z"
+  },
+  {
+    "type": "release",
+    "url": "https://npmjs.com/spin-delay",
+    "title": "spin-delay",
+    "description": "Smart spinner helper for React, to manage the duration of loading states.",
+    "version": "0.0.2",
+    "published": "2020-11-25T19:15:52.054Z"
+  },
+  {
+    "type": "release",
+    "url": "https://npmjs.com/spin-delay",
+    "title": "spin-delay",
+    "description": "Smart spinner helper for React, to manage the duration of loading states.",
+    "version": "1.0.0",
+    "published": "2020-11-26T09:04:22.892Z"
+  },
+  {
     "type": "article",
     "url": "https://dev.to/smeijer/stop-mutating-in-map-reduce-and-foreach-58bf",
     "image": "https://dev-to-uploads.s3.amazonaws.com/i/ooqvfnvncs8w69u15aki.jpg",
@@ -710,11 +656,7 @@
     "description": "Functional methods and side effects don't play well together.",
     "canonical": "https://dev.to/smeijer/stop-mutating-in-map-reduce-and-foreach-58bf",
     "published": "2020-12-14T11:49:41.648Z",
-    "tags": [
-      "es6",
-      "javascript",
-      "webdev"
-    ]
+    "tags": ["es6", "javascript", "webdev"]
   },
   {
     "type": "article",
@@ -725,26 +667,18 @@
     "description": "Mutating objects is fine, sometimes preferred.",
     "canonical": "https://dev.to/smeijer/don-t-stop-mutating-3gj7",
     "published": "2020-12-16T14:45:18.938Z",
-    "tags": [
-      "es6",
-      "javascript",
-      "webdev"
-    ]
+    "tags": ["es6", "javascript", "webdev"]
   },
   {
     "type": "article",
     "url": "https://dev.to/smeijer/a-typescript-valueof-implementation-and-how-it-s-built-4gim",
     "image": "https://dev-to-uploads.s3.amazonaws.com/i/dy14hetvbio4fjtzdxwt.jpg",
     "slug": "a-typescript-valueof-implementation-and-how-it-s-built-4gim",
-    "title": "How to implement a generic ValueOf&lt;T​&gt; helper type in TypeScript.",
+    "title": "How to implement a generic ValueOf<T​> helper type in TypeScript.",
     "description": " A typescript `valueof` implementation similar to `keyof`",
     "canonical": "https://dev.to/smeijer/a-typescript-valueof-implementation-and-how-it-s-built-4gim",
     "published": "2020-12-18T11:00:00.569Z",
-    "tags": [
-      "webdev",
-      "javascript",
-      "typescript"
-    ]
+    "tags": ["webdev", "javascript", "typescript"]
   },
   {
     "type": "article",
@@ -755,11 +689,7 @@
     "description": "Prefer [].slice(2) over [,,rest]",
     "canonical": "https://dev.to/smeijer/don-t-skip-elements-with-array-destructuring-3fl9",
     "published": "2020-12-22T17:55:48.263Z",
-    "tags": [
-      "es6",
-      "javascript",
-      "webdev"
-    ]
+    "tags": ["es6", "javascript", "webdev"]
   },
   {
     "type": "article",
@@ -770,12 +700,7 @@
     "description": "Form handling in React, without react controlling everything!",
     "canonical": "https://dev.to/smeijer/simple-form-handling-in-react-o72",
     "published": "2021-01-04T12:31:29.527Z",
-    "tags": [
-      "react",
-      "javascript",
-      "webdev",
-      "forms"
-    ]
+    "tags": ["react", "javascript", "webdev", "forms"]
   },
   {
     "type": "release",
@@ -796,33 +721,18 @@
   {
     "type": "webapp",
     "url": "https://rake.red",
-    "image": "/img/projects/rakered.png",
-    "icon": "/logos/rakered/logo-48.svg",
     "title": "rake.red",
     "description": "Collect info from users without a server or back-end code. Receive submissions in rake.red. Easy, fast and secure.",
-    "tags": [
-      "founder",
-      "saas",
-      "node.js",
-      "graphql"
-    ],
+    "tags": ["founder", "saas", "node.js", "graphql"],
     "published": "2021-01-26"
   },
   {
     "type": "library",
     "url": "https://github.com/rakered/rakered",
-    "image": "/img/projects/rakered.png",
-    "icon": "/logos/rakered/logo-48.svg",
     "title": "rake.red — open",
     "description": "The open source components from rake.red",
-    "tags": [
-      "mongodb",
-      "accounts",
-      "node.js",
-      "email"
-    ],
+    "tags": ["mongodb", "accounts", "node.js", "email"],
     "published": "2021-01-26",
-    "repo": "rakered/rakered",
     "packages": [
       "@rakered/accounts",
       "@rakered/email",
@@ -970,6 +880,14 @@
   },
   {
     "type": "release",
+    "url": "https://npmjs.com/spin-delay",
+    "title": "spin-delay",
+    "description": "Smart spinner helper for React, to manage the duration of loading states.",
+    "version": "1.1.0",
+    "published": "2021-02-17T20:09:44.350Z"
+  },
+  {
+    "type": "release",
     "url": "https://npmjs.com/@rakered/forms",
     "title": "@rakered/forms",
     "description": "Tiny helper to help with form submissions",
@@ -1113,11 +1031,7 @@
     "description": "Use PM2 to turn multiple startup commands into a single one.",
     "canonical": "https://dev.to/smeijer/simplify-your-dev-environment-with-pm2-2288",
     "published": "2021-03-21T14:44:04.035Z",
-    "tags": [
-      "webdev",
-      "node",
-      "pm2"
-    ]
+    "tags": ["webdev", "node", "pm2"]
   },
   {
     "type": "article",
@@ -1128,11 +1042,7 @@
     "description": "How to use Type Guards to narrow types in TypeScript.",
     "canonical": "https://dev.to/smeijer/typescript-type-guards-and-type-predicates-4m5e",
     "published": "2021-03-22T08:39:16.486Z",
-    "tags": [
-      "webdev",
-      "typescript",
-      "typeguards"
-    ]
+    "tags": ["webdev", "typescript", "typeguards"]
   },
   {
     "type": "article",
@@ -1143,11 +1053,6 @@
     "description": "How I became as productive as I am.",
     "canonical": "https://dev.to/smeijer/my-career-and-lessons-learned-in-a-nutshell-25f4",
     "published": "2021-03-23T18:14:47.652Z",
-    "tags": [
-      "webdev",
-      "career",
-      "experience",
-      "learning"
-    ]
+    "tags": ["webdev", "career", "experience", "learning"]
   }
 ]

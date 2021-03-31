@@ -3,7 +3,7 @@ import '../styles/globals.css';
 import withTwindApp from '@twind/next/shim/app';
 import Head from 'next/head';
 
-import { absoluteUrl } from '../lib/absoluteUrl';
+import { absoluteUrl } from '../lib/absolute-url';
 import twindConfig from '../twind.config';
 
 function MyApp({ Component, pageProps }) {

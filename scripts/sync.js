@@ -6,19 +6,36 @@ const path = require('path');
 
 // @ts-ignore
 const plugin = devto({
-  apiKey: process.env.DEV_TO_API_KEY
-})
+  apiKey: process.env.DEV_TO_API_KEY,
+});
+
+const entities = {
+  amp: '&',
+  apos: "'",
+  '#x27': "'",
+  '#x2F': '/',
+  '#39': "'",
+  '#47': '/',
+  lt: '<',
+  gt: '>',
+  nbsp: ' ',
+  quot: '"',
+};
+
+function decodeHTMLEntities(text) {
+  return text.replace(/&([^;]+);/gm, function (match, entity) {
+    return entities[entity] || match;
+  });
+}
 
 const removeEmpty = (obj) => {
-  let newObj = {};
+  const newObj = {};
   Object.keys(obj).forEach((key) => {
     if (typeof obj[key] === 'undefined') {
       newObj[key] = null;
-    }
-    else if (obj[key] === Object(obj[key])) {
+    } else if (obj[key] === Object(obj[key])) {
       newObj[key] = removeEmpty(obj[key]);
-    }
-    else {
+    } else {
       newObj[key] = obj[key];
     }
   });
@@ -36,27 +53,8 @@ const devTo = {
   async getPage(uuid) {
     const data = await plugin.getDataSlice(uuid);
     return removeEmpty(data);
-  }
-}
-
-const entities = {
-  'amp': '&',
-  'apos': '\'',
-  '#x27': '\'',
-  '#x2F': '/',
-  '#39': '\'',
-  '#47': '/',
-  'lt': '<',
-  'gt': '>',
-  'nbsp': ' ',
-  'quot': '"'
-}
-
-function decodeHTMLEntities (text) {
-  return text.replace(/&([^;]+);/gm, function (match, entity) {
-    return entities[entity] || match
-  })
-}
+  },
+};
 
 function tagFilter(tag) {
   return !['development', 'updraftsapp', 'makers'].includes(tag);
@@ -77,15 +75,15 @@ const projects = require('../data/projects');
 async function main() {
   const articles = await devTo.createIndex();
 
-  let out = [...projects];
+  const out = [...projects];
 
-  for (let article of articles) {
+  for (const article of articles) {
     out.push({
       type: 'article',
       url: article.url,
       image: article.metadata.cover_image,
       slug: article.slug,
-      title: article.title,
+      title: decodeHTMLEntities(article.title),
       description: article.description,
       canonical: article.canonical_url,
       published: article.published_at,
@@ -93,19 +91,29 @@ async function main() {
     });
   }
 
-  const packages = projects.filter(prj => prj.packages).map(prj => prj.packages.map(pkg => ({
-    project: prj,
-    name: pkg.name || pkg,
-    package: pkg,
-  }))).flat();
+  const packages = projects
+    .filter((prj) => prj.packages)
+    .map((prj) =>
+      prj.packages.map((pkg) => ({
+        project: prj,
+        name: pkg.name || pkg,
+        package: pkg,
+      })),
+    )
+    .flat();
 
   for (const pkg of packages) {
     const data = await getNpmData(pkg.name);
 
-    for (let [version, date] of Object.entries(data.time)) {
-      if(version === 'created' || version === 'modified') continue;
+    for (const [version, date] of Object.entries(data.time)) {
+      if (version === 'created' || version === 'modified') {
+        continue;
+      }
 
-      const description = data.description.replace(/<!--.*-->/g, '').replace(/(\[(.*)]\(.*\))/g, '$2').trim();
+      const description = data.description
+        .replace(/<!--.*-->/g, '')
+        .replace(/(\[(.*)]\(.*\))/g, '$2')
+        .trim();
 
       out.push({
         type: 'release',
@@ -115,11 +123,13 @@ async function main() {
         description: description || pkg.project.description,
         version: version,
         published: date,
-      })
+      });
     }
   }
 
-  out.sort((a, b) => new Date(a.published).getTime() - new Date(b.published).getTime());
+  out.sort(
+    (a, b) => new Date(a.published).getTime() - new Date(b.published).getTime(),
+  );
 
   // github
   // for (let repo of repos) {
@@ -141,9 +151,13 @@ async function main() {
   //   }
   // }
 
-  fs.writeFileSync(path.join(__dirname , '../data/data.json'), JSON.stringify(out, null, 2), {
-    encoding: 'utf-8'
-  });
+  fs.writeFileSync(
+    path.join(__dirname, '../generated/data.json'),
+    JSON.stringify(out, null, 2),
+    {
+      encoding: 'utf-8',
+    },
+  );
 }
 
 main();
