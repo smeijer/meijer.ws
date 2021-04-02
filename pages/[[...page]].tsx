@@ -4,6 +4,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import path from 'path';
+import { useEffect, useState } from 'react';
 
 import FeedEntry from '~/components/feed-entry';
 import FilterButtons from '~/components/filter-buttons';
@@ -18,22 +19,21 @@ const transition = {
   mass: 1,
 };
 
-const categoryGroupMap = {
-  library: 'open-source',
-  article: 'articles',
-  webapp: 'projects',
-  release: 'releases',
-};
-
 function isItemVisible(item, filter) {
-  return !filter || categoryGroupMap[item.type] === filter;
+  return !filter || item.type === filter;
 }
 
 export default function Home({ pages }) {
   const { query } = useRouter();
 
-  const page = Array.isArray(query.page) ? query.page[0] : query.page;
-  const filtered = pages.filter((p) => isItemVisible(p, page));
+  const [items, setItems] = useState([]);
+
+  const page =
+    (Array.isArray(query.page) ? query.page[0] : query.page) || 'projects';
+
+  useEffect(() => {
+    setItems(pages.filter((p) => isItemVisible(p, page)));
+  }, [page]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -86,11 +86,11 @@ export default function Home({ pages }) {
                     className="w-full"
                     layout={false}
                   >
-                    {filtered.map((item, idx) => (
+                    {items.map((item, idx) => (
                       <FeedEntry
-                        key={item.published + item.url}
+                        key={item.date + item.url}
                         item={item}
-                        isLast={idx === filtered.length - 1}
+                        isLast={idx === items.length - 1}
                       />
                     ))}
                   </motion.ul>
@@ -105,11 +105,12 @@ export default function Home({ pages }) {
 }
 
 export const getStaticPaths = async () => {
-  const paths = Object.values(categoryGroupMap).map((path) => ({
-    params: { page: path.split('/') },
-  }));
-
-  paths.push({ params: { page: null } });
+  const paths = [
+    { params: { page: ['articles'] } },
+    { params: { page: ['projects'] } },
+    { params: { page: ['open-source'] } },
+    { params: { page: null } },
+  ];
 
   return {
     paths,
@@ -118,7 +119,9 @@ export const getStaticPaths = async () => {
 };
 
 const iconMap = {
-  library: 'github',
+  articles: 'article',
+  projects: 'apps',
+  'open-source': 'github',
 };
 
 export const getStaticProps = async () => {
@@ -133,37 +136,42 @@ export const getStaticProps = async () => {
       .map((x) => `/${x}`),
   );
 
-  for (const d of data) {
-    const page: any = { ...d };
+  for (const type of Object.keys(data)) {
+    const source = data[type];
 
-    // filter the releases so that only the first release is shown.
-    // rendering all releases, might get a bit overwhelming.
-    if (page.type === 'release' && cache[page.title]) {
-      continue;
+    for (let i = 0; i < source.length; i++) {
+      const page: any = { ...source[i], type };
+
+      // when the page doesn't have an icon, we try to get one by convention
+      if (!page.icon) {
+        const potentialIcons = [
+          `/logos/${page.title.toLowerCase()}/logo-48.svg`,
+          `/logos/${page.title.toLowerCase()}/logo.svg`,
+          `/logos/${page.type}.svg`,
+          `/logos/${page.title.toLowerCase()}.svg`,
+          `/logos/${iconMap[page.type]}.svg`,
+        ];
+
+        page.icon = potentialIcons.find((icon) => svgs.has(icon)) || null;
+      }
+
+      if (page.type === 'release') {
+        cache[page.title] = true;
+      }
+
+      pages.push(page);
     }
-
-    // when the page doesn't have an icon, we try to get one by convention
-    if (!page.icon) {
-      const potentialIcons = [
-        `/logos/${page.title.toLowerCase()}/logo-48.svg`,
-        `/logos/${page.title.toLowerCase()}/logo.svg`,
-        `/logos/${page.type}.svg`,
-        `/logos/${iconMap[page.type]}.svg`,
-      ];
-
-      page.icon = potentialIcons.find((icon) => svgs.has(icon)) || null;
-    }
-
-    if (page.type === 'release') {
-      cache[page.title] = true;
-    }
-
-    pages.push(page);
   }
 
-  pages.sort(
-    (a, b) => new Date(b.published).getTime() - new Date(a.published).getTime(),
-  );
+  pages
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .map((x) => ({
+      type: x.type,
+      title: x.title,
+      description: x.description,
+      date: x.date,
+      icon: x.icon,
+    }));
 
   return {
     props: {

@@ -65,7 +65,7 @@ function FeedEntry({ item, isLast, small = false }) {
               <span>{item.title}</span>
             </a>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {intl.format(new Date(item.published))}
+              {intl.format(new Date(item.date))}
             </p>
             <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
               {item.description}

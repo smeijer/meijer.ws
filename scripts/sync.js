@@ -1,8 +1,10 @@
 const devto = require('@ssgjs/source-devto');
 require('dotenv-safe').config();
-const fetch = require('node-fetch');
 const fs = require('fs');
 const path = require('path');
+const github = require('./github');
+const npm = require('./npm');
+const projectData = require('../data/projects');
 
 // @ts-ignore
 const plugin = devto({
@@ -60,97 +62,106 @@ function tagFilter(tag) {
   return !['development', 'updraftsapp', 'makers'].includes(tag);
 }
 
-async function getReleases(repo) {
-  const res = await fetch(`https://api.github.com/repos/${repo}/releases`);
-  return res.json();
-}
-
-async function getNpmData(packageName) {
-  const res = await fetch(`https://registry.npmjs.org/${packageName}`);
-  return res.json();
-}
-
-const projects = require('../data/projects');
-
 async function main() {
-  const articles = await devTo.createIndex();
+  const articles = (await devTo.createIndex()).map((article) => ({
+    type: 'article',
+    url: article.url,
+    image: article.metadata.cover_image,
+    // strip dev.to id from slug
+    slug: article.slug.substr(0, article.slug.lastIndexOf('-')),
+    title: decodeHTMLEntities(article.title),
+    description: article.description,
+    canonical: article.canonical_url,
+    date: article.published_at,
+    tags: Object.values(article.tag_list).filter(tagFilter),
+  }));
 
-  const out = [...projects];
+  //
+  // COLLECT PROJECT DATA
+  //
+  const repos = projectData.filter(
+    (prj) => prj.repo || prj.url?.startsWith('https://github.com'),
+  );
 
-  for (const article of articles) {
-    out.push({
-      type: 'article',
-      url: article.url,
-      image: article.metadata.cover_image,
-      slug: article.slug,
-      title: decodeHTMLEntities(article.title),
-      description: article.description,
-      canonical: article.canonical_url,
-      published: article.published_at,
-      tags: Object.values(article.tag_list).filter(tagFilter),
-    });
+  for (const repo of repos) {
+    const details = await github.getRepo(repo.repo || repo.url);
+
+    // mutate repo, but also use those values to overrule details
+    Object.assign(repo, details, { ...repo });
   }
 
-  const packages = projects
-    .filter((prj) => prj.packages)
-    .map((prj) =>
-      prj.packages.map((pkg) => ({
-        project: prj,
-        name: pkg.name || pkg,
-        package: pkg,
-      })),
-    )
-    .flat();
+  //
+  // COLLECT PROJECTS
+  //
+  const projects = projectData
+    .filter((x) => x.highlight)
+    .map((x) => ({ ...x }));
 
-  for (const pkg of packages) {
-    const data = await getNpmData(pkg.name);
+  //
+  // SEPARATE OPEN SOURCE
+  //
+  const opensource = [];
 
-    for (const [version, date] of Object.entries(data.time)) {
-      if (version === 'created' || version === 'modified') {
-        continue;
+  console.log('fetch details from github');
+  for (const repo of repos) {
+    if (repo.packages.length > 0) {
+      // add all public packages in a mono repo
+      for (const package of repo.packages) {
+        if (!package.private) {
+          opensource.push({
+            type: 'library',
+            title: package.name || repo.title,
+            description: repo.description,
+            url: package.url || repo.url,
+            github: package.url || repo.url,
+            npm: `https://npmjs.com/${package.name}`,
+            ...package,
+          });
+        }
       }
-
-      const description = data.description
-        .replace(/<!--.*-->/g, '')
-        .replace(/(\[(.*)]\(.*\))/g, '$2')
-        .trim();
-
-      out.push({
-        type: 'release',
-        url: `https://npmjs.com/${pkg.name}`,
-        title: data.name,
-        project: pkg.project.name,
-        description: description || pkg.project.description,
-        version: version,
-        published: date,
-      });
+    } else if (repo.package) {
+      // if we're dealing with a single package, add it
+      if (!repo.package.private) {
+        opensource.push({
+          type: 'library',
+          title: repo.package.name || repo.title,
+          description: repo.description,
+          github: repo.package.url || repo.url,
+          npm: `https://npmjs.com/${repo.package.name}`,
+          ...repo.package,
+        });
+      }
+      // otherwise, add the repo itself
+      else if (!repo.private) {
+        const { package, packages, ...data } = repo;
+        opensource.push({
+          type: 'webapp',
+          ...data,
+          url: package.url,
+          github: package.url,
+        });
+      }
     }
   }
 
-  out.sort(
-    (a, b) => new Date(a.published).getTime() - new Date(b.published).getTime(),
-  );
+  const withoutDate = opensource.filter((x) => x.type === 'library' && !x.date);
 
-  // github
-  // for (let repo of repos) {
-  //   const releases = await getReleases(repo);
-  //   for (let release of releases) {
-  //     if (release.name.includes('-')) {
-  //       continue;
-  //     }
-  //
-  //     out.push({
-  //       type: 'release',
-  //       url: release.url,
-  //       slug: repo.split('/')[1] + '/' + release.name,
-  //       icon: '/logos/release.svg',
-  //       description: release.body,
-  //       version: release.name,
-  //       published: release.created_at, // published_at is push date, not commit date
-  //     });
-  //   }
-  // }
+  console.log('fetch details from npm');
+  for (const package of withoutDate) {
+    const details = await npm.getPackage(package.name);
+    package.date = details.time.created;
+  }
 
+  const sortByDate = (a, b) =>
+    new Date(a.date).getTime() - new Date(b.date).getTime();
+
+  const out = {
+    articles: [...articles].sort(sortByDate),
+    projects: [...projects].sort(sortByDate),
+    'open-source': [...opensource].sort(sortByDate),
+  };
+
+  console.log('update generated/data.json');
   fs.writeFileSync(
     path.join(__dirname, '../generated/data.json'),
     JSON.stringify(out, null, 2),
