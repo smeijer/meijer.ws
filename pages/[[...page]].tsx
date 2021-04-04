@@ -144,11 +144,17 @@ export const getStaticProps = async () => {
 
       // when the page doesn't have an icon, we try to get one by convention
       if (!page.icon) {
+        const name = page.title
+          .toLowerCase()
+          .replace(/^@/, '')
+          .replace(/\//g, '-');
+
         const potentialIcons = [
-          `/logos/${page.title.toLowerCase()}/logo-48.svg`,
-          `/logos/${page.title.toLowerCase()}/logo.svg`,
+          `/logos/${name}/logo.svg`,
+          `/logos/${name}.svg`,
+          `/logos/${name.replace(/\./g, '-')}.svg`,
+          `/logos/${name.split('.')[0]}.svg`,
           `/logos/${page.type}.svg`,
-          `/logos/${page.title.toLowerCase()}.svg`,
           `/logos/${iconMap[page.type]}.svg`,
         ];
 
