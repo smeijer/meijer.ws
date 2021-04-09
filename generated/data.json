@@ -120,6 +120,39 @@
       "canonical": "https://dev.to/smeijer/my-career-and-lessons-learned-in-a-nutshell-25f4",
       "date": "2021-03-23T18:14:47.652Z",
       "tags": ["webdev", "career", "experience", "learning"]
+    },
+    {
+      "type": "article",
+      "url": "https://dev.to/smeijer/you-might-not-need-recursion-282b",
+      "image": "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/uv92ixxhupkx8ghw54nj.jpg",
+      "slug": "you-might-not-need-recursion",
+      "title": "You might not need recursion",
+      "description": "Flat loops as an alternative for complex recursive functions",
+      "canonical": "https://dev.to/smeijer/you-might-not-need-recursion-282b",
+      "date": "2021-04-09T15:32:07.437Z",
+      "tags": ["webdev", "javascript", "recursion"]
+    },
+    {
+      "type": "article",
+      "url": "https://dev.to/smeijer/three-ways-to-handle-recursion-5g2l",
+      "image": "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/uylk3lbh2ovhzui2syuu.jpg",
+      "slug": "three-ways-to-handle-recursion",
+      "title": "Three ways to handle recursion",
+      "description": "Walking down a tree using a function, loop or generator",
+      "canonical": "https://dev.to/smeijer/three-ways-to-handle-recursion-5g2l",
+      "date": "2021-04-12T12:58:24.829Z",
+      "tags": ["webdev", "typescript", "javascript"]
+    },
+    {
+      "type": "article",
+      "url": "https://dev.to/smeijer/a-quick-dive-into-generators-o0l",
+      "image": "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/kq6hndvpy6vlrbz0degk.jpg",
+      "slug": "a-quick-dive-into-generators",
+      "title": "A quick dive into generators",
+      "description": "Generators and what makes them so special",
+      "canonical": "https://dev.to/smeijer/a-quick-dive-into-generators-o0l",
+      "date": "2021-04-15T07:36:25.969Z",
+      "tags": ["webdev", "typescript", "javascript"]
     }
   ],
   "projects": [
@@ -224,42 +257,56 @@
           "name": "@rakered/accounts",
           "description": "An account package for managing user accounts in mongodb.",
           "tags": ["nodejs", "mongodb"],
-          "url": "https://github.com/rakered/rakered/tree/main/packages/packages/accounts",
+          "url": "https://github.com/rakered/rakered/tree/main/packages/accounts",
           "private": false
         },
         {
           "name": "@rakered/email",
           "description": "Compose emails using react and send them with nodemailer",
           "tags": ["nodejs", "email", "react"],
-          "url": "https://github.com/rakered/rakered/tree/main/packages/packages/email",
+          "url": "https://github.com/rakered/rakered/tree/main/packages/email",
           "private": false
         },
         {
           "name": "@rakered/errors",
           "description": "Convenient custom errors matching http status code.",
           "tags": ["nodejs", "errors"],
-          "url": "https://github.com/rakered/rakered/tree/main/packages/packages/errors",
+          "url": "https://github.com/rakered/rakered/tree/main/packages/errors",
           "private": false
         },
         {
           "name": "@rakered/forms",
           "description": "Tiny helper to help with form submissions.",
           "tags": ["forms", "javascript"],
-          "url": "https://github.com/rakered/rakered/tree/main/packages/packages/forms",
+          "url": "https://github.com/rakered/rakered/tree/main/packages/forms",
           "private": false
         },
         {
           "name": "@rakered/hash",
           "description": "A tiny, zero dependency, isomorphic SHA256 hashing algorithm.",
           "tags": ["hash", "browser", "nodejs"],
-          "url": "https://github.com/rakered/rakered/tree/main/packages/packages/hash",
+          "url": "https://github.com/rakered/rakered/tree/main/packages/hash",
           "private": false
         },
         {
           "name": "@rakered/mongo",
           "description": "A tiny but elegant wrapper around the native mongodb driver for Node.js, removing boilerplate and fixing id generation.",
           "tags": ["nodejs", "mongodb"],
-          "url": "https://github.com/rakered/rakered/tree/main/packages/packages/mongo",
+          "url": "https://github.com/rakered/rakered/tree/main/packages/mongo",
+          "private": false
+        },
+        {
+          "name": "@rakered/nextjs-auth-api",
+          "description": "api sdk for using @rakered/accounts with nextjs.",
+          "tags": ["nodejs", "errors"],
+          "url": "https://github.com/rakered/rakered/tree/main/packages/nextjs-auth-api",
+          "private": false
+        },
+        {
+          "name": "@rakered/nextjs-auth-ui",
+          "description": "ui for using @rakered/accounts with nextjs.",
+          "tags": ["nodejs", "errors"],
+          "url": "https://github.com/rakered/rakered/tree/main/packages/nextjs-auth-ui",
           "private": false
         }
       ]
@@ -370,8 +417,8 @@
       "type": "library",
       "title": "@rakered/mongo",
       "description": "A tiny but elegant wrapper around the native mongodb driver for Node.js, removing boilerplate and fixing id generation.",
-      "url": "https://github.com/rakered/rakered/tree/main/packages/packages/mongo",
-      "github": "https://github.com/rakered/rakered/tree/main/packages/packages/mongo",
+      "url": "https://github.com/rakered/rakered/tree/main/packages/mongo",
+      "github": "https://github.com/rakered/rakered/tree/main/packages/mongo",
       "npm": "https://npmjs.com/@rakered/mongo",
       "name": "@rakered/mongo",
       "tags": ["nodejs", "mongodb"],
@@ -382,8 +429,8 @@
       "type": "library",
       "title": "@rakered/hash",
       "description": "A tiny, zero dependency, isomorphic SHA256 hashing algorithm.",
-      "url": "https://github.com/rakered/rakered/tree/main/packages/packages/hash",
-      "github": "https://github.com/rakered/rakered/tree/main/packages/packages/hash",
+      "url": "https://github.com/rakered/rakered/tree/main/packages/hash",
+      "github": "https://github.com/rakered/rakered/tree/main/packages/hash",
       "npm": "https://npmjs.com/@rakered/hash",
       "name": "@rakered/hash",
       "tags": ["hash", "browser", "nodejs"],
@@ -394,8 +441,8 @@
       "type": "library",
       "title": "@rakered/email",
       "description": "Compose emails using react and send them with nodemailer",
-      "url": "https://github.com/rakered/rakered/tree/main/packages/packages/email",
-      "github": "https://github.com/rakered/rakered/tree/main/packages/packages/email",
+      "url": "https://github.com/rakered/rakered/tree/main/packages/email",
+      "github": "https://github.com/rakered/rakered/tree/main/packages/email",
       "npm": "https://npmjs.com/@rakered/email",
       "name": "@rakered/email",
       "tags": ["nodejs", "email", "react"],
@@ -406,8 +453,8 @@
       "type": "library",
       "title": "@rakered/errors",
       "description": "Convenient custom errors matching http status code.",
-      "url": "https://github.com/rakered/rakered/tree/main/packages/packages/errors",
-      "github": "https://github.com/rakered/rakered/tree/main/packages/packages/errors",
+      "url": "https://github.com/rakered/rakered/tree/main/packages/errors",
+      "github": "https://github.com/rakered/rakered/tree/main/packages/errors",
       "npm": "https://npmjs.com/@rakered/errors",
       "name": "@rakered/errors",
       "tags": ["nodejs", "errors"],
@@ -418,8 +465,8 @@
       "type": "library",
       "title": "@rakered/accounts",
       "description": "An account package for managing user accounts in mongodb.",
-      "url": "https://github.com/rakered/rakered/tree/main/packages/packages/accounts",
-      "github": "https://github.com/rakered/rakered/tree/main/packages/packages/accounts",
+      "url": "https://github.com/rakered/rakered/tree/main/packages/accounts",
+      "github": "https://github.com/rakered/rakered/tree/main/packages/accounts",
       "npm": "https://npmjs.com/@rakered/accounts",
       "name": "@rakered/accounts",
       "tags": ["nodejs", "mongodb"],
@@ -430,13 +477,37 @@
       "type": "library",
       "title": "@rakered/forms",
       "description": "Tiny helper to help with form submissions.",
-      "url": "https://github.com/rakered/rakered/tree/main/packages/packages/forms",
-      "github": "https://github.com/rakered/rakered/tree/main/packages/packages/forms",
+      "url": "https://github.com/rakered/rakered/tree/main/packages/forms",
+      "github": "https://github.com/rakered/rakered/tree/main/packages/forms",
       "npm": "https://npmjs.com/@rakered/forms",
       "name": "@rakered/forms",
       "tags": ["forms", "javascript"],
       "private": false,
       "date": "2021-02-12T15:49:22.359Z"
+    },
+    {
+      "type": "library",
+      "title": "@rakered/nextjs-auth-ui",
+      "description": "ui for using @rakered/accounts with nextjs.",
+      "url": "https://github.com/rakered/rakered/tree/main/packages/nextjs-auth-ui",
+      "github": "https://github.com/rakered/rakered/tree/main/packages/nextjs-auth-ui",
+      "npm": "https://npmjs.com/@rakered/nextjs-auth-ui",
+      "name": "@rakered/nextjs-auth-ui",
+      "tags": ["nodejs", "errors"],
+      "private": false,
+      "date": "2021-04-11T16:01:52.904Z"
+    },
+    {
+      "type": "library",
+      "title": "@rakered/nextjs-auth-api",
+      "description": "api sdk for using @rakered/accounts with nextjs.",
+      "url": "https://github.com/rakered/rakered/tree/main/packages/nextjs-auth-api",
+      "github": "https://github.com/rakered/rakered/tree/main/packages/nextjs-auth-api",
+      "npm": "https://npmjs.com/@rakered/nextjs-auth-api",
+      "name": "@rakered/nextjs-auth-api",
+      "tags": ["nodejs", "errors"],
+      "private": false,
+      "date": "2021-04-11T16:02:45.138Z"
     }
   ]
 }
