@@ -93,18 +93,17 @@ async function getRepo(repo) {
   const parsePackageJson = (pkg) => {
     const obj = JSON.parse(pkg.object.text);
 
+    const url =
+      `https://github.com/${owner}/${name}` +
+      (pkg.path
+        ? `/tree/${branch.name}/${pkg.path.replace(/\/package.json$/, '')}`
+        : '');
+
     return {
       name: obj.name,
       description: obj.description,
       tags: obj.keywords,
-      url:
-        `https://github.com/${owner}/${name}` +
-        (pkg.path
-          ? `/tree/${branch.name}/packages/${pkg.path.replace(
-              /\/package.json$/,
-              '',
-            )}`
-          : ''),
+      url: url,
       private: Boolean(obj.private),
     };
   };
