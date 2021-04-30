@@ -147,7 +147,7 @@ export const getStaticProps = async () => {
         const name = page.title
           .toLowerCase()
           .replace(/^@/, '')
-          .replace(/\//g, '-');
+          .replace(/[\/ ]/g, '-');
 
         const potentialIcons = [
           `/logos/${name}/logo.svg`,

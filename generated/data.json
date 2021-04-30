@@ -60,7 +60,7 @@
       "url": "https://dev.to/smeijer/a-typescript-valueof-implementation-and-how-it-s-built-4gim",
       "image": "https://dev-to-uploads.s3.amazonaws.com/i/dy14hetvbio4fjtzdxwt.jpg",
       "slug": "a-typescript-valueof-implementation-and-how-it-s-built",
-      "title": "How to implement a generic ValueOf<T​> helper type in TypeScript.",
+      "title": "How to implement a generic ValueOf<T> helper type in TypeScript.",
       "description": " A typescript `valueof` implementation similar to `keyof`",
       "canonical": "https://dev.to/smeijer/a-typescript-valueof-implementation-and-how-it-s-built-4gim",
       "date": "2020-12-18T11:00:00.569Z",
@@ -153,6 +153,61 @@
       "canonical": "https://dev.to/smeijer/a-quick-dive-into-generators-o0l",
       "date": "2021-04-15T07:36:25.969Z",
       "tags": ["webdev", "typescript", "javascript"]
+    },
+    {
+      "type": "article",
+      "url": "https://dev.to/smeijer/trivia-or-job-interview-4mpj",
+      "image": "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/bvlsyr8hsiuyqye7arvp.jpg",
+      "slug": "trivia-or-job-interview",
+      "title": "Trivia or Job Interview?",
+      "description": "The interview process is broken, I can build, I can't play.",
+      "canonical": "https://dev.to/smeijer/trivia-or-job-interview-4mpj",
+      "date": "2021-05-04T20:38:38.680Z",
+      "tags": ["javascript", "webdev", "interview"]
+    },
+    {
+      "type": "article",
+      "url": "https://dev.to/smeijer/how-i-got-a-job-offer-from-a-funded-startup-3a56",
+      "image": "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/2rpvtwaztlzw3khg0hmm.jpg",
+      "slug": "how-i-got-a-job-offer-from-a-funded-startup",
+      "title": "How I got a job offer from a funded startup",
+      "description": "How I got an exciting job offer, that I had to decline.",
+      "canonical": "https://dev.to/smeijer/how-i-got-a-job-offer-from-a-funded-startup-3a56",
+      "date": "2021-05-06T14:23:23.341Z",
+      "tags": ["webdev", "job", "interview", "vacancy"]
+    },
+    {
+      "type": "article",
+      "url": "https://dev.to/smeijer/typescript-type-assertions-4klf",
+      "image": "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/xd5kvuvdjt78s4f47vqj.jpg",
+      "slug": "typescript-type-assertions",
+      "title": "Typescript Type Assertions ",
+      "description": "How to use Type Assertions to narrow types in TypeScript.",
+      "canonical": "https://dev.to/smeijer/typescript-type-assertions-4klf",
+      "date": "2021-09-07T15:29:28.637Z",
+      "tags": ["webdev", "typescript", "assertions"]
+    },
+    {
+      "type": "article",
+      "url": "https://dev.to/smeijer/handling-post-requests-in-next-js-getserversideprops-50ia",
+      "image": "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/f07gdcmfu5mkc2fedev7.jpg",
+      "slug": "handling-post-requests-in-next-js-getserversideprops",
+      "title": "Handling POST requests in Next.js getServerSideProps",
+      "description": "How to handle POST requests in Next.js getServerSideProps",
+      "canonical": "https://dev.to/smeijer/handling-post-requests-in-next-js-getserversideprops-50ia",
+      "date": "2021-09-10T08:11:56.269Z",
+      "tags": ["webdev", "nextjs"]
+    },
+    {
+      "type": "article",
+      "url": "https://dev.to/smeijer/typed-graphql-with-react-query-graphql-request-3jj9",
+      "image": "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/u0f9n6xy9rj8v2320o1n.jpg",
+      "slug": "typed-graphql-with-react-query-graphql-request",
+      "title": "Typed GraphQL with react-query & graphql-request",
+      "description": "Using typed GraphQL queries to easy development and maintain API confidence",
+      "canonical": "https://dev.to/smeijer/typed-graphql-with-react-query-graphql-request-3jj9",
+      "date": "2021-11-25T10:19:13.434Z",
+      "tags": ["graphql", "typescript", "frontend"]
     }
   ],
   "projects": [
@@ -197,12 +252,10 @@
       "description": "Check if your browser is still supported by your favorite websites.",
       "date": "2020-08-27T21:29:36Z",
       "url": "https://issupported.com",
-      "private": true,
+      "private": false,
       "tags": ["nodejs", "serverless"],
       "package": {
-        "name": "issupported.com",
-        "description": "Check if your browser is still supported by your favorite websites.",
-        "tags": [],
+        "name": "issupported",
         "url": "https://github.com/smeijer/issupported.com",
         "private": true
       },
@@ -261,6 +314,13 @@
           "private": false
         },
         {
+          "name": "@rakered/cron",
+          "description": "Lightweight job scheduling for Node.js",
+          "tags": ["nodejs", "mongodb", "taskscheduler"],
+          "url": "https://github.com/rakered/rakered/tree/main/packages/cron",
+          "private": false
+        },
+        {
           "name": "@rakered/email",
           "description": "Compose emails using react and send them with nodemailer",
           "tags": ["nodejs", "email", "react"],
@@ -308,8 +368,38 @@
           "tags": ["nodejs", "errors"],
           "url": "https://github.com/rakered/rakered/tree/main/packages/nextjs-auth-ui",
           "private": false
+        },
+        {
+          "name": "@rakered/swift",
+          "description": "A lib to manage files on OpenStack Swift with ease",
+          "tags": ["openstack", "swift", "nodejs"],
+          "url": "https://github.com/rakered/rakered/tree/main/packages/swift",
+          "private": false
         }
       ]
+    },
+    {
+      "url": "https://kentcdodds.com",
+      "title": "kentcdodds.com",
+      "description": "Helped Kent build his new site using remix, tailwind and framer-motion.",
+      "tags": ["react", "tailwindcss", "remix"],
+      "date": "2021-06-28",
+      "highlight": true
+    },
+    {
+      "url": "https://metricmouse.com",
+      "title": "Metric Mouse",
+      "description": "Your Friendly Google Analytics Dashboard.",
+      "highlight": true,
+      "date": "2021-08-19"
+    },
+    {
+      "url": "https://magicbell.io",
+      "title": "MagicBell",
+      "description": "The notification inbox for your product.",
+      "tags": ["saas", "react", "graphql"],
+      "date": "2021-10-26",
+      "highlight": true
     }
   ],
   "open-source": [
@@ -366,6 +456,18 @@
       "url": "https://github.com/smeijer/where-broke",
       "private": false,
       "date": "2020-07-03T18:48:21.067Z"
+    },
+    {
+      "type": "webapp",
+      "repo": "smeijer/issupported.com",
+      "highlight": true,
+      "title": "issupported.com",
+      "description": "Check if your browser is still supported by your favorite websites.",
+      "date": "2020-08-27T21:29:36Z",
+      "url": "https://github.com/smeijer/issupported.com",
+      "private": false,
+      "tags": ["nodejs", "serverless"],
+      "github": "https://github.com/smeijer/issupported.com"
     },
     {
       "type": "library",
@@ -508,6 +610,41 @@
       "tags": ["nodejs", "errors"],
       "private": false,
       "date": "2021-04-11T16:02:45.138Z"
+    },
+    {
+      "type": "library",
+      "title": "@rakered/swift",
+      "description": "A lib to manage files on OpenStack Swift with ease",
+      "url": "https://github.com/rakered/rakered/tree/main/packages/swift",
+      "github": "https://github.com/rakered/rakered/tree/main/packages/swift",
+      "npm": "https://npmjs.com/@rakered/swift",
+      "name": "@rakered/swift",
+      "tags": ["openstack", "swift", "nodejs"],
+      "private": false,
+      "date": "2021-04-30T09:17:43.965Z"
+    },
+    {
+      "type": "library",
+      "title": "@rakered/cron",
+      "description": "Lightweight job scheduling for Node.js",
+      "url": "https://github.com/rakered/rakered/tree/main/packages/cron",
+      "github": "https://github.com/rakered/rakered/tree/main/packages/cron",
+      "npm": "https://npmjs.com/@rakered/cron",
+      "name": "@rakered/cron",
+      "tags": ["nodejs", "mongodb", "taskscheduler"],
+      "private": false,
+      "date": "2021-05-27T10:22:08.326Z"
+    },
+    {
+      "type": "library",
+      "title": "next-runtime",
+      "description": "handler to improve data handling in Next.js getServerSideProps",
+      "github": "https://github.com/smeijer/next-runtime",
+      "npm": "https://npmjs.com/next-runtime",
+      "name": "next-runtime",
+      "url": "https://github.com/smeijer/next-runtime",
+      "private": false,
+      "date": "2021-09-11T18:31:49.285Z"
     }
   ]
 }
