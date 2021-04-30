@@ -153,6 +153,28 @@
       "canonical": "https://dev.to/smeijer/a-quick-dive-into-generators-o0l",
       "date": "2021-04-15T07:36:25.969Z",
       "tags": ["webdev", "typescript", "javascript"]
+    },
+    {
+      "type": "article",
+      "url": "https://dev.to/smeijer/trivia-or-job-interview-4mpj",
+      "image": "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/bvlsyr8hsiuyqye7arvp.jpg",
+      "slug": "trivia-or-job-interview",
+      "title": "Trivia or Job Interview?",
+      "description": "The interview process is broken, I can build, I can't play.",
+      "canonical": "https://dev.to/smeijer/trivia-or-job-interview-4mpj",
+      "date": "2021-05-04T20:38:38.680Z",
+      "tags": ["javascript", "webdev", "interview"]
+    },
+    {
+      "type": "article",
+      "url": "https://dev.to/smeijer/how-i-got-a-job-offer-from-a-funded-startup-3a56",
+      "image": "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/2rpvtwaztlzw3khg0hmm.jpg",
+      "slug": "how-i-got-a-job-offer-from-a-funded-startup",
+      "title": "How I got a job offer from a funded startup",
+      "description": "How I got an exciting job offer, that I had to decline.",
+      "canonical": "https://dev.to/smeijer/how-i-got-a-job-offer-from-a-funded-startup-3a56",
+      "date": "2021-05-06T14:23:23.341Z",
+      "tags": ["webdev", "job", "interview", "vacancy"]
     }
   ],
   "projects": [
@@ -261,6 +283,13 @@
           "private": false
         },
         {
+          "name": "@rakered/cron",
+          "description": "Lightweight job scheduling for Node.js",
+          "tags": ["nodejs", "mongodb", "taskscheduler"],
+          "url": "https://github.com/rakered/rakered/tree/main/packages/cron",
+          "private": false
+        },
+        {
           "name": "@rakered/email",
           "description": "Compose emails using react and send them with nodemailer",
           "tags": ["nodejs", "email", "react"],
@@ -307,6 +336,13 @@
           "description": "ui for using @rakered/accounts with nextjs.",
           "tags": ["nodejs", "errors"],
           "url": "https://github.com/rakered/rakered/tree/main/packages/nextjs-auth-ui",
+          "private": false
+        },
+        {
+          "name": "@rakered/swift",
+          "description": "A lib to manage files on OpenStack Swift with ease",
+          "tags": ["openstack", "swift", "nodejs"],
+          "url": "https://github.com/rakered/rakered/tree/main/packages/swift",
           "private": false
         }
       ]
@@ -508,6 +544,30 @@
       "tags": ["nodejs", "errors"],
       "private": false,
       "date": "2021-04-11T16:02:45.138Z"
+    },
+    {
+      "type": "library",
+      "title": "@rakered/swift",
+      "description": "A lib to manage files on OpenStack Swift with ease",
+      "url": "https://github.com/rakered/rakered/tree/main/packages/swift",
+      "github": "https://github.com/rakered/rakered/tree/main/packages/swift",
+      "npm": "https://npmjs.com/@rakered/swift",
+      "name": "@rakered/swift",
+      "tags": ["openstack", "swift", "nodejs"],
+      "private": false,
+      "date": "2021-04-30T09:17:43.965Z"
+    },
+    {
+      "type": "library",
+      "title": "@rakered/cron",
+      "description": "Lightweight job scheduling for Node.js",
+      "url": "https://github.com/rakered/rakered/tree/main/packages/cron",
+      "github": "https://github.com/rakered/rakered/tree/main/packages/cron",
+      "npm": "https://npmjs.com/@rakered/cron",
+      "name": "@rakered/cron",
+      "tags": ["nodejs", "mongodb", "taskscheduler"],
+      "private": false,
+      "date": "2021-05-27T10:22:08.326Z"
     }
   ]
 }
