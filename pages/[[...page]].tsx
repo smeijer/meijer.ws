@@ -128,9 +128,9 @@ export const getStaticProps = async () => {
   const pages = [];
   const cache = {};
 
-  const svgs = new Set(
+  const icons = new Set(
     glob
-      .sync('logos/**/*.svg', {
+      .sync('logos/**/*.{svg,png}', {
         cwd: path.join(process.cwd(), 'public'),
       })
       .map((x) => `/${x}`),
@@ -154,11 +154,15 @@ export const getStaticProps = async () => {
           `/logos/${name}.svg`,
           `/logos/${name.replace(/\./g, '-')}.svg`,
           `/logos/${name.split('.')[0]}.svg`,
-          `/logos/${page.type}.svg`,
-          `/logos/${iconMap[page.type]}.svg`,
-        ];
+        ]
+          .map((x) => [x, x.replace(/svg$/, 'png')])
+          .flat()
+          .concat([
+            `/logos/${page.type}.svg`,
+            `/logos/${iconMap[page.type]}.svg`,
+          ]);
 
-        page.icon = potentialIcons.find((icon) => svgs.has(icon)) || null;
+        page.icon = potentialIcons.find((icon) => icons.has(icon)) || null;
       }
 
       if (page.type === 'release') {
