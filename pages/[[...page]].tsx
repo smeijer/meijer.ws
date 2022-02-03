@@ -46,7 +46,7 @@ export default function Home({ pages }) {
           <Link href="/" shallow>
             <img
               className="absolute cursor-pointer bottom-0 w-1/5 object-cover rounded-full"
-              src="/headshot.png"
+              src="/headshot.jpg"
               style={{ transform: 'translateY(50%)', left: '4%' }}
             />
           </Link>
