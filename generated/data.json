@@ -208,6 +208,28 @@
       "canonical": "https://dev.to/smeijer/typed-graphql-with-react-query-graphql-request-3jj9",
       "date": "2021-11-25T10:19:13.434Z",
       "tags": ["graphql", "typescript", "frontend"]
+    },
+    {
+      "type": "article",
+      "url": "https://dev.to/smeijer/conflicted-42f2",
+      "image": "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/895u6wd1cfasbz7fs155.jpg",
+      "slug": "conflicted",
+      "title": "Conflicted",
+      "description": "A rambling about recent events in my life",
+      "canonical": "https://dev.to/smeijer/conflicted-42f2",
+      "date": "2022-03-28T21:32:42.419Z",
+      "tags": ["webdev", "career", "life"]
+    },
+    {
+      "type": "article",
+      "url": "https://dev.to/smeijer/simpler-dev-environments-with-procfiles-2akn",
+      "image": "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ige13faq43xsh6sji8ha.jpg",
+      "slug": "simpler-dev-environments-with-procfiles",
+      "title": "Simpler Dev Environments with Procfiles",
+      "description": "Use Procfiles to turn multiple startup commands into a single one.",
+      "canonical": "https://dev.to/smeijer/simpler-dev-environments-with-procfiles-2akn",
+      "date": "2022-06-01T19:50:55.082Z",
+      "tags": ["webdev", "node", "procfile"]
     }
   ],
   "projects": [
