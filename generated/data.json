@@ -9,7 +9,12 @@
       "description": "The costs of Optional Chaining in performance and bundle size.",
       "canonical": "https://dev.to/smeijer/the-costs-of-optional-chaining-5bno",
       "date": "2019-07-31T12:50:04.523Z",
-      "tags": ["javascript", "babel", "webdev", "discuss"]
+      "tags": [
+        "javascript",
+        "babel",
+        "webdev",
+        "discuss"
+      ]
     },
     {
       "type": "article",
@@ -20,7 +25,10 @@
       "description": "The launch of Updrafts.app - A Tailwind Studio.",
       "canonical": "https://dev.to/smeijer/the-launch-of-updrafts-app-22fn",
       "date": "2020-10-02T14:37:06.015Z",
-      "tags": ["tailwindcss", "indiehackers"]
+      "tags": [
+        "tailwindcss",
+        "indiehackers"
+      ]
     },
     {
       "type": "article",
@@ -31,7 +39,12 @@
       "description": "Working from Home isn't the same anymore.",
       "canonical": "https://dev.to/smeijer/work-from-home-the-struggle-of-2020-46ca",
       "date": "2020-11-03T12:03:05.027Z",
-      "tags": ["wfh", "covid", "2020", "struggle"]
+      "tags": [
+        "wfh",
+        "covid",
+        "2020",
+        "struggle"
+      ]
     },
     {
       "type": "article",
@@ -42,7 +55,11 @@
       "description": "Functional methods and side effects don't play well together.",
       "canonical": "https://dev.to/smeijer/stop-mutating-in-map-reduce-and-foreach-58bf",
       "date": "2020-12-14T11:49:41.648Z",
-      "tags": ["es6", "javascript", "webdev"]
+      "tags": [
+        "es6",
+        "javascript",
+        "webdev"
+      ]
     },
     {
       "type": "article",
@@ -53,7 +70,11 @@
       "description": "Mutating objects is fine, sometimes preferred.",
       "canonical": "https://dev.to/smeijer/don-t-stop-mutating-3gj7",
       "date": "2020-12-16T14:45:18.938Z",
-      "tags": ["es6", "javascript", "webdev"]
+      "tags": [
+        "es6",
+        "javascript",
+        "webdev"
+      ]
     },
     {
       "type": "article",
@@ -64,7 +85,11 @@
       "description": " A typescript `valueof` implementation similar to `keyof`",
       "canonical": "https://dev.to/smeijer/a-typescript-valueof-implementation-and-how-it-s-built-4gim",
       "date": "2020-12-18T11:00:00.569Z",
-      "tags": ["webdev", "javascript", "typescript"]
+      "tags": [
+        "webdev",
+        "javascript",
+        "typescript"
+      ]
     },
     {
       "type": "article",
@@ -75,7 +100,11 @@
       "description": "Prefer [].slice(2) over [,,rest]",
       "canonical": "https://dev.to/smeijer/don-t-skip-elements-with-array-destructuring-3fl9",
       "date": "2020-12-22T17:55:48.263Z",
-      "tags": ["es6", "javascript", "webdev"]
+      "tags": [
+        "es6",
+        "javascript",
+        "webdev"
+      ]
     },
     {
       "type": "article",
@@ -86,7 +115,12 @@
       "description": "Form handling in React, without react controlling everything!",
       "canonical": "https://dev.to/smeijer/simple-form-handling-in-react-o72",
       "date": "2021-01-04T12:31:29.527Z",
-      "tags": ["react", "javascript", "webdev", "forms"]
+      "tags": [
+        "react",
+        "javascript",
+        "webdev",
+        "forms"
+      ]
     },
     {
       "type": "article",
@@ -97,7 +131,11 @@
       "description": "Use PM2 to turn multiple startup commands into a single one.",
       "canonical": "https://dev.to/smeijer/simplify-your-dev-environment-with-pm2-2288",
       "date": "2021-03-21T14:44:04.035Z",
-      "tags": ["webdev", "node", "pm2"]
+      "tags": [
+        "webdev",
+        "node",
+        "pm2"
+      ]
     },
     {
       "type": "article",
@@ -108,7 +146,11 @@
       "description": "How to use Type Guards to narrow types in TypeScript.",
       "canonical": "https://dev.to/smeijer/typescript-type-guards-and-type-predicates-4m5e",
       "date": "2021-03-22T08:39:16.486Z",
-      "tags": ["webdev", "typescript", "typeguards"]
+      "tags": [
+        "webdev",
+        "typescript",
+        "typeguards"
+      ]
     },
     {
       "type": "article",
@@ -119,7 +161,12 @@
       "description": "How I became as productive as I am.",
       "canonical": "https://dev.to/smeijer/my-career-and-lessons-learned-in-a-nutshell-25f4",
       "date": "2021-03-23T18:14:47.652Z",
-      "tags": ["webdev", "career", "experience", "learning"]
+      "tags": [
+        "webdev",
+        "career",
+        "experience",
+        "learning"
+      ]
     },
     {
       "type": "article",
@@ -130,7 +177,11 @@
       "description": "Flat loops as an alternative for complex recursive functions",
       "canonical": "https://dev.to/smeijer/you-might-not-need-recursion-282b",
       "date": "2021-04-09T15:32:07.437Z",
-      "tags": ["webdev", "javascript", "recursion"]
+      "tags": [
+        "webdev",
+        "javascript",
+        "recursion"
+      ]
     },
     {
       "type": "article",
@@ -141,7 +192,11 @@
       "description": "Walking down a tree using a function, loop or generator",
       "canonical": "https://dev.to/smeijer/three-ways-to-handle-recursion-5g2l",
       "date": "2021-04-12T12:58:24.829Z",
-      "tags": ["webdev", "typescript", "javascript"]
+      "tags": [
+        "webdev",
+        "typescript",
+        "javascript"
+      ]
     },
     {
       "type": "article",
@@ -152,7 +207,11 @@
       "description": "Generators and what makes them so special",
       "canonical": "https://dev.to/smeijer/a-quick-dive-into-generators-o0l",
       "date": "2021-04-15T07:36:25.969Z",
-      "tags": ["webdev", "typescript", "javascript"]
+      "tags": [
+        "webdev",
+        "typescript",
+        "javascript"
+      ]
     },
     {
       "type": "article",
@@ -163,7 +222,11 @@
       "description": "The interview process is broken, I can build, I can't play.",
       "canonical": "https://dev.to/smeijer/trivia-or-job-interview-4mpj",
       "date": "2021-05-04T20:38:38.680Z",
-      "tags": ["javascript", "webdev", "interview"]
+      "tags": [
+        "javascript",
+        "webdev",
+        "interview"
+      ]
     },
     {
       "type": "article",
@@ -174,7 +237,12 @@
       "description": "How I got an exciting job offer, that I had to decline.",
       "canonical": "https://dev.to/smeijer/how-i-got-a-job-offer-from-a-funded-startup-3a56",
       "date": "2021-05-06T14:23:23.341Z",
-      "tags": ["webdev", "job", "interview", "vacancy"]
+      "tags": [
+        "webdev",
+        "job",
+        "interview",
+        "vacancy"
+      ]
     },
     {
       "type": "article",
@@ -185,7 +253,11 @@
       "description": "How to use Type Assertions to narrow types in TypeScript.",
       "canonical": "https://dev.to/smeijer/typescript-type-assertions-4klf",
       "date": "2021-09-07T15:29:28.637Z",
-      "tags": ["webdev", "typescript", "assertions"]
+      "tags": [
+        "webdev",
+        "typescript",
+        "assertions"
+      ]
     },
     {
       "type": "article",
@@ -196,7 +268,10 @@
       "description": "How to handle POST requests in Next.js getServerSideProps",
       "canonical": "https://dev.to/smeijer/handling-post-requests-in-next-js-getserversideprops-50ia",
       "date": "2021-09-10T08:11:56.269Z",
-      "tags": ["webdev", "nextjs"]
+      "tags": [
+        "webdev",
+        "nextjs"
+      ]
     },
     {
       "type": "article",
@@ -207,7 +282,11 @@
       "description": "Using typed GraphQL queries to easy development and maintain API confidence",
       "canonical": "https://dev.to/smeijer/typed-graphql-with-react-query-graphql-request-3jj9",
       "date": "2021-11-25T10:19:13.434Z",
-      "tags": ["graphql", "typescript", "frontend"]
+      "tags": [
+        "graphql",
+        "typescript",
+        "frontend"
+      ]
     },
     {
       "type": "article",
@@ -218,7 +297,11 @@
       "description": "A rambling about recent events in my life",
       "canonical": "https://dev.to/smeijer/conflicted-42f2",
       "date": "2022-03-28T21:32:42.419Z",
-      "tags": ["webdev", "career", "life"]
+      "tags": [
+        "webdev",
+        "career",
+        "life"
+      ]
     },
     {
       "type": "article",
@@ -229,7 +312,11 @@
       "description": "Use Procfiles to turn multiple startup commands into a single one.",
       "canonical": "https://dev.to/smeijer/simpler-dev-environments-with-procfiles-2akn",
       "date": "2022-06-01T19:50:55.082Z",
-      "tags": ["webdev", "node", "procfile"]
+      "tags": [
+        "webdev",
+        "node",
+        "procfile"
+      ]
     }
   ],
   "projects": [
@@ -238,14 +325,24 @@
       "title": "GoWion",
       "description": "A pipeline management system for owners and maintainers of underground infrastructures.",
       "date": "2011-09-17",
-      "tags": ["founder", "saas", "csharp", "rest"],
+      "tags": [
+        "founder",
+        "saas",
+        "csharp",
+        "rest"
+      ],
       "highlight": true
     },
     {
       "url": "https://futureinsight.nl/clearly",
       "title": "Clearly",
       "description": "A business-to-business collaboration platform for projects in the living environment.",
-      "tags": ["founder", "saas", "nodejs", "graphql"],
+      "tags": [
+        "founder",
+        "saas",
+        "nodejs",
+        "graphql"
+      ],
       "date": "2014-09-17",
       "highlight": true
     },
@@ -257,7 +354,13 @@
       "date": "2020-05-18T12:13:05Z",
       "url": "https://testing-playground.com",
       "private": false,
-      "tags": ["testing", "nodejs", "serverless", "a11y"],
+      "tags": [
+        "testing",
+        "nodejs",
+        "serverless",
+        "a11y",
+        "chrome-extensions"
+      ],
       "package": {
         "name": "testing-playground.com",
         "description": "Simple and complete DOM testing playground that encourage good testing practices.",
@@ -275,7 +378,10 @@
       "date": "2020-08-27T21:29:36Z",
       "url": "https://issupported.com",
       "private": false,
-      "tags": ["nodejs", "serverless"],
+      "tags": [
+        "nodejs",
+        "serverless"
+      ],
       "package": {
         "name": "issupported",
         "url": "https://github.com/smeijer/issupported.com",
@@ -291,11 +397,19 @@
       "date": "2020-09-14T10:26:27Z",
       "url": "https://updrafts.app",
       "private": true,
-      "tags": ["nodejs", "graphql", "saas"],
+      "tags": [
+        "nodejs",
+        "graphql",
+        "saas"
+      ],
       "package": {
         "name": "updrafts.app",
         "description": "Build responsive websites in your browser, without writing code.",
-        "tags": ["nodejs", "graphql", "saas"],
+        "tags": [
+          "nodejs",
+          "graphql",
+          "saas"
+        ],
         "url": "https://github.com/smeijer/updrafts.app",
         "private": true
       },
@@ -331,70 +445,104 @@
         {
           "name": "@rakered/accounts",
           "description": "An account package for managing user accounts in mongodb.",
-          "tags": ["nodejs", "mongodb"],
+          "tags": [
+            "nodejs",
+            "mongodb"
+          ],
           "url": "https://github.com/rakered/rakered/tree/main/packages/accounts",
           "private": false
         },
         {
           "name": "@rakered/cron",
           "description": "Lightweight job scheduling for Node.js",
-          "tags": ["nodejs", "mongodb", "taskscheduler"],
+          "tags": [
+            "nodejs",
+            "mongodb",
+            "taskscheduler"
+          ],
           "url": "https://github.com/rakered/rakered/tree/main/packages/cron",
           "private": false
         },
         {
           "name": "@rakered/email",
           "description": "Compose emails using react and send them with nodemailer",
-          "tags": ["nodejs", "email", "react"],
+          "tags": [
+            "nodejs",
+            "email",
+            "react"
+          ],
           "url": "https://github.com/rakered/rakered/tree/main/packages/email",
           "private": false
         },
         {
           "name": "@rakered/errors",
           "description": "Convenient custom errors matching http status code.",
-          "tags": ["nodejs", "errors"],
+          "tags": [
+            "nodejs",
+            "errors"
+          ],
           "url": "https://github.com/rakered/rakered/tree/main/packages/errors",
           "private": false
         },
         {
           "name": "@rakered/forms",
           "description": "Tiny helper to help with form submissions.",
-          "tags": ["forms", "javascript"],
+          "tags": [
+            "forms",
+            "javascript"
+          ],
           "url": "https://github.com/rakered/rakered/tree/main/packages/forms",
           "private": false
         },
         {
           "name": "@rakered/hash",
           "description": "A tiny, zero dependency, isomorphic SHA256 hashing algorithm.",
-          "tags": ["hash", "browser", "nodejs"],
+          "tags": [
+            "hash",
+            "browser",
+            "nodejs"
+          ],
           "url": "https://github.com/rakered/rakered/tree/main/packages/hash",
           "private": false
         },
         {
           "name": "@rakered/mongo",
           "description": "A tiny but elegant wrapper around the native mongodb driver for Node.js, removing boilerplate and fixing id generation.",
-          "tags": ["nodejs", "mongodb"],
+          "tags": [
+            "nodejs",
+            "mongodb"
+          ],
           "url": "https://github.com/rakered/rakered/tree/main/packages/mongo",
           "private": false
         },
         {
           "name": "@rakered/nextjs-auth-api",
           "description": "api sdk for using @rakered/accounts with nextjs.",
-          "tags": ["nodejs", "errors"],
+          "tags": [
+            "nodejs",
+            "errors"
+          ],
           "url": "https://github.com/rakered/rakered/tree/main/packages/nextjs-auth-api",
           "private": false
         },
         {
           "name": "@rakered/nextjs-auth-ui",
           "description": "ui for using @rakered/accounts with nextjs.",
-          "tags": ["nodejs", "errors"],
+          "tags": [
+            "nodejs",
+            "errors"
+          ],
           "url": "https://github.com/rakered/rakered/tree/main/packages/nextjs-auth-ui",
           "private": false
         },
         {
           "name": "@rakered/swift",
           "description": "A lib to manage files on OpenStack Swift with ease",
-          "tags": ["openstack", "swift", "nodejs"],
+          "tags": [
+            "openstack",
+            "swift",
+            "nodejs"
+          ],
           "url": "https://github.com/rakered/rakered/tree/main/packages/swift",
           "private": false
         }
@@ -404,7 +552,11 @@
       "url": "https://kentcdodds.com",
       "title": "kentcdodds.com",
       "description": "Helped Kent build his new site using remix, tailwind and framer-motion.",
-      "tags": ["react", "tailwindcss", "remix"],
+      "tags": [
+        "react",
+        "tailwindcss",
+        "remix"
+      ],
       "date": "2021-06-28",
       "highlight": true
     },
@@ -416,10 +568,26 @@
       "date": "2021-08-19"
     },
     {
+      "url": "https://dm.app",
+      "title": "DM.app",
+      "description": "Free messaging platform to engage your community on web/mobile/SMS.",
+      "tags": [
+        "saas",
+        "react",
+        "next.js"
+      ],
+      "date": "2021-09-27",
+      "highlight": true
+    },
+    {
       "url": "https://magicbell.io",
       "title": "MagicBell",
       "description": "The notification inbox for your product.",
-      "tags": ["saas", "react", "graphql"],
+      "tags": [
+        "saas",
+        "react",
+        "graphql"
+      ],
       "date": "2021-10-26",
       "highlight": true
     }
@@ -432,7 +600,14 @@
       "github": "https://github.com/smeijer/leaflet-geosearch",
       "npm": "https://npmjs.com/leaflet-geosearch",
       "name": "leaflet-geosearch",
-      "tags": ["geolocation", "geocoding", "plugins", "leaflet", "geo", "map"],
+      "tags": [
+        "geolocation",
+        "geocoding",
+        "plugins",
+        "leaflet",
+        "geo",
+        "map"
+      ],
       "url": "https://github.com/smeijer/leaflet-geosearch",
       "private": false,
       "date": "2016-03-23T11:28:38.131Z"
@@ -464,7 +639,13 @@
       "date": "2020-05-18T12:13:05Z",
       "url": "https://github.com/smeijer/testing-playground",
       "private": false,
-      "tags": ["testing", "nodejs", "serverless", "a11y"],
+      "tags": [
+        "testing",
+        "nodejs",
+        "serverless",
+        "a11y",
+        "chrome-extensions"
+      ],
       "github": "https://github.com/smeijer/testing-playground"
     },
     {
@@ -488,7 +669,10 @@
       "date": "2020-08-27T21:29:36Z",
       "url": "https://github.com/smeijer/issupported.com",
       "private": false,
-      "tags": ["nodejs", "serverless"],
+      "tags": [
+        "nodejs",
+        "serverless"
+      ],
       "github": "https://github.com/smeijer/issupported.com"
     },
     {
@@ -520,7 +704,12 @@
       "github": "https://github.com/smeijer/graphql-args",
       "npm": "https://npmjs.com/graphql-args",
       "name": "graphql-args",
-      "tags": ["nodejs", "graphql", "mongodb", "ast"],
+      "tags": [
+        "nodejs",
+        "graphql",
+        "mongodb",
+        "ast"
+      ],
       "url": "https://github.com/smeijer/graphql-args",
       "private": false,
       "date": "2020-09-29T12:51:48.681Z"
@@ -532,7 +721,12 @@
       "github": "https://github.com/smeijer/spin-delay",
       "npm": "https://npmjs.com/spin-delay",
       "name": "spin-delay",
-      "tags": ["react", "loader", "suspense", "delay"],
+      "tags": [
+        "react",
+        "loader",
+        "suspense",
+        "delay"
+      ],
       "url": "https://github.com/smeijer/spin-delay",
       "private": false,
       "date": "2020-11-25T15:19:11.443Z"
@@ -545,7 +739,10 @@
       "github": "https://github.com/rakered/rakered/tree/main/packages/mongo",
       "npm": "https://npmjs.com/@rakered/mongo",
       "name": "@rakered/mongo",
-      "tags": ["nodejs", "mongodb"],
+      "tags": [
+        "nodejs",
+        "mongodb"
+      ],
       "private": false,
       "date": "2021-01-26T17:53:15.630Z"
     },
@@ -557,7 +754,11 @@
       "github": "https://github.com/rakered/rakered/tree/main/packages/hash",
       "npm": "https://npmjs.com/@rakered/hash",
       "name": "@rakered/hash",
-      "tags": ["hash", "browser", "nodejs"],
+      "tags": [
+        "hash",
+        "browser",
+        "nodejs"
+      ],
       "private": false,
       "date": "2021-01-27T09:57:06.037Z"
     },
@@ -569,7 +770,11 @@
       "github": "https://github.com/rakered/rakered/tree/main/packages/email",
       "npm": "https://npmjs.com/@rakered/email",
       "name": "@rakered/email",
-      "tags": ["nodejs", "email", "react"],
+      "tags": [
+        "nodejs",
+        "email",
+        "react"
+      ],
       "private": false,
       "date": "2021-01-27T12:25:03.966Z"
     },
@@ -581,7 +786,10 @@
       "github": "https://github.com/rakered/rakered/tree/main/packages/errors",
       "npm": "https://npmjs.com/@rakered/errors",
       "name": "@rakered/errors",
-      "tags": ["nodejs", "errors"],
+      "tags": [
+        "nodejs",
+        "errors"
+      ],
       "private": false,
       "date": "2021-02-05T08:07:05.591Z"
     },
@@ -593,7 +801,10 @@
       "github": "https://github.com/rakered/rakered/tree/main/packages/accounts",
       "npm": "https://npmjs.com/@rakered/accounts",
       "name": "@rakered/accounts",
-      "tags": ["nodejs", "mongodb"],
+      "tags": [
+        "nodejs",
+        "mongodb"
+      ],
       "private": false,
       "date": "2021-02-09T12:11:44.652Z"
     },
@@ -605,7 +816,10 @@
       "github": "https://github.com/rakered/rakered/tree/main/packages/forms",
       "npm": "https://npmjs.com/@rakered/forms",
       "name": "@rakered/forms",
-      "tags": ["forms", "javascript"],
+      "tags": [
+        "forms",
+        "javascript"
+      ],
       "private": false,
       "date": "2021-02-12T15:49:22.359Z"
     },
@@ -617,7 +831,10 @@
       "github": "https://github.com/rakered/rakered/tree/main/packages/nextjs-auth-ui",
       "npm": "https://npmjs.com/@rakered/nextjs-auth-ui",
       "name": "@rakered/nextjs-auth-ui",
-      "tags": ["nodejs", "errors"],
+      "tags": [
+        "nodejs",
+        "errors"
+      ],
       "private": false,
       "date": "2021-04-11T16:01:52.904Z"
     },
@@ -629,7 +846,10 @@
       "github": "https://github.com/rakered/rakered/tree/main/packages/nextjs-auth-api",
       "npm": "https://npmjs.com/@rakered/nextjs-auth-api",
       "name": "@rakered/nextjs-auth-api",
-      "tags": ["nodejs", "errors"],
+      "tags": [
+        "nodejs",
+        "errors"
+      ],
       "private": false,
       "date": "2021-04-11T16:02:45.138Z"
     },
@@ -641,7 +861,11 @@
       "github": "https://github.com/rakered/rakered/tree/main/packages/swift",
       "npm": "https://npmjs.com/@rakered/swift",
       "name": "@rakered/swift",
-      "tags": ["openstack", "swift", "nodejs"],
+      "tags": [
+        "openstack",
+        "swift",
+        "nodejs"
+      ],
       "private": false,
       "date": "2021-04-30T09:17:43.965Z"
     },
@@ -653,7 +877,11 @@
       "github": "https://github.com/rakered/rakered/tree/main/packages/cron",
       "npm": "https://npmjs.com/@rakered/cron",
       "name": "@rakered/cron",
-      "tags": ["nodejs", "mongodb", "taskscheduler"],
+      "tags": [
+        "nodejs",
+        "mongodb",
+        "taskscheduler"
+      ],
       "private": false,
       "date": "2021-05-27T10:22:08.326Z"
     },

@@ -17,6 +17,15 @@ const projects = [
     highlight: true,
   },
   {
+    url: 'https://dm.app',
+    title: 'DM.app',
+    description:
+      'Free messaging platform to engage your community on web/mobile/SMS.',
+    tags: ['saas', 'react', 'next.js'],
+    date: '2021-09-27',
+    highlight: true,
+  },
+  {
     url: 'https://metricmouse.com',
     title: 'Metric Mouse',
     description: 'Your Friendly Google Analytics Dashboard.',
