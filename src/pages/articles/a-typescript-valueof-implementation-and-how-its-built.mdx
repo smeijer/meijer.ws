@@ -1,0 +1,179 @@
+---
+title: How to implement a generic `ValueOf<T>` helper type in TypeScript.
+description:  A typescript `valueof` implementation similar to `keyof`
+tags: webdev, development, javascript, typescript
+date: 2020-12-18
+---
+
+[Sudhanshu](https://twitter.com/__tsuki__42) asked this interesting typescript question yesterday on the [KCD Discord](https://kcd.im/discord). The question was:
+
+> _Is it possible to restrict the type of a variable, to the values of a plain object._
+
+I was able to provide the solution, but then he wanted to know how it worked. This article is my attempt to share this bit of knowledge with you.
+
+Let's start with the plain JavaScript version. A runtime check that does the validation that Sudhanshu required. 
+
+```js
+const SHAPES = {
+  SQUARE: 'square',
+  CIRCLE: 'circle',
+};
+
+const value = 'square';
+
+// validate if `value` matches one of the `SHAPES` values
+const validValues = Object.values(SHAPES);
+const isValid = validValues.includes(value);
+
+if (!isValid) {
+  throw new TypeError(
+    `'value' should be one of: ${validValues.join(' | ')}`
+  );
+}
+```
+
+That will throw whenever `value` does not equal either `square` or `circle`. Runtime checking is nice. But the question was if this could be statically done by typescript. Luckily for us, it sure can.
+
+## Restricting to values of object
+
+The first challenge we're up against is working with an `object` instead of a `type`. So before we can do anything, we need to extract a type out of that object. For that, we use `typeof`.
+
+```ts
+const SHAPES = {
+  SQUARE: 'square',
+  CIRCLE: 'circle',
+};
+
+type Shape = typeof SHAPES;
+```
+
+`Shape` now equals:
+
+```ts
+type Shape = { 
+  SQUARE: string;
+  CIRCLE: string;
+}
+```
+
+That's not what we want though. If we need to verify that `value` is contained in the values of the object (`square | circle`), we need those. We can do that by declaring the object as a `const`. With this, we promise Typescript that we won't be mutating that object at run-time, and Typescript will start seeing it as an "enum like" object. 
+
+```ts
+const SHAPES = {
+  SQUARE: 'square',
+  CIRCLE: 'circle',
+} as const;
+```
+
+With that, `Shape` becomes:
+
+```ts
+type Shape = { 
+  readonly SQUARE: 'square';
+  readonly CIRCLE: 'circle'; 
+}
+```
+
+So two things happened there. First, the properties are marked as `readonly`. We are no longer able to reassign the values, without getting errors from typescript. And second, instead of type `string`, the properties are now restricted to their corresponding "enum" value. 
+
+And with that, we have a type that we can work with. Typescript does not have a `valueof` helper, but it does have a `keyof`.  Let's take a look, and speed up a bit.
+
+```ts
+type keys = keyof Shape;
+```
+
+That creates a union of the keys of Shape. `keys` is now the same as:
+
+```ts
+type keys = 'SQUARE' | 'CIRCLE';
+```
+
+Once we have the keys, we can get the values. You might already know that it's possible to extract values and reuse them. For example, if you like to extract the type of `SQUARE`, you'd use:
+
+```ts
+type Square = Shape['SQUARE']; // square
+```
+
+Now, if you would create a new union based on that type, people tend to go with something like:
+
+```ts
+type ValidShapes = Shape['SQUARE'] | Shape['CIRCLE']; // square | circle
+```
+
+Less people know or use the shorter variant:
+
+```ts
+type ValidShapes = Shape['SQUARE' | 'CIRCLE']; // square | circle
+```
+
+Let's summarize. We used `keyof` to get a union type that reflects the keys of `Shape`. And I told you about a more compact way to create a union type from the values. Now, when you see that last snippet. You'd see that the index argument, is just another union. Meaning, we might just as well directly in-line `keyof` there.
+
+All put together, that brings us to:
+
+```ts
+// declare object as a const, so ts recognizes it as enum
+const SHAPES = {
+  SQUARE: 'square',
+  CIRCLE: 'circle',
+} as const;
+
+// create a type out of the object
+type Shape = typeof SHAPES;
+
+// create a union from the objects keys (SQUARE | CIRCLE)
+type Shapes = keyof Shape;
+
+// create a union from the objects values (square | circle)
+type Values = Shape[Shapes];
+
+```
+
+And that we can use to type the properties:
+
+```ts
+const shape: Values = 'circle';
+```
+
+Typescript will report errors there when we try to assign anything different than `square` or `circle`. So we're done for today. The runtime check is no longer needed, as we won't be able to compile when we assign an unsupported value.
+
+## The `ValueOf<T>` Generic
+
+Okay. You can use the above perfectly fine. But wouldn't it be nice if we could make this reusable? For that, typescript has something that they call a `generic`.
+
+Let's repeat our solution:
+
+```ts
+type Shape = typeof SHAPES;
+type Shapes = keyof Shape;
+type Values = Shape[Shapes];
+```
+
+And let's turn that into a generic. The first step is to make it a one-liner, but only till the type level. We are not going to in-line `typeof` at this moment. It's certainly possible to do that, but that will add complexity that we can talk about another time.
+
+```ts
+type Values = Shape[keyof Shape];
+```
+
+That works. And nothing has changed. The usage is still the same `const shape: Values = 'circle'`. Now the generic part:
+
+```ts
+type Values     = Shape[keyof Shape];
+type ValueOf<T> = T    [keyof T];
+```
+
+I've added a bit of whitespace so it's clear what happens. First, we append the type variable `<T>` to the type. It's a special kind of variable, that works on types rather than values. Next, we use that variable as the argument instead of our concrete type. Basically just replacing `Shape` with the variable `T`.
+
+That's it. `ValueOf` can be added to your typescript utility belt.
+
+```ts
+type ValueOf<T> = T[keyof T];
+
+// using with a type
+const circle: ValueOf<Shape> = 'circle';
+const rectangle: ValueOf<Shape> = 'rectangle'; // err
+   
+// using a plain object
+const circle: ValueOf<typeof SHAPES> = 'circle';
+const rectangle: ValueOf<typeof SHAPES> = 'rectangle'; // err
+```
+

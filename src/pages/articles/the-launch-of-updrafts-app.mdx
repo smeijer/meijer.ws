@@ -1,0 +1,93 @@
+---
+title: The launch of Updrafts.app
+description: The launch of Updrafts.app - A Tailwind Studio.
+tags: tailwindcss, updraftsapp, indiehackers, makers
+date: 2020-10-02
+---
+
+I recently launched [Tailwind-Studio](https://tailwind-studio.com), which was quickly renamed to [Updrafts.app](https://updrafts.app). In this post, I tell you my story. How I came to the (early) launch, how I experienced the first week, and what I learned from it.
+
+## 3 Sept - First Teaser
+
+I [tweeted a sped-up video](https://twitter.com/meijer_s/status/1301499675976007680), showing what I was working on in my free time. Besides the tweet, I also mentioned it in a discord that I'm member of. I got some nice feedback and number of questions were asked. People wanted to know where they could sign up. It was all positive, and nothing out of the ordinary. 4 retweets, 18 likes, and a few messages were written on Discord.
+
+
+
+## 4 Sept - Second Teaser
+
+Because of the positive responses on the earlier teaser, I decided to post [another video](https://twitter.com/meijer_s/status/1301962876652081152), with more text, as well as a Typeform where people could submit their email to be informed about the release. Typeform has a free plan available, that enables me to collect 100 responses per month. That should be plenty!
+
+
+
+## 5 Sept - Early Access Signups
+
+The typeform is stuffed 🔥! People are [tweeting that they aren't able](https://twitter.com/me_ayushraj/status/1302113821004238849?s=20) to submit their email address. It turned out that the 100 response limit was reached while I was asleep. I quickly created a google form, and posted it in a tweet.
+
+By the end of the day, I had ~650 likes, ~100 retweets, and 193 email addresses were submitted. I know, it didn't exactly go viral. But I only had about 500 followers, and this was not what I was expecting. I'm used to tweeting into the void, and was hoping for 10 or 20 submissions on the Typeform.
+
+This was the day that I knew I was on to something.
+
+
+
+### Lesson Learned #1
+
+> Looks don't matter. Typeform looks nice, but if you're using the free plan, and are not on top of it, it will cost you submissions! Google Form doesn't look as nice, but it does the job. I should have gone with them in the first place.
+
+## 10 Sept - LAUNCH DAY! 🚀 
+
+Well, early access, but still! I've been working hard on releasing this beta, because I didn't want to loose the traction from my earlier preview tweet. I have no idea if this is the right thing to do, or if I instead should have tweeted more teasers to first grow that mail-list.
+
+During the last few days, I had collected 269 email addresses to which I was going to send an email. I've read somewhere that email has a conversion rate between 5 and 15%, so I was expecting to get my first ~25 users. 
+
+I also send out a tweet mentioning [the launch of Tailwind-Studio](https://twitter.com/meijer_s/status/1303971912276676608) . Again, not entirely viral. But 215 retweets, and over 1.000 likes. The video has been watched for almost 30.000 times and the tweet got 135.000 impressions! Seriously, way above my expectations.
+
+
+
+About an hour before dinner, I got a DM from [@adamwathan](https://twitter.com/adamwathan). The guy that created Tailwind CSS. It turned out that by naming the product [Tailwind-Studio](http://tailwind-studio.com), I was breaking their trademark. Adam is friendly dude, and there are no hard feelings. But to stay in his words, this was "*a bummer of a message on an otherwise exciting day*".
+
+### Lesson Learned #2
+
+> If you name your product after another product, don't hesitate to reach out to the other party to hear how they feel about that. I named my product after an open source project, and trademarks didn't even cross my mind. By reaching out to them, I could have prevented this bitter aftertaste on launch day.
+
+## 11 Sept - Approaching 1.000 Users
+
+To speed up the launch, and partially because it's so hot these days, I chose to host the platform on Netlify. Besides using their lambda's, I also used Netlify Identity as identity provider. This so that I didn't need to worry about storing emails & passwords. They have a generous free plan of 1.000 active users.
+
+It turned out that I was approaching that number fast! Within 24 hours after launch, I was at 978 users. Truly mind blowing 🤯 , who would have expected that?
+
+I decided to close user registrations by switching to "Invite Only", so that I could remain in their free plan for the time being. 
+
+## 12 Sept - Netlify Identity
+
+I got an email from Netlify, mentioning that "Tailwind Studio has been upgraded to Identity Level 1". 
+
+It turns out, that by switching to "Invite Only", all existing users were marked as being "invited", and the free plan comes with a limit of 5 "invite only" users. So, I got myself an upgrade after all.
+
+I opened registrations again, and started refactoring code to migrate away from Netlify Identity, as I wasn't ready to pay $ 99 a month for user 1.001. 
+
+At the end, registrations have unnecessarily been closed for 24 hours, because I panicked. Closing registrations did not prevent a bill from being send, but I missed out on an approximate 750 users because of it.
+
+This is based on the fact that I got 1.000 signups in the first 24 hours and 500 signups in the third 24 hours. Logically, the second 24 hours should have been good for 750 signups.
+
+### Lesson Learned #3
+
+> When you're using free tiers; make sure to be aware of their restrictions and conditions. Where Typeform decides to freeze the form once the limit has been reached, Netlify decides to start billing. And just because their build minutes are priced nicely (300 minutes /month, then $7 per 500), doesn't mean that Identity is as well (1k per site /month, $99 when exceeded).
+
+## 16 Sept - Re-branding!
+
+Within a week after launch, I moved away from Netlify Identity, and re-branded [Tailwind Studio](http://tailwind-studio.com) to [Updrafts.app](http://updrafts.app). I've send out [another tweet](https://twitter.com/meijer_s/status/1306308672658776064), and by now things have cooled down. 15 retweets and 148 likes. I've informed Adam about the new name, and he kindly let me know that he noticed and is okay with it.
+
+
+
+## 17 Sept - Roundup
+
+That was the first week. [Updrafts.app](https://updrafts.app) was visited by 5.504 unique humans, that created 8.427 page views (It's a single page app). A total of 1.438 users signed up in the first 7 days.
+
+### Lesson Learned #4
+
+> Tweet, communicate, tease, just spread the word! Don't stop talking. Making noise is what get's you the traffic. The two spikes below, are generated by my 2 launch tweets.
+
+![updrafts-users](https://dev-to-uploads.s3.amazonaws.com/i/nm3iuanop0ez4wyv2w8a.png)
+
+It's a lot already, but not all of it. There were more technical challenges, and I had an email conversation going with a company that wanted to pay me to fork my repo. Food for another time.
+

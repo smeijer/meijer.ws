@@ -1,0 +1,142 @@
+---
+title: Typed GraphQL with react-query & graphql-request
+description: Using typed GraphQL queries to easy development and maintain API confidence
+tags: GraphQL, typescript, frontend
+date: 2021-11-25
+---
+
+While our front-end at [MagicBell](https://magicbell.io/) is a React/TypeScript application, we write our back-end in Ruby. This article explains how I've connected our client to the back-end and how we guard against breaking API changes.
+
+### GraphQL Code Generator
+
+Let's get the obvious choice out of the way first. [`graphql-codegen`](https://www.graphql-code-generator.com/). It's a no-brainer. This tool enables us to generate TypeScript types based on a GraphQL schema. Think typed queries, mutations, fragments, and object types.
+
+Having types generated based upon your GraphQL schema means that TypeScript will inform you when the back-end (GraphQL API) introduces a breaking change. As a front-end engineer, that's what I want!
+
+GraphQL Code Generator can generate fully typed React hooks if you tell it to, but I'm a fan of keeping things simple and thereby of their [TypedDocumentNode approach](https://the-guild.dev/blog/typed-document-node). This variant is unaware of the GraphQL client that you're using. In other words, it's not tied to `react-apollo` (or alternative).
+
+To get that up and running, you'll need to install a few dev dependencies:
+
+```
+npm i -D 
+  @graphql-codegen/cli 
+  @graphql-codegen/typed-document-node
+  @graphql-codegen/typescript 
+  @graphql-codegen/typescript-operations 
+  @graphql-typed-document-node/core
+```
+
+And now the more exciting part, our codegen config (`codegen.yml`). We don't have a schema stored in code, and because the back-end is in Ruby, `graphql-codegen` won't be able to extract the types out of the back-end source files either. So instead, we provide our GraphQL endpoint. It's an easy setup, but the one downside is that our server must be running when we want to generate new types.
+
+```yml
+schema:
+  - http://localhost:3000/graphql:
+      headers:
+        X-MAGICBELL-API-KEY: "${MAGICBELL_API_KEY}"
+documents: "./app/javascript/src/graphql/**/*.graphql"
+generates:
+  ./app/javascript/src/graphql/generated.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typed-document-node
+```
+
+That's it. Codegen will read the `.env` file from the project root and use that to populate the API headers. `documents` is the path where the GraphQL queries are stored. I'll come back to those later.
+
+### Graphql Client
+
+I'm not going with the famous `@apollo/client` because it's too much for our dashboard. Besides, we're migrating from REST to GraphQL, meaning we'll need to deal with both for some time. As [React Query](https://react-query.tanstack.com/) is sublime in cache management, and can be used for both REST and GraphQL, we'll be using that.
+
+I have considered [`swr`](https://github.com/vercel/swr) instead of `react-query`, as it's smaller, but they lack some fundamentals that we need. Think clear state indicators or even a (solid) solution to manage mutations.
+
+For the fetching part, we'll use [`graphql-request`](https://github.com/prisma-labs/graphql-request). It has almost as many installs/month as apollo, but it's [way smaller](https://bundlephobia.com/package/graphql-request@3.6.1) and doesn't have as many open issues.
+
+#### TypedDocumentNode and graphql-request
+
+Now the "tricky" part, we need `graphql-request` to use our generated `TypedDocumentNode`. For that, I've created a custom hook:
+
+```ts
+import { useCallback } from 'react';
+import { request } from 'graphql-request';
+import { RequestDocument } from 'graphql-request/dist/types';
+import { TypedDocumentNode } from '@graphql-typed-document-node/core';
+import { useCurrentUser } from '../context';
+
+export function useGraphqlRequest() {
+  const { apiKey } = useCurrentUser();
+
+  return useCallback(
+    <TDocument = any, TVariables = Record<string, any>>(
+      document: RequestDocument | TypedDocumentNode<TDocument, TVariables>,
+      variables?: TVariables,
+    ) =>
+      request<TDocument, TVariables>('/graphql', document, variables, {
+        'X-MAGICBELL-API-KEY': apiKey,
+      }),
+    [apiKey],
+  );
+}
+```
+
+That's the magic sauce that will power it all. It returns a `graphql-request` client and uses `TypedDocumentNode` to infer types from the query. It also provides some defaults to `graphql-request`. Even without the type annotations, this would be a helpful hook that prevents setting options (like the header) in multiple places throughout our code.
+
+#### Writing queries
+
+And with this setup, we have a way to query the back-end with confidence. To create a new query, I'll write a GraphQL definition in a `*.graphql` file somewhere in the path declared by `codegen.yml#documents`.
+
+For example, this [logs query](https://www.magicbell.com/docs/graphql-api/reference#logs-query):
+
+```graphql
+query logMessage($id: ID!) {
+  log(id: $id) {
+    id
+    createdAt
+    user {
+      firstName
+      lastName
+      email
+    }
+    notification {
+      title
+      content
+      actionUrl
+    }
+  }
+}
+```
+
+Then run `npx graphql-codegen`, and consume the generated types in my query hook that I compose using `react-query`:
+
+```ts
+import { useQuery } from 'react-query';
+import { useGraphqlRequest } from './useGraphqlRequest';
+import { LogMessageDocument, LogMessageQuery } from './generated';
+
+type UseLogMessageOptions = {
+  logId?: LogMessageQuery['log']['id'];
+};
+
+export function useLogMessage({ logId }: UseLogMessageOptions) {
+  const request = useGraphqlRequest();
+
+  return useQuery<LogMessageQuery['log']>(
+    ['log-message', logId],
+    () => request(LogMessageDocument, { id: logId }).then((x) => x.log),
+    { enabled: logId != null },
+  );
+}
+```
+
+Lastly, we'll consume that hook in our component, to fetch the data that we need:
+
+```tsx
+function LogDetails({ logId }: LogDetailsProps) {
+  const { data, status } = useLogMessage({ logId });
+```
+
+And that's it. `data` is fully typed. Suppose the back-end engineers introduce a change that isn't compatible with the current front-end, or I'm consuming data that never existed in the first place. In that case, TypeScript will notify us by throwing errors as part of the checks that run against our pull requests.
+
+## Recap
+
+We type our GraphQL queries using `graphql-codegen` and use `react-query` to manage server/query state. `graphql-request` is the glue between codegen and react-query, a typed `fetch` for GraphQL, if you want. And with this setup, I have reduced the chance of breaking our GraphQL queries at [MagicBell](https://magicbell.io/).

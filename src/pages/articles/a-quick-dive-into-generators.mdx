@@ -1,0 +1,202 @@
+---
+title: A quick dive into generators
+description: Generators and what makes them so special
+tags: webdev, typescript, javascript
+date: 2021-04-12
+---
+
+I've briefly mentioned generators earlier in my [article about recursion](https://meijer.ws/articles/three-ways-to-handle-recursion). Today, I'm going to explain the concept of generators to you, and why I believe that they are an important thing to know. If you haven't read that article, I'd recommend doing so, as this explanation builds upon that one.
+
+## Introduction
+
+Let's take the recursive function and the recursive generator function from the earlier article. Both these functions convert a tree-like structure to a flat list where each item has an `id` and a `parent` property:
+
+The recursive function looked like:
+
+```tsx
+function flatten(node: Node, parent?: Node): FlatNode[] {
+  const nodes: FlatNode[] = [{ id: node.id, parent: parent?.id }];
+
+  if (Array.isArray(node.children)) {
+    for (const child of node.children) {
+      nodes.push(...flatten(child, node));
+    }
+  } else if (typeof node.children === 'object') {
+    nodes.push(...flatten(node.children, node));
+  }
+
+  return nodes;
+}
+```
+
+While it's generator variant looked like:
+
+```tsx
+function* flatten(node: Node, parent: Node): Generator<FlatNode> {
+  yield { id: node.id, parent: parent?.id };
+
+  if (Array.isArray(node.children)) {
+    for (const child of node.children) {
+      yield* flatten(child, node);
+    }
+  } else if (typeof node.children === 'object') {
+    yield* flatten(node.children, node);
+  }
+}
+```
+
+Now, most of my projects have an utility that I named `ensureArray`. It's a nifty little helper that wraps values in an array, unless it already is an array. Something like:
+
+```js
+function ensureArray(object) {
+  if (typeof object === 'undefined') {
+    return [];
+  }
+    
+  if (Array.isArray(object)) {
+    return object;
+  }
+
+  return [object];
+}
+```
+
+I share this because this little utility lets me clean up these functions and make the similarities more obvious. I'll also stop annotating the examples with types, to further reduce the noise.
+
+## Recursive generators
+
+In case you've never seen generators before, (overly simplified), generators are functions decorated with an `*` and using the `yield` keyword to return values. There is a lot to read about them, but the nice thing is that they are executed lazily. Meaning, when we call `flatten` here, it's possible to only process the first `n` nodes, and ignore the rest. Where the non-generator variant would first process the entire tree, only to discard everything afterward, generators allow us to only process the absolute minimum of what's required for the task at hand. 
+
+We'll come back to that. Let's take a look at the implementation first. I've simplified the examples from above using the `ensureArray` helper, and I've added a log statement:
+
+Recursive function:
+
+```js
+function flatten(node, parent) {
+  console.log('flatten', node.id);  
+  const nodes = [{ id: node.id, parent: parent?.id }];
+
+  for (const child of ensureArray(node.children)) {
+    nodes.push(...flatten(child, node));
+  }
+
+  return nodes;
+}
+```
+
+Recursive generator:
+
+```js
+function* flatten(node, parent) {
+  console.log('flatten', node.id);
+  yield { id: node.id, parent: parent?.id };
+
+  for (const child of ensureArray(node.children)) {
+    yield* flatten(child, node);
+  }
+}
+```
+
+You see the similarities, right? I hope that makes it less daunting.
+
+Instead of adding the node to an array, we directly `yield` (return) it, and instead of pushing nested nodes to that same array, we also `yield` those. The `*` that you'll see behind that second yield, is syntactic sugar to `yield` all results in an array/iterator individually.
+
+```js
+yield* flatten(child, node);
+```
+
+could just as well be written as:
+
+```js
+for (const result of flatten(child, node)) {
+  yield result;
+}
+```
+
+## Lazy evaluation
+
+So the thing I mentioned earlier about the lazy behavior? Imagine we need to do something only for the first three nodes in that tree. We would write something like this:
+
+```js
+const nodes = flatten(tree);
+for (let idx = 0; idx < 3; idx++) {
+  console.log('handle', nodes[idx].id);
+}
+```
+
+Using the traditional, non-generator approach, this would result in the following log:
+
+```shell
+flatten 1
+flatten 2
+flatten 3
+flatten 4
+flatten 5
+flatten 6
+flatten 7
+flatten 8
+flatten 9
+flatten 10
+flatten 11
+handle 1
+handle 2
+handle 3
+```
+
+That log tells us that the entire tree is processed and converted to the flat array before we can handle the 3 nodes that we need. The processing time that we used for those other 8 nodes, is wasted.
+
+Now, if we'd do the same with that generator function, we'd need to change the syntax a bit:
+
+```js
+const nodes = flatten(tree);
+for (let idx = 0; idx < 3; idx++) {
+  console.log('handle', nodes.next().value.id);
+}
+```
+
+We no longer use the `idx` property, but instead, call the `next` function from the `nodes`. 
+
+The `flatten` call itself doesn't do much there. It does not invoke the `flatten` function. The log on that first line? It's not printed. Instead, the call prepares the generator and returns an object with a `next` method. When we call the `next` method, the generator will run till the next `yield` inside that function. When it meets that `yield`, it will return the value that's being yielded.
+
+The return value of `next` is not just that yielded value. It's an object with a `value` prop, holding your yielded value, and a `done` property, holding a boolean that will tell you if this generator is done generating values.
+
+So the output from that last loop?
+
+```shell
+flatten 1
+handle 1
+flatten 2
+handle 2
+flatten 3
+handle 3
+```
+
+It's important to understand that the output order has changed. We can handle the node, as soon as the generator yields one. It doesn't yield all nodes at once, it yields every node individually, as soon as it has it. We don't need to wait for the entire tree to be processed. In fact, the processing won't continue, until we explicitly ask for the next node.
+
+Once we've handled our three nodes, we stop our loop, and the tree is not further processed. We haven't wasted any processing time using the generator approach.
+
+You probably don't always need loops, and sometimes you do want to process all or nothing. In those cases, it's trivial to wrap the call in `Array.from`, to get all nodes at once. Just like you would have with the non-generator approach:
+
+```js
+const nodes = Array.from(flatten(tree)); // [{ id:  … }]
+```
+
+We've used a simple loop in this example, but you can imagine that this is quite powerful. Without changes to the generator itself, it can be wrapped with logic to only handle the first `n` results, or only process until a certain condition is met.
+
+Also, isn't it just beautiful, how easy it is to write recursive functions this way? No intermediate arrays. No return complexity. Recursive tree parsing, in 3 lines. All it asks is to get familiar with `yield`.
+
+```js
+function* flatten(node, parent) {
+  yield { id: node.id, parent: parent?.id };
+
+  for (const child of ensureArray(node.children))
+    yield* flatten(child, node);
+}
+```
+
+## Final word
+
+Generators might look a bit scary at first, but they come with a lot of flexibility and power. I can imagine that they look daunting, especially for inexperienced developers. But I would really recommend getting familiar with them. They make a great asset to your utility belt.
+
+If you have questions related to this subject, please let me know in the comments. I'm happy to explain things in more detail.
+

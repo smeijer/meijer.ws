@@ -1,0 +1,97 @@
+---
+title: Don't stop Mutating
+description: Mutating objects is fine, sometimes preferred.
+tags: es6, javascript, development, webdev
+date: 2020-12-16
+---
+
+I recently came across a [tweet by Simon Høiberg][6] that basically forbids you to use `delete`. The reason for this? *"You don't want to mutate the existing object. It leads to inconsistent and unpredictable behavior"*
+
+
+
+This kind of advice turns me sad. I mean, the keyword is there. JavaScript allows us to delete properties from an object. Why not use it?
+
+Don't get me wrong. There is a truth hidden in Simon's message. There are scenarios where you can easily avoid that keyword. And there are scenarios where mutating will cause trouble. The question is, do you really need to avoid it like the plague?
+
+## Immutable or Readable
+
+The internet speaks about two primary reasons why you shouldn't be using `delete`. 
+
+1. Mutable, delete mutates an object which is bad. <sup>[1]</sup>
+2. Performance, delete has serious performance impact. <sup>[2]</sup> <sup>[3]</sup>
+
+Readability doesn't seem to be very important nowadays. So let me focus on that part.
+
+But first, let's take a look at some code. I find it easier to talk that way. I've taken Simon's example. We have a number of users, and want to delete the `age` property.
+
+
+```js
+const users = await fetchUsers(100);
+const newUsers = [];
+
+for (let i = 0; i < users.length; i++) {
+  const { age, ...newUser } = users[i];
+  newUsers.push(newUser);
+}
+```
+
+How was that? It's a quite basic snippet, so I hope it was easy to understand. The above, is the version that uses object destructuring and also pushes the users without the age to a new array. Because, if we don't want to mutate the user records, we also don't want to mutate the list. It wouldn't make much sense otherwise.
+
+Now, please compare it to the next example, where I don't know any better, and simply mutate the data.
+
+```js
+const users = await fetchUsers(100);
+
+for (let i = 0; i < users.length; i++) {
+  delete users[i].age;
+}
+```
+
+How was that for readability? I definitely prefer the last one. It's way easier to see what's going on. Sure, I understand the first one perfectly fine. That's not what this is about. The mutating variant simply adds less noise.
+
+## Unpredictable behavior
+
+I can hear you think. But what about the "unpredictable behavior"?!. One example that I instantly can come up with where mutating can cause trouble, is in React. React uses mutations to detect when it should update the user interface (DOM). So yes, it's important there.
+
+That being said, if you fetch a large object from a rest api, and wish to do some cleaning before you save the object in a state/store. Than why could it not be a mutating action?
+
+Basically, if we take the example from above, and would wrap it in a function. What trouble can it give us?
+
+
+```js
+async function getUsersWithoutProjects() {
+  const users = await fetchUsers(100);
+
+  for (let i = 0; i < users.length; i++) {
+    delete users[i].projects;
+  }
+  
+  return users;
+}
+```
+
+Do you have the answer? Right.., none! Because for the outside world, `users` never had that property to start with. The data is created and mutated in the same boundary (/scope). Because `users` never left this function with the projects attached, nothing can depend on it.
+
+## Performance
+
+But what about performance?!! Well, are you deleting large values or small values? A single one, or thousands? How does the rest of your code perform? If you don't know, then don't worry about it. You can try to optimize till the latest ms, but if the data request takes hundreds of milliseconds, would that `delete` call really make a difference?
+
+I've created a simple [perf.link][4] that shows you that `delete` doesn't need to be slower than the alternative. It is one case out of thousands of potential scenarios. All I'm saying is, it's not black and white. If you have an edge case, please do what feels best. I'm confident that there are cases where `delete` is the performance bottleneck. But I'm just as confident that 99% of us, will never work on those kinds of projects.
+ 
+Then the other thing about performance. Not regarding `delete`, but regarding mutating. If it's about assigning new values to properties instead of reconstructing entire objects, mutating is [seriously][5] faster. Again, in most cases, reconstructing objects and working in an immutable way performs fine. You won't experience any slowness because of it. But in those other cases, mutating data is okay. Maybe even preferable.
+
+## Conclusion
+
+I hope you liked this article. Because I'm not going to tell you if you should mutate your objects or not. Both mutable as well as immutable solutions have their time and place. Use them accordingly, and do what feels best. In most cases, go with what's easiest to read.
+
+This article is another attempt of me to stop the "*DON'T DO THIS*" shouting on the internet. Programming isn't black and white. We can't just ban half the keywords or native functions because they "feel wrong". There is a valid use case for each and every function.
+
+[2]: https://github.com/googleapis/google-api-nodejs-client/issues/375
+[3]: https://webkit.org/blog/10298/inline-caching-delete/
+[1]: https://twitter.com/SimonHoiberg/status/1338901315922128897
+
+[4]: https://perf.link/#eyJpZCI6IjVtcW8zbm1seDA3IiwidGl0bGUiOiJyZWNvbnN0cnVjdCB2cyBkZWxldGUiLCJiZWZvcmUiOiJmdW5jdGlvbiBmZXRjaFVzZXJzKGxlbmd0aCkge1xuICByZXR1cm4gQXJyYXkuZnJvbSh7IGxlbmd0aCB9KS5tYXAoKF8sIGlkKSA9PiAoeyBcbiAgICBhZ2U6IDEwLCBcbiAgICBpZDogaWRcbiAgfSkpO1xufVxuXG5jb25zdCBjb3VudCA9IDEwMDA7IiwidGVzdHMiOlt7Im5hbWUiOiJpbW11dGFibGUiLCJjb2RlIjoiY29uc3QgdXNlcnMgPSBmZXRjaFVzZXJzKGNvdW50KTtcbmNvbnN0IG5ld1VzZXJzID0gW107XG5cbmZvciAobGV0IGkgPSAwOyBpIDwgdXNlcnMubGVuZ3RoOyBpKyspIHtcbiAgY29uc3QgeyBhZ2UsIC4uLm5ld1VzZXIgfSA9IHVzZXJzW2ldO1xuICBuZXdVc2Vycy5wdXNoKG5ld1VzZXIpO1xufSIsInJ1bnMiOls3NTAsNzUwLDc1MCw3NTAsNzUwLDc1MCw3NTAsNzUwLDc1MCw3NTAsNzUwLDkzNyw3NTAsNzUwLDEzMTIsMTI1MCwxNDM3LDEyNTAsMTMxMiwxMzEyLDEzMTIsMTM3NSwxMjUwLDEyNTAsNzUwLDExODcsMTQzNywxMjUwLDE0MzcsNzUwLDEzMTIsMTQzNywxNDM3LDEyNTAsMTE4NywxMzEyLDE0MzcsMTEyNSwxMjUwLDEyNTAsMTI1MCw3NTAsMTMxMiwxMjUwLDkzNyw5MzcsMTMxMiwxMzc1LDExMjUsMTE4NywxMTI1LDExODcsMTM3NSwxMTg3LDEzMTIsNzUwLDEyNTAsMTEyNSwxMjUwLDE0MzcsOTM3LDEyNTAsMTAwMCwxMzEyLDEyNTAsMTEyNSw3NTAsMTE4NywxMTg3LDEzMTIsMTMxMiwxMDYyLDEzMTIsMTMxMiw3NTAsMTEyNSw3NTAsMTM3NSwxMjUwLDEyNTAsMTMxMiwxMDAwLDEzNzUsMTA2MiwxMDYyLDc1MCwxMTI1LDEzNzUsMTMxMiwxMjUwLDE0MzcsMTMxMiwxMjUwLDEzMTIsMTI1MCwxMTg3LDEzNzUsMTM3NSwxMzEyLDExODddLCJvcHMiOjExNDR9LHsibmFtZSI6ImRlbGV0ZSIsImNvZGUiOiJjb25zdCB1c2VycyA9IGZldGNoVXNlcnMoY291bnQpO1xuXG5mb3IgKGxldCBpID0gMDsgaSA8IHVzZXJzLmxlbmd0aDsgaSsrKSB7XG4gIGRlbGV0ZSB1c2Vyc1tpXS5hZ2U7XG59IiwicnVucyI6WzExMjUsMTE4NywxMDYyLDExMjUsMTA2MiwxMTI1LDExODcsMTA2MiwxMTI1LDEwNjIsMTEyNSwxMzEyLDEzMTIsMTAwMCwxMzc1LDE1MDAsMTUwMCwxMzc1LDE1MDAsMTQzNywxNTAwLDEzNzUsMTM3NSwxMzc1LDEwNjIsMTM3NSwxNTAwLDE1MDAsMTQzNywxMDYyLDEzMTIsMTM3NSwxMzc1LDEzNzUsMTUwMCwxMzEyLDEzNzUsMTM3NSwxMzEyLDE1MDAsMTQzNywxMDYyLDE0MzcsMTM3NSw2MjUsMTMxMiwxMzc1LDEzNzUsMTM3NSwxMzc1LDEzNzUsMTUwMCwxMzEyLDEzNzUsMTM3NSwxMDYyLDE1MDAsMTUwMCwxNDM3LDEzNzUsMTM3NSwxNDM3LDEzMTIsMTUwMCwxMzc1LDEzMTIsMTA2MiwxNDM3LDE1MDAsMTM3NSwxNDM3LDEzMTIsMTU2MiwxNTAwLDEwNjIsMTUwMCwxMDAwLDEzMTIsMTMxMiwxMzEyLDEzMTIsMTMxMiwxMzEyLDEzMTIsMTQzNywxMDAwLDE0MzcsMTUwMCwxNTYyLDEzNzUsMTUwMCwxNDM3LDEzNzUsMTQzNywxMzc1LDEzMTIsMTQzNywxNDM3LDEzMTIsMTQzN10sIm9wcyI6MTMzMX1dLCJ1cGRhdGVkIjoiMjAyMC0xMi0xNlQxNDowOTo0NC42OTNaIn0%3D
+
+[5]: https://perf.link/#eyJpZCI6IjVtcW8zbm1seDA3IiwidGl0bGUiOiJpbW11dGFibGUgdnMgbXV0YWJsZSIsImJlZm9yZSI6ImZ1bmN0aW9uIGZldGNoVXNlcnMobGVuZ3RoKSB7XG4gIHJldHVybiBBcnJheS5mcm9tKHsgbGVuZ3RoIH0pLm1hcCgoXywgaWQpID0%2BICh7IFxuICAgIGFnZTogMTAsIFxuICAgIGlkOiBpZFxuICB9KSk7XG59XG5cbmNvbnN0IGNvdW50ID0gMTAwMDsiLCJ0ZXN0cyI6W3sibmFtZSI6ImltbXV0YWJsZSIsImNvZGUiOiJjb25zdCB1c2VycyA9IGZldGNoVXNlcnMoY291bnQpO1xuY29uc3QgbmV3VXNlcnMgPSBbXTtcblxuZm9yIChsZXQgaSA9IDA7IGkgPCB1c2Vycy5sZW5ndGg7IGkrKykge1xuICBuZXdVc2Vycy5wdXNoKHsgLi4udXNlcnNbaV0sIGFnZTogdXNlcnNbaV0uYWdlICsgMSB9KTtcbn0iLCJydW5zIjpbMTUxOCwyMzMzLDUwMzcsNTExMSw1Mjk2LDI1OTIsNTI1OSw1MDc0LDQ3NzcsNDcwMyw0OTYyLDQ5MjUsNDkyNSw0Nzc3LDQ0NDQsNDQwNyw0NzQwLDUwMDAsNTAzNyw0NzQwLDUwNzQsNTA3NCw0MjIyLDUwMzcsNDg4OCw1MDc0LDUyOTYsNTE0OCw1MTQ4LDUxMTEsNTI5Niw1MTQ4LDUzMzMsNDgxNCw1MDAwLDUzNzAsNTE4NSw0NzQwLDUyOTYsNTE4NSw1MTExLDUxNDgsNDkyNSw1MTExLDU0NDQsNTAzNyw1Mjk2LDUxODUsMjU1NSw1MTExLDUwMDAsNTE0OCw1MTQ4LDQ2NjYsNTAwMCw1MDc0LDUxNDgsNDg4OCw1MDc0LDUwMDAsNDgxNCw1MDAwLDUwNzQsNTI5Niw1MTQ4LDUxODUsMjU5Miw1MDc0LDUwMzcsNTExMSwyMjU5LDQ5NjIsNTE0OCw1MTExLDQ3MDMsNTAzNyw0NzAzLDUyOTYsNTMzMyw1Mjk2LDQ5NjIsNTQwNyw1MTExLDUyNTksNDk2MiwyNzc3LDUyMjIsNTI5Niw0NzQwLDU0MDcsNTI1OSw1MDM3LDUxMTEsNTAwMCw1Mjk2LDQ0ODEsNTE0OCw1MDM3LDUxMTEsNDk2Ml0sIm9wcyI6NDg1OX0seyJuYW1lIjoibXV0YWJsZSIsImNvZGUiOiJjb25zdCB1c2VycyA9IGZldGNoVXNlcnMoY291bnQpO1xuXG5mb3IgKGxldCBpID0gMDsgaSA8IHVzZXJzLmxlbmd0aDsgaSsrKSB7XG4gIHVzZXJzW2ldLmFnZSA9IHVzZXJzW2ldLmFnZSArIDE7XG59IiwicnVucyI6WzM1MTgsMzcwMyw2Nzc3LDc0MDcsNzM3MCwzNzAzLDc1MTgsNjQwNyw3Mjk2LDcxODUsNzE4NSw3MjU5LDYxNDgsNzM3MCw3MzMzLDczMzMsNjg4OCw3MDM3LDcyMjIsNjg1MSw3MDM3LDcxNDgsNzU5Miw2Nzc3LDczNzAsNjgxNCw3NzAzLDc2NjYsNzIyMiw3Mjk2LDc2MjksNzU1NSw3MDc0LDc1MTgsNzM3MCw3NDA3LDc0MDcsNzA3NCw3Mjk2LDc0MDcsNzYyOSw3MTQ4LDcyNTksNzMzMyw3NTE4LDc3NDAsNzU5Miw3NjI5LDQwMDAsNzUxOCw3OTYyLDc0MDcsNzIyMiw3MjU5LDc1NTUsNzc3Nyw3NjY2LDY3NzcsNzI5Niw3MTQ4LDczNzAsNjkyNSw2OTI1LDc1OTIsNzc0MCw3MjIyLDM3NzcsNzQwNyw3Mjk2LDcyOTYsNDAzNyw3MjIyLDc1NTUsNzQ4MSw3MjIyLDczNzAsNzI1OSw2NTU1LDczNzAsNzQwNyw2OTYyLDczNzAsNzcwMyw3NDgxLDc1MTgsMzc3Nyw3MTQ4LDc0ODEsNzcwMyw3NzQwLDc2NjYsNzc0MCw3MjU5LDc2NjYsNzUxOCw2NjY2LDc1MTgsNzI1OSw1ODg4LDcxNDhdLCJvcHMiOjcwNTV9XSwidXBkYXRlZCI6IjIwMjAtMTItMTZUMTQ6MDk6MjcuMTE3WiJ9
+
+[6]: https://twitter.com/SimonHoiberg/status/1338898087092346885

@@ -1,0 +1,142 @@
+---
+title: The costs of Optional Chaining.
+description: The costs of Optional Chaining in performance and bundle size.
+tags: javascript, babel, webdev, discuss
+date: 2019-07-31
+---
+
+
+Now that optional chaining has reached stage 3, it's time for a reevaluation. 
+
+A little more than a year ago, we decided to go ahead and start using `@babel/plugin-proposal-optional-chaining`. As usual with babel plugins, the primary reason was developer experience. "It will make our lives easier".
+
+And it did. It still does. I see it being used everywhere throughout our codebase. 
+
+In react `componentDidUpdate`:
+
+```jsx
+componentDidUpdate(prevProps) {
+  if (
+    this.props.image?.type !== prevProps.image?.type || 
+    this.props.image?.orientation !== prevProps.image?.orientation
+  ) {
+    // ...
+  }
+}
+```
+
+And in render functions:
+
+```jsx
+function CommentButtons({ user }) {
+  return (
+    <div>
+      <Button disabled={user?.can?.edit}>edit</Button>
+      <Button disabled={user?.can?.delete}>delete</Button>
+      <Button disabled={user?.can?.reply}>reply</Button>
+    </div>
+  )
+}
+```
+
+It does look nice. It's easy to understand what's going on. Yet, it does come with a cost. And we, or at least I, highly underestimated this. The costs are there, both in performance and in bundle size.
+
+## Performance
+
+Let's first talk about the performance. Because that's not what concerns me most. 
+
+The performance cost is there if optional chaining is being overused. Don't guard all your properties. Only guard the unknowns. It's safe to make assumptions of existence if you're dealing with your own code.
+
+That being said, We aren't iterating our own render function 65 million times in a second. So even while the performance hit can be up to 45%. It can still be negligible in production environments. For those wondering, here is the [`jsperf`](https://jsperf.com/costs-of-optional-chaining). Please don't attach to much value to that.
+
+Let's move on.
+
+## Bundle size
+
+The `CommentButtons` component posted above, for example, contains `244` bytes of written code, which is [transpiled](https://babeljs.io/repl#?babili=false&browsers=&build=&builtIns=false&spec=false&loose=false&code_lz=GYVwdgxgLglg9mABAYTgWzQUzFAQiKKBAZwAoBvREYzAJ0QF8BKRcgKEUVsyhFqVIdOiADwATGADcAfEOGj8hBIgnEAhgCMANpjEBectToB-AHQQ1YM7phQG0m1BEB6RUTCz5nEW-WrNOvqGNLRmFlamYpg6UJj2UTGYLr4ecsI-BO4qMOraugZGoeaWZtwADloAnvblVcmZCJ7pzhIyQkxsDEA&debug=false&forceAllTransforms=false&shippedProposals=false&circleciRepo=&evaluate=false&fileSize=true&timeTravel=false&sourceType=module&lineWrap=true&presets=es2015%2Creact%2Cstage-2&prettier=true&targets=&version=7.5.5&externalPlugins=%40babel%2Fplugin-proposal-optional-chaining%407.2.0) into `1.000` bytes. A factor 4 larger. 
+
+Because it's our own code, we can safely assume that whenever the `user` prop is not `undefined`, it also has the `can` property. If it wouldn't be enforceable by the backend. It would be enforceable by the frontend. A parent component, or the place where we call the API.
+
+Anyway, we can reduce [the transpiled byte size](https://babeljs.io/repl#?babili=false&browsers=&build=&builtIns=false&spec=false&loose=false&code_lz=GYVwdgxgLglg9mABAYTgWzQUzFAQiKKBAZwAoBvREYzAJ0QF8BKRcgKEUQhKi4EMkAXio16AfhF0AdBAGIAXKwYBuDojW1MUELSSk1nADwATGADcAfAc6JD-QgkSnifAEYAbTMcHlZYKV4wUAwWgVCGAPT2RGBWNjZ2BDFOMC4eXj5-UsaYnlCYITl5mJHRCHHxtmVIzm6e3r4CUpoADu4AniGtHaVJ5daRppZqTGwMQA&debug=false&forceAllTransforms=false&shippedProposals=false&circleciRepo=&evaluate=false&fileSize=true&timeTravel=false&sourceType=module&lineWrap=true&presets=es2015%2Creact%2Cstage-2&prettier=true&targets=&version=7.5.5&externalPlugins=%40babel%2Fplugin-proposal-optional-chaining%407.2.0) to `477` bytes, by rewriting that component to remove the `optional chaining`. We are not even assuming the existence of `can` here, we default it to an empty object instead.
+
+```jsx
+function CommentButtons({ user }) {
+  const can = user ? user.can : {};
+  
+  return (
+    <div>
+      <Button disabled={can.edit}>edit</Button>
+      <Button disabled={can.delete}>delete</Button>
+      <Button disabled={can.reply}>reply</Button>
+    </div>
+  )
+}
+```
+
+I realize this is an extreme example. But I see code quite similar to this in the wild. We developers just love our productivity tools. And if there is a babel plugin that makes something easier, than why not use it?
+
+I'm not saying to not use the optional chaining at all. I still love using it. I'm asking you to remember that it does come at a cost. For example, try to not use a fallback for the same property twice within a single method:
+
+
+```js
+var canEdit = user?.can?.edit;
+var canDelete = user?.can?.delete;
+
+// transpiles to:
+"use strict";
+
+var _user, _user$can, _user2, _user2$can;
+
+var canEdit =
+  (_user = user) === null || _user === void 0
+    ? void 0
+    : (_user$can = _user.can) === null || _user$can === void 0
+      ? void 0
+      : _user$can.edit;
+var canDelete =
+  (_user2 = user) === null || _user2 === void 0
+    ? void 0
+    : (_user2$can = _user2.can) === null || _user2$can === void 0
+      ? void 0
+      : _user2$can.delete;
+```
+
+We can easily reduce [that](https://babeljs.io/repl#?babili=false&browsers=&build=&builtIns=false&spec=false&loose=false&code_lz=G4QwTgBAxiB2CiATAlgFwgXggVwM4FMwB-AOhllPxVQG4AoUScgEXwBt9V9McDiy4pRO074aQA&debug=false&forceAllTransforms=false&shippedProposals=false&circleciRepo=&evaluate=false&fileSize=true&timeTravel=false&sourceType=module&lineWrap=true&presets=es2015%2Creact%2Cstage-2&prettier=true&targets=&version=7.5.5&externalPlugins=%40babel%2Fplugin-proposal-optional-chaining%407.2.0), by only checking the `user.can` property [once](https://babeljs.io/repl#?babili=false&browsers=&build=&builtIns=false&spec=false&loose=false&code_lz=G4QwTgBAxiB2EF4IFcDOBTMB-AdDeAPgRAN4C-A3AFCiT4CiAJgJYAui0cO6Lr1tnWABF0AG3St0HfDkZiJ6CkA&debug=false&forceAllTransforms=false&shippedProposals=false&circleciRepo=&evaluate=false&fileSize=true&timeTravel=false&sourceType=module&lineWrap=true&presets=es2015%2Creact%2Cstage-2&prettier=true&targets=&version=7.5.5&externalPlugins=%40babel%2Fplugin-proposal-optional-chaining%407.2.0):
+
+
+```js
+var can = user?.can || {};
+var canEdit = can.edit;
+var canDelete = can.delete;
+
+// transpiles to:
+"use strict";
+
+var _user;
+
+var can =
+  ((_user = user) === null || _user === void 0 ? void 0 : _user.can) || {};
+var canEdit = can.edit;
+var canDelete = can.delete;
+```
+
+And unless your first optional operator is nested somewhere, it might be worth it to take that [last step](https://babeljs.io/repl#?babili=false&browsers=&build=&builtIns=false&spec=false&loose=false&code_lz=G4QwTgBAxiB2EF4IFcDOBTSAyLKNgDoZ4AfEiAbwF8BuAKFEmIFEATASwBdFo4D0Oneo16wAIugA26Tuh7ECrKTPQ0gA&debug=false&forceAllTransforms=false&shippedProposals=false&circleciRepo=&evaluate=false&fileSize=true&timeTravel=false&sourceType=module&lineWrap=true&presets=es2015%2Creact%2Cstage-2&prettier=true&targets=&version=7.5.5&externalPlugins=%40babel%2Fplugin-proposal-optional-chaining%407.2.0), and do avoid the optional operator at all:
+
+```js
+var can = user && user.can || {};
+var canEdit = can.edit;
+var canDelete = can.delete;
+
+
+// transpiles to:
+"use strict";
+
+var can = (user && user.can) || {};
+var canEdit = can.edit;
+var canDelete = can.delete;
+```
+
+I hope this makes my point. I do realize that gzip can remove some of the overhead, as it's quite good at compressing repeating patterns like `=== void 0` and `=== null`. But even with gzip, the costs of optional chaining are there. Please remember it, as we will be stuck to using the babel transpiler for quite some time. Even now it's stage 3, it will not land in every browser that we need to support in a very short term.
+
+I'll still keep using optional chaining. Albeit less fanatical. 
+

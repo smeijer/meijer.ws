@@ -1,0 +1,116 @@
+---
+title: Typescript Type Assertions 
+description: How to use Type Assertions to narrow types in TypeScript.
+tags: webdev, typescript, assertions, development
+date: 2021-09-07
+---
+
+Type assertions look a lot like of [type guards](https://meijer.ws/articles/typescript-type-guards-and-type-predicates), with the exception that they don't need to be embedded in an `if` statement.
+
+Imagine we have a blog, and allow authenticated users to post comments. We come up with a function like this:
+
+```ts
+function isAuthenticated(user: User | null) {
+  return typeof user !== null;
+}
+
+function addComment(user: User | null, comment: string) {
+  if (!isAuthenticated(user)) {
+    throw new Error('unauthenticated')
+  }
+
+  db.comments.insert({ author: user._id, comment });
+}
+```
+
+We have extracted an `isAuthenticated` helper that tells us if the user is logged in. And we make sure to throw an error if they are not. 
+
+In pure JavaScript, we would be done by now. An error will be thrown if `user` is `null`, so by the time we reach the database statement,  we're sure that the `user` object is defined.
+
+TypeScript on the other hand, still sees the `user` as `User | null`. To fix that, we can introduce a type guard. Update the helper by adding the type predicate `user is User` , and it understands that user is `null` in the scope of the `if` statement,  and thereby has to be `User` after it.
+
+```ts
+function isAuthenticated(user: User | null): user is User {
+  return typeof user !== null;
+}
+```
+
+I recommend reading my earlier article about [Type guards and Type predicates](https://meijer.ws/articles/typescript-type-guards-and-type-predicates) if you're unfamiliar with those.
+
+By adding the type predicate we've fixed the issue in the database statement. TypeScript is aware that `user` will never be `null` at that stage.
+
+## Assertion Functions
+
+The problem lies in repetition. Having those 3 lines of code all around the project, adds noise. Besides, it's unlikely that this is the only check you have defined. 
+
+We could turn that check into something like:
+
+```ts
+function assertAuthenticated(user: User | null): user is User {
+  if (user === null || user === undefined) {
+    throw new Error('unauthenticated');
+  }
+
+  return true;
+}
+
+function addComment(user: User | null, comment: string) {
+  assertAuthenticated(user);
+
+  db.comments.insert({ author: user._id, comment });
+}
+```
+
+In plain JavaScript, that would still work.  The `assertAuthenticated` function throws if the `user` object is not defined, and because the error propagates, we never reach the database statement.
+
+However, because we removed the wrapping `if` statement, TypeScript is again not happy. The `user._id` in the database statement, will throw an `TS2531: Object is possibly 'null'`. To fix that, we'll insert the [`Type assertion`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#assertion-functions).
+
+It's quite trivial, really. Simply add `asserts` in front of the type predicate, and remove the return statement from the assertion function. Where type guards must return a `boolean`, assertion functions must return `void`.
+
+```ts
+function assertAuthenticated(user: User | null): asserts user is User {
+  if (user === null || user === undefined) {
+    throw new Error('unauthenticated');
+  }
+}
+```
+
+And now when you call this function, TypeScript knows that the value of `user` can never be `null` after that line.
+
+```tsx
+function addComment(user: User | null, comment: string) {
+  assertAuthenticated(user);
+  db.comments.insert({ author: user._id, comment });
+}
+```
+
+## Assert Generic
+
+Now that we know about `asserts`, we can also quite easily introduce a reusable helper function:
+
+```ts
+function assert<T>(
+  condition: T,
+  message,
+): asserts condition is Exclude<T, null | undefined> {
+  if (condition === null || condition === undefined) {
+    throw new Error(message);
+  }
+}
+```
+
+And then whenever you have a function that accepts optional or partial values, you can simply protect them using a this `assert` helper.
+
+```ts
+async function latestBlog() {
+  const blog = await db.blogs.findOne({ author: 'smeijer' }); // Blog | null
+  assert(blog, 'author does  not have any blogs');
+    
+  // and here we know `blog: Blog`
+}
+```
+
+When the `blog` is not found in the database, the `assert` statement will throw an error up the chain, if it did find something, we can safely work with the object after the assert call.
+
+The next time you consider type casting a property with `as MyType`, consider writing an type assertion instead. Instead of simply silencing TypeScript, you'll get runtime validation with a single line of code.
+

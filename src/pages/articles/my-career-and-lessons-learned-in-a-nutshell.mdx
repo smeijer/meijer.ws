@@ -1,0 +1,84 @@
+---
+title: My Career and Lessons Learned in a Nutshell
+description: How I became as productive as I am.
+tags: webdev, career, experience, learning
+date: 2021-03-23
+---
+
+It has now happened a few times that I got asked how I "can be so productive". In this article, I'll tell you my story.
+
+## Intro
+
+For me personally, 2020 was the year that I became more visible on Twitter and in the (Open Source) dev community. Not that I'm famous and have lots of followers, but it did provide me a small group of people that I now consider to be my friends.
+
+This last year, I've built and published several smaller open-source libraries, as well as bigger projects like [testing-playground](https://testing-playground.com) and [updrafts.app](https://updrafts.app). [leaflet-geosearch](https://github.com/smeijer/leaflet-geosearch) crossed 1 million downloads 🤯 , and I recently shifted to work on my next project, [rake.red](https://rake.red). All of this besides my day-job, where I make a living with the development of a business-to-business collaboration platform. 
+
+It's not all puppies and moonshine, but I've already talked about that in my blog about [The struggle of 2020](https://meijer.ws/articles/work-from-home-the-struggle-of-2020), so that's not what this article is about.
+
+## Being Productive
+
+It has now happened a few times that I got asked questions that boiled down to the question of how I become "so productive".
+
+This question is often asked by developers with far less experience than myself. That's not a problem. Instead, I believe it's the answer. When I seem to be more productive than you or iterate faster than you, it might have something to do with the fact that I've been creating software for over 15 years, and launched my first SaaS almost 10 years ago.  *(I guess I have to celebrate on Sept' 17, 2021 🎉)*. That's the story you don't see on social media. You'll see the makers publishing their things, but you often don't see all those silent hours or years even.
+
+Don't get me wrong. You don't need those 15 years to catch up. The world of web development changes so fast, that most of my knowledge of > 5 years ago, has become obsolete. But try to compare it to athletes or formula one drivers. We are well aware that every record made, will be broken. There will be someone faster than the current record holders. But we also know that you can't beat an athlete, while you're untrained.
+
+No matter who the developer is that you look up to, I'm sure they had many years of training.
+
+## Getting Experienced
+
+Most of my experience comes from making mistakes and self-reflection. I constantly wonder if something that I just did, could have been done better, or more efficiently. I have no education in the direction of computer science, and I have never followed any developer course or boot camp.
+
+The first code I've written professionally was to automate my own work. I started my career being a CAD operator and noticed the patterns and repetition in my drawings. AutoCAD had an interface for c#.net, and I used that to reduce days of manual labor, to minutes of watching and assisting the computer making those drawings.
+
+Eventually, I ended up being experienced with C# and used that to solve more problems. Not long after that, we got confronted with new Dutch laws and obligations involving underground infrastructures such as cables and pipelines. The implementation of that law created a need for a pipeline management portal, and I decided to build it. My first SaaS was born, and I got a few big companies as customers.
+
+This SaaS ultimately lead to my decision to switch careers and to make a living with software development instead.
+
+## Leveling Up
+
+A related question that I often get, is how to get better at stuff, how to learn faster, and even how to enjoy learning.
+
+My belief is that learning is a means, not an end. I've never approached learning something as the goal. I don't think I could learn that way.
+
+Instead, I build something like testing-playground.com, because I see the need. When I choose the stack, I might add one or two things that sound like a good investment to get familiar with. For testing-playground, I choose to use react because I was familiar with it, and I chose to deploy to Netlify so I could learn a bit about serverless functions. I don't approach that as "*Oh my, I'm going to learn serverless! So much fun!*". I'm simply solving the problem that there wasn't a repl for testing-library. Learning serverless, was a nice bonus to add to my resume.
+
+It's definitely satisfying to see the final product go online. And maybe even a bit satisfying that I made it work on Netlify. But "*learning serverless*" was never the goal and was not what gave me satisfaction. Using it to provide a solution for a problem, does that for me. 
+
+## Making Mistakes
+
+I learn most from making and recognizing mistakes. Self-reflection is extremely important, especially if you don't have anyone around that can or will point out your mistakes. If you do have coworkers, but nobody points out mistakes, it doesn't mean that you're fault-free. I honestly don't think anyone (in this industry) is.
+
+Over the years I've made quite a few mistakes. I'll list a couple, so we can both learn from it:
+
+### Gradually migrating to new tech
+
+This one is not that black and white. But what I mean by that, is that I'm currently maintaining a codebase (NodeJS / MongoDB based) that dates back to 2014. At that time, we were still using node v0.10! Over the years, we've migrated from Blaze to React, from class components to functional components, from hocs to hooks, from REST to GraphQL, and I had a few more "brilliant ideas" that I implemented in that codebase in the months that I was the sole developer. Partially because that new tech looked better, partially because I blindly followed the latest trend, and partially because I wanted to try something new.
+
+I do regret that. If I could do it over, I would have skipped a few migrations and stuck to current conventions. This is one of the reasons that I now have more side projects. If I want to play with something new, I'm going to do that in a side project, instead of the project that makes my living.
+
+There is nothing wrong with migrating. But due to lack of time, not all migrations were complete. So there are multiple conventions used in a single codebase. That does not do good for maintainability.
+
+### Code Complexity
+
+Another mistake I made in the past, was related to functional programming. I'm not talking about React functional components. I'm talking about using lenses, traversals, currying, point-free functions, and immutability. In simpler terms, manipulating data using `ramda.js` and `partial.lenses`. They all have their purposes, but at a certain moment, I tried making everything point-free. Resulting in unnecessary complex code. I learned my lesson and took a step back. I still use the knowledge I gained from functional programming, but I apply the concepts a bit less fanatical. Readability first.
+
+I think the main lesson here, is that shorter code is not always better. Write for readability. Your future self will appreciate it.
+
+### Follow the hype
+
+I made this mistake twice, and (hopefully) won't make it again. 
+
+The first time was when MDG announced that they were dropping support for their view layer Blaze. I quickly migrated to React, but because I was working on the product alone, this was consuming valuable time. I'm convinced that if I would have stuck with Blaze, the application would still work perfectly fine. We could have used that time differently, without any serious impact.
+
+The second time was with hooks. I like hooks! But the mistake I made, was to ask the team to refactor all components during the next few sprints. It took more time than expected, and because the tech was new to everyone, mistakes were made and new bugs were introduced.
+
+I'm not sure if I should add GraphQL to this list, but I jumped aboard the train, and our platform currently uses GraphQL for a private API. I do like the tech, but it does make things more complicated than strictly required. In hindsight, I believe that REST would have been a better choice for us. 
+
+## Final word
+
+I've never worked for an IT company. I'm currently self-employed and work together with non-technical partners in a joint firm. I don't do well in interviews, and yet I build and maintain a number of (web) applications.
+
+Unless you truly get energy from the learning itself, I would advise you to stop pursuing knowledge. If you need to learn something for your work, do it during business hours. It's part of the job! If you want to learn something for yourself, create something. Create a solution to your problems, and knowledge will come along the way. The harder the problem, the more you'll learn from solving that, and the greater the satisfaction will be when you've done it.
+
+Believe in yourself, don't let anyone hold you down, and don't feel obligated to learn in your personal time! Self-education is a choice, not an obligation.

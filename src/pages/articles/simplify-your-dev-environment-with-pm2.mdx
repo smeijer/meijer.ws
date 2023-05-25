@@ -1,0 +1,169 @@
+---
+title: Simplify your Dev Environment with PM2
+description: Use PM2 to turn multiple startup commands into a single one.
+tags: webdev, node, development, pm2
+date: 2021-03-21
+---
+
+Do you recognize that scenario were starting a project in dev mode, requires multiple actions to be taken? I think we all have or had those cases. Start a local database, start a node app, and maybe even start some file watchers to watch and compile css files or other assets.
+
+We are well aware that there are recommended ways to solve this. If you'd ask around, you'll often be advised to solve this with docker (compose).
+
+There is an easier way to this tho! One that doesn't directly make you a DevOps, but lets you stick to the tech that you're comfortable with. 
+
+## Getting Started
+
+When you'll read the landing page at [keymetrics][keymetrics], you'll notice that PM2 is positioned as "*a daemon process manager that will help you manage and keep your production application online 24/7*".
+
+I'm here to tell you that it's also perfectly suited for applications in development mode. Not to keep your app online 24/7, but to manage the processes, and spawn multiple processes at once.
+
+For the development of [rake.red][rake.red], I needed to invoke multiple commands to get my dev environment up and running:
+
+```shell
+npm run start:db      # start mongodb
+npm run start:pubsub  # start pub/sub server
+npm run start:dev     # start node app
+```
+
+By writing a single pm2 config script, once, starting my dev environment became as simple as:
+
+```shell
+npm run dev           # start them all!
+```
+
+## Setup PM2
+
+So, first things first. Navigate to the root of your project, and install [pm2](http://npmjs.com/pm2). It's a node module, so nothing too exciting.
+
+```shell
+npm i pm2
+```
+
+Next, you'll need to write that config file. This might require a bit of research from your side. But if you know the commands that you need to invoke to get your current environment up and running, this shouldn't be too hard.
+
+The config is a file named `pm2.config.js`, that exports a config object, with `apps` in it. In PM2 terms, you'll be writing the [`Ecosystem file`][ecosystem]
+
+```js
+module.exports = {
+  apps: [],
+};
+```
+
+You can add as many apps there ad you'd like. Rake.red is build with [`nextjs`][nextjs], so let's use that one as example:
+
+```js
+// pm2.config.js
+module.exports = {
+  apps: [
+    {
+      name: 'Next',
+      script: 'next dev',
+      watch: ['data', 'docs'],
+      env: {
+        NODE_ENV: 'development',
+      },
+    },
+  ],
+};
+```
+
+Let's walk over the options.
+
+**name**
+
+The `name` is simply a name that you can assign to it. You'll see this name in the terminal when you have log statements, but besides that, it doesn't matter much what you write there. 
+
+**script**
+
+The `script` property, is the command that you run to get this part of your environment running. I had `next dev` aliased as `dev` script in my package.json (`"dev": "next dev"`), so I could just as well set `script: 'npm run start:dev'`, but I'd like to keep my pm2 config free from my npm scripts. That way, I can clean up package.json and have fewer cross dependencies.
+
+**watch**
+
+The `watch` argument is an interesting one. NextJS already watches the source files, so I could have omitted this one. But I use some more advanced loaders and read markdown files from the file system, which are then converted to react components and documentation pages. NextJS does not watch those markdown files that I read using `fs`. So being able to trigger a restart when I change one of those, is a welcome addition. 
+
+If you'd like to use pm2's file watching feature, simply provide an array with folder paths. In my case, both `data`, as well as `docs`, are folders located at the root of my project. You could also target them down using more specific paths like `data/sub/folders`.
+
+When you need more specific watch options, there is a `watch_options` property as well. For the specifics about that, you might want to check the [chokidar][chokidar] docs.
+
+**env**
+
+The last one, `env`, is something we're all familiar with. I just set `NODE_ENV` to `development`. But depending on your config you might want to add additional settings there. Think `MAIL_URL`, `DB_HOST`, or things like that. I don't do that, because I load that kind of settings with [`dotenv`](npmjs.com/dotenv). In this config file, you want to add those env vars, that you used to have defined in your package.json scripts.
+
+## Adding the second app
+
+The profit of PM2 does not lie in the configuration of a single app. The profit comes when we're adding the second or even third app. Rake.red stores its data in MongoDB. So let's add that one ass well.
+
+```js
+module.exports = {
+  apps: [
+    { … },
+    {
+      name: 'Mongo',
+      script: 'mongod --dbpath ../.db',
+      ignore_watch: ['.'],
+      env: {
+        NODE_ENV: 'development',
+      },
+    },
+  ],
+};
+```
+
+That should look familiar now, except for the `ignore_watch` property. With the NextJS app as defined above, I wanted to restart when files in two specific folders changed. But I don't want to restart something like a database, like ever. Hence the `ignore_watch`. The `.` tells pm2 to simply ignore all file changes for this application. In other words, no matter what file in my project changes, pm2 will not restart MongoDB. 
+
+A database should start with the project, and stop at the end of the day. Restarting in between file changes doesn't make sense.
+
+## Reuse NPM Scripts
+
+As I mentioned above, it's also possible to reuse those npm scripts that you have already defined in `package.json`. I'm not a fan of it, but that shouldn't stop you from using it! It might ease the migration for your coworkers or contributors. Here is an example that you can copy/paste and adjust:
+
+```js
+module.exports = {
+  apps: [
+    { … },
+    {
+      name: 'PostCSS',
+      script: 'npm run css:watch',
+      ignore_watch: ['.'],
+      env: { NODE_ENV: 'development' },
+    },
+  ],
+};
+```
+
+## Run it
+
+Lastly, add a start script to your package.json:
+
+```json
+{
+  "scripts": {
+    "dev": "pm2-dev pm2.config.js",
+  }
+}
+```
+
+And start your whole environment at once, with:
+
+```shell
+npm run dev
+```
+
+## Final word
+
+Instead of needing to invoke multiple commands to get your development environment up and running, you now have a single command. This eases your own daily startup, and also makes it easier for contributors or new members on the team to get started with the project.
+
+There are other solutions to get something similar to this. For example Docker, or Make files. Make files are difficult to use cross-platform. And Docker requires additional software to be installed and images to be downloaded.
+
+The benefit of PM2 is, that it gets installed with `npm`, together with all your other dependencies. With `pm2-dev`, it only runs while your project is running (no daemon), while Docker keeps running as a background service. PM2 has a lower learning curve and is a bit friendlier for low-end machines regarding system resources. No virtual machines, just a process manager.
+
+--- 
+
+_:wave: I'm Stephan, and I'm building [rake.red](http://rake.red). If you wish to read more of mine, follow me on [Twitter](https://twitter.com/meijer_s)._
+
+
+[rake.red]: https://rake.red
+[keymetrics]: https://pm2.keymetrics.io/
+[ecosystem]: https://pm2.keymetrics.io/docs/usage/application-declaration/#ecosystem-file
+[nextjs]: https://nextjs.org
+[chokidar]: https://github.com/paulmillr/chokidar

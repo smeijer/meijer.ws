@@ -1,0 +1,124 @@
+---
+title: Handling POST requests in Next.js getServerSideProps
+description: How to handle POST requests in Next.js getServerSideProps
+tags: webdev, nextjs, development
+date: 2021-09-10
+---
+
+The documentation pages of Next.js list [`getServerSideProps`](https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering) under "data fetching", and for any kind of data mutations, they'll point you to the [`api routes`](https://nextjs.org/docs/api-routes/introduction). I'm here to tell you, that there is another way!
+
+In this article, I'm going to show you how you can post to `getServerSideProps`, and have your components, data fetching, and data mutation logic all collocated in the same file. 
+
+## HTML Forms
+
+I'll directly dive in. We'll create a form so we can bring this to a working example. Let's keep it simple. Create a new next app with `npx create-next-app`, and add a form to your index component. 
+
+```jsx
+export default function IndexPage({ name = "person" }) {
+  return (
+    <form method="post">
+      <input name="name" defaultValue={name} />
+      <button type="submit">submit</button>
+    </form>
+  );
+}
+```
+
+Note that I don't set the "action" attribute. When the action attribute is left out, it defaults to the current path. And that's exactly what we want it to do. If you'd be using an hosted form service like [rake.red](https://rake.red), you'd be setting it to an absolute url.
+
+As we'll be adding `getServerSideProps` in the next step, I've also already provided an initial `name` value via the props, and default it to `person` for now. 
+
+That's it for the component part. This will render a form that accepts a name, and will be submitted to the current path. Give it a spin!
+
+## Server Side Props
+
+So let's start with the basic variant of `getServerSideProps`.
+
+```js
+export async function getServerSideProps({ req }) {
+  console.log(req.method, req.body);
+
+  return {
+    props: {
+      name: "smeijer"
+    }
+  };
+}
+```
+
+I've added an initial value for `name`, which you'll now see rendered in your form. The value no longer comes from the component, but it's consumed from an "backend part". See it as a query if you will, but without additional request, and without a need for react-query, swr, or other forms of client state management. 
+
+Now, if you refresh the page, and resubmit the form, you'll notice that the server will log `GET` on refresh, and `POST` on form submit. That's right! We don't need anything special to receive the post. Next already does that out of the box.
+
+But here's the thing. You can add logging statements for `req.body`, `req.params` and `req.query`, but they're all empty. Next.js does not process our request body. So that's something we're gonna fix.
+
+## Hooking up body-parser
+
+We'll be using [`body-parser`](https://www.npmjs.com/package/body-parser) to read the request body. Install the dependency, and add the following 3 lines to the top of your file:
+
+```js
+import bodyParser from "body-parser";
+import util from "util";
+
+const getBody = util.promisify(bodyParser.urlencoded());
+```
+
+`urlencoded()` returns an middleware function that has the common 3 arguments, `request`, `response` and `next`. We use `promisify` to turn the callback function into an async function, because we won't be using this as a traditional middleware.
+
+If you'll now update `getServerSideProps` and add `await getBody(req, res)` to just before that log statement, you'll see that our request body has been processed. 🤯
+
+```js
+export async function getServerSideProps({ req, res }) {
+  await getBody(req, res);
+  console.log(req.method, req.body); // POST { name: 'smeijer' }
+  // …
+```
+
+And now you're able to use `getServerSideProps` to handle your mutations. Seriously, do with the data in `req.body`, whatever you like. You can access secrets from `process.env`, and connect to the database in `getServerSideProps` just fine. It only runs on the server, and won't be exposed to the client.
+
+## Full Example
+
+Here is the full, runnable, Next.js page file. You'll notice that I've wrapped the body parser statement inside a check against the request method. That's technically not required, but let's just add the body parsing in there so it doesn't do unnecessary work during GET requests. Besides, we're likely to add more logic in the POST handler, like writing stuff to our database.
+
+Depending on your needs, you can return completely different props, or a similar shape. To keep things predictable, I definitely recommend the latter.
+
+```jsx
+import bodyParser from "body-parser";
+import { promisify } from "util";
+
+const getBody = promisify(bodyParser.urlencoded());
+
+export async function getServerSideProps({ req, res }) {
+  if (req.method === "POST") {
+    await getBody(req, res);
+  }
+
+  return {
+    props: {
+      name: req.body?.name || "smeijer",
+      message: req.body ? "received!" : "",
+    }
+  };
+}
+
+export default function IndexPage(props) {
+  return (
+    <>
+      <form method="post">
+        <input name="name" defaultValue={props.name} />
+        <button type="submit">submit</button>
+      </form>
+      <p>
+        {props.message}
+      </p>
+    </>
+  );
+}
+```
+
+## Final word
+
+Even though Next.js doesn't advertise the `getServerSideProps` handler in this way, I think it can be very useful as a simple way to add forms to your page, without the need to define api routes, and deal with client state.
+
+I also haven't tried if this works when hosting on vercel, as I'm running my Next.js apps on my own VPS instead of "serverless". So if anyone can give that a shot, and let us know if it worked out, that would be great.
+

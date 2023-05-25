@@ -1,0 +1,226 @@
+---
+title: How to handle forms in React, the alternative approach
+description: Form handling in React, without react controlling everything!
+tags: react, javascript, webdev, forms
+date: 2021-01-04
+---
+
+When I first started with React, I was relearning how to manage forms again. `Controlled`, or `uncontrolled`. Use `defaultValue` instead of `value`, bind `onChange` handlers, and manage the state in `redux`, or more recently; should I manage the state with `useState` or `useReducer`?
+
+What if I told you that this can be done much simpler? Don't make the same rookie mistake as I did 5 years ago. Using React doesn't mean that React needs to control everything! Use the HTML and javascript fundamentals.
+
+Let's take the example from [`w3schools`](https://www.w3schools.com/react/react_forms.asp) for submitting and validating multi-field forms. I've converted the class component to a functional one, as I find it easier to read. 
+
+```jsx
+function MyForm() {
+  const [state, setState] = useState({ username: '', age: null });
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+      
+    const age = state.age;
+      
+    if (!Number(age)) {
+      alert('Your age must be a number');
+      return;
+    }
+      
+    console.log('submitting', state);
+  };
+
+  const handleChange = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    setState({ ...state, [name]: value });
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <h1>Hi!</h1>
+          
+      <p>Enter your name:</p>
+      <input type="text" name="username" onChange={handleChange} />
+          
+      <p>Enter your age:</p>
+      <input type="text" name="age" onChange={handleChange} />
+          
+      <br /><br />
+      <input type="submit" />
+    </form>
+  );
+}
+```
+
+That's a whole lot of code for handling a form. What you're seeing here, is that on every keypress (change) in the input's, the state is updated. When the form is submitted, this state is being read, validated, and printed to the console. 
+
+Now, let's slim this down by removing all state management and change handlers.
+
+```jsx
+function MyForm() {
+  return (  
+    <form>
+      <h1>Hi!</h1>
+          
+      <p>Enter your name:</p>
+      <input type="text" name="username" />
+          
+      <p>Enter your age:</p>
+      <input type="text" name="age" />
+          
+      <br /><br />
+      <input type="submit" />
+    </form>
+  );
+}
+```
+
+That's the HTML (JSX) that needs to be returned to render the form. Note, this doesn't do anything besides rendering HTML. It does not validate, it does not handle submissions. We'll add that back. 
+
+But first, forget about react, and try to remember how this would work without frameworks. How can we read the values of this form using javascript? When we have a reference to a form, with for example `document.getElementById('form')`, we can use `FormData` to read the form values.
+
+```js
+const element = document.getElementByID('form')
+const data = new FormData(element);
+```
+
+Now, `data` is of type `FormData`, when you'd need an object that you can serialize, you'd need to convert it to a plain object first. We use `Object.fromEntries` to do so.
+
+```js
+Object.fromEntries(data.entries());
+```
+
+Next, we'll put that back together and create an `onSubmit` handler. Please remember, when a form is submitted, the form element is available under the `event.currentTarget` property.
+
+```js
+const handleSubmit = (event) => {
+  event.preventDefault();
+
+  const data = new FormData(event.currentTarget);
+  const values = Object.fromEntries(data.entries());
+  console.log(values); // { name: '', age: '' }
+};
+```
+
+That's still pure javascript, without any framework or library magic. Validation can be added at the place that fits you best. It's possible to either use the form data directly or use the plain object.
+
+```js
+// get values using FormData
+const age = data.get('age');
+
+// get values using plain object
+const age = values.age;
+```
+
+When we glue all those pieces together, we'll have our final working react form:
+
+```jsx
+function MyForm() {
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const data = new FormData(event.currentTarget);
+    const values = Object.fromEntries(data.entries());
+
+    if (!Number(values.age)) {
+      alert('Your age must be a number');
+      return;
+    }
+        
+    console.log('submitting', values);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <h1>Hi!</h1>
+
+      <p>Enter your name:</p>
+      <input type="text" name="username" />
+
+      <p>Enter your age:</p>
+      <input type="text" name="age" />
+
+      <br /><br />
+      <input type="submit" />
+    </form>
+  );
+}
+```
+
+How does that look? No more state, no more change handlers, just handing the form submit event, and working with plain HTML/javascript methods. No react specifics and no use of any library other than native methods.
+
+## Bonus, create your own helper method
+
+Now when you're dealing with a lot of forms, you might want to extract a part of this to a helper and reduce the number of duplicate lines across your code.
+
+It's trivial to extract the value extraction part to a separate function:
+
+```js
+function getFormValues(event) {
+  const data = new FormData(event.currentTarget);
+  return Object.fromEntries(data.entries());
+}
+
+export default function MyForm() {
+  const handleSubmit = (event) => {   
+    event.preventDefault();
+    const values = getFormValues(event);
+      
+    console.log('submitting', values); // { name: '', age: '' }
+  };
+
+  // ...
+```
+
+That still results in the need to repeat those `preventDefault` and `getFormValues` calls tho. Every handler will now need start with:
+
+```js
+event.preventDefault();
+const values = getFormValues(event);
+```
+
+That, we can also resolve by creating a callback style wrapper. And you know what? Let's give it a fancy hook-like name. The function isn't that special at all. It doesn't do anything related to hooks, but it looks awesome! And we like awesome things, don't we?
+
+```js
+function useSubmit(fn) {
+  return (event) => {
+    event.preventDefault();
+
+    const values = getFormValues(event);
+    return fn(values);
+  };
+}
+```
+
+And with that "hook", handling forms becomes as trivial as:
+
+```jsx
+export default function MyForm() {
+  const handleSubmit = useSubmit((values) => {        
+    console.log('submitting', values);
+  });
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <h1>Hi!</h1>
+
+      <p>Enter your name:</p>
+      <input type="text" name="username" />
+
+      <p>Enter your age:</p>
+      <input type="text" name="age" />
+
+      <br /><br />
+      <input type="submit" />
+    </form>
+  );
+}
+```
+
+Feel free to use that function in non-react code. It's framework agnostics and works with plain HTML and javascript.
+
+Truth be told, I would not call it `useSubmit` in my production code. Instead, go with something more generic like `onSubmit`, `handleSubmit`, or even `submit`. It's not a hook, and making it look like one, can result in confusion.
+
+--- 
+
+_:wave: I'm Stephan, and I'm building [updrafts.app](http://updrafts.app). If you wish to read more of my unpopular opinions, follow me on [Twitter](https://twitter.com/meijer_s)._
+

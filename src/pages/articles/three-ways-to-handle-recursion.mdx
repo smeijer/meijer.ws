@@ -1,0 +1,148 @@
+---
+title: Three ways to handle recursion
+description: Walking down a tree using a function, loop or generator
+tags: webdev, typescript, javascript
+date: 2021-04-10
+---
+
+This is a follow-up post on [You might not need recursion](https://meijer.ws/articles/you-might-not-need-recursion). In this article, I'm going to show you three different ways to convert a Tree data structure, to a flat list while maintaining a reference to the parent.
+
+Let's start with the input that we're working with: 
+
+```tsx
+type Node = {
+  id: number;
+  children?: Node | Node[];
+};
+
+const tree: Node = {
+  id: 1,
+  children: [
+    {
+      id: 2,
+      children: [{ id: 3 }, { id: 4 }],
+    },
+    {
+      id: 5,
+      children: [{ id: 6 }, { id: 7, children: [{ id: 8 }] }],
+    },
+    {
+      id: 9,
+      children: { id: 10, children: [{ id: 11 }] },
+    },
+  ],
+};
+```
+
+As you can see, this tree has a hierarchical structure. Every node has an `id`, and an optional property called `children` which is either an `array` or an `object`. 
+
+We're going to convert this to a flat array holding items with an `id` and a `parent` property:
+
+```tsx
+type FlatNode = {
+  id: number;
+  parent?: number;
+};
+
+const output: FlatNode[] = [
+  { id: 1 },
+  { id: 2, parent: 1 },
+  { id: 3, parent: 2 },
+  { id: 4, parent: 2 },
+  …
+]
+```
+
+## Recursive function
+
+When working with Tree-like structures like the one above, we tend to write recursive functions by default. Despite the fact that recursion is hard to grasp for a lot of us. Even amongst senior developers, with many years of experience.
+
+When we write a recursive function to handle this, we end up with something like the following:
+
+```tsx
+function flatten(node: Node, parent?: Node): FlatNode[] {
+  const nodes: FlatNode[] = [{ id: node.id, parent: parent?.id }];
+
+  if (Array.isArray(node.children)) {
+    for (const child of node.children) {
+      nodes.push(...flatten(child, node));
+    }
+  } else if (typeof node.children === 'object') {
+    nodes.push(...flatten(node.children, node));
+  }
+
+  return nodes;
+}
+```
+
+When calling `flatten(tree)`, it starts processing at the root node and recursively walks down the tree walking over the children, to return them as a `FlatNode`. To be able to keep the reference to the parent, we need to pass in the parent as an additional function argument.
+
+There is nothing wrong with this function. And I believe that it's perfectly understandable. However, my experience also tells me that I will have coworkers working on the same code base, that find this concept hard to understand.
+
+If you haven't worked with recursion before, and think you'll understand what's going on, I want to challenge you. Take the `tree` object from above, and write this `flatten` function without looking back to my example before you have a working result.
+
+## Flat iteration
+
+This recursive function can also be rewritten to a flat loop. The following example has the same input and output as the recursive function, but all operations take place in a single call frame. There is no recursion and there are no calls to an external function.
+
+```ts
+function flatten(rootNode: Node): FlatNode[] {
+  const nodes: FlatNode[] = [];
+  const queue = [rootNode];
+
+  while (queue.length > 0) {
+    const node = queue.shift();
+
+    if (Array.isArray(node.children)) {
+      for (const child of node.children) {
+        queue.push({ ...child, parent: node });
+      }
+    } else if (typeof node.children === 'object') {
+      queue.push({ ...node.children, parent: node });
+    }
+    
+    nodes.push({ id: node.id, parent: node.parent?.id });
+  }
+
+  return nodes;
+}
+```
+
+Now, I do believe that this is easier to follow for people unfamiliar with recursion. But I also think that the difference in complexity is fading. This is a more complex function than the one from [my earlier article](https://meijer.ws/articles/you-might-not-need-recursion#iterative) because the subject is more advanced as well.
+
+From the performance point of view, in Chrome the recursive function is twice as fast, while in Firefox the non-recursive function is the faster one.
+
+Also, mind that while the output has the same structure, the resulting nodes are in a different order. The recursive function eagerly moves to the child nodes and handles children before siblings. While the loop handles siblings before children. Making both functions merge their results in a different order.
+
+## Recursive generators
+
+Generators are particularly well suited to tackle recursive problems.
+
+In case you've never seen generators before, (overly simplified), generators are functions decorated with an `*` and using the `yield` keyword to return values. 
+
+Let's take a look at the implementation:
+
+```tsx
+function* flatten(node: Node, parent: Node): Generator<FlatNode> {
+  yield { id: node.id, parent: parent?.id };
+
+  if (Array.isArray(node.children)) {
+    for (const child of node.children) {
+      yield* flatten(child, node);
+    }
+  } else if (typeof node.children === 'object') {
+    yield* flatten(node.children, node);
+  }
+}
+```
+
+Now, this solution will return the values in the same order as the recursive function. In fact, they do look quite similar, except that we don't need that temporary `nodes` array to merge the results.
+
+Instead of adding the node to an array, we directly `yield` (return) it, and instead of pushing nested nodes to the same array, we also `yield` those. 
+
+## Final word
+
+Whatever you prefer is fine. I think it's most important to choose the method that's most familiar to your team and most fitting to your requirements. Remember that for inexperienced developers the loop is easier to understand and that it's always the easiest one to debug.
+
+I personally would recommend getting familiar with generators. They look a bit scary at first, but they come with a lot of flexibility and power.
+

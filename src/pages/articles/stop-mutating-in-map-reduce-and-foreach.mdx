@@ -1,0 +1,179 @@
+---
+title: Stop mutating in map, reduce and forEach
+description: Functional methods and side effects don't play well together.
+tags: es6, javascript, development, webdevelopment
+date: 2020-12-14
+---
+
+There are plenty of articles that will try to convince you that you should use the `map`, `filter` and `reduce` methods. Less of them mention `forEach`, and not many of them mention the more traditional for loops as serious alternative. Or when to use `map` over `reduce` or especially `forEach`.
+
+Programming is mostly about opinions and (maybe a bit too much) about something that we like to call "common sense". In this article, I'm sharing my opinion, and write about the functions and the problem of side effects (mutating). Triggered by [this tweet of Erik Rasmussen](https://twitter.com/erikras/status/1338415676709605376?s=20) today, and experience from the past. 
+
+
+ 
+I still remember this change I requested during a code review. It grew among the team, and was even discussed during the next retrospective. PR #1069, July 18, 2019, author *unimportant*.
+
+```js
+path?.map(id => checkID(id)); // eslint-disable-line no-unused-expressions
+```
+
+My request was to change it to:
+
+```js
+path?.forEach(id => checkID(id));
+```
+
+A little background, `path` is a `string[]`, and `checkID` does some validations on that string to see if it's a id-like value. If not, it will throw an error.
+
+Why my change request, and why mention it in the retro? There is no law against calling methods in the map function, or throwing from within it. It was just that it doesn't match with my expectations. And I still believe I'm in my rights there.
+
+## Map
+
+My expectations for `map` is that it "maps" one value to another. Like so:
+
+```js
+const input = [1, 2, 3];
+const output = input.map(value => value * 2);
+```
+
+There is an input value (`[1, 2, 3]`), map does something with it, and returns an entirely new value. `input !== output` and my expectation is that whenever an array value changed, it doesn't match the previous value either. In other words I expect that at least for one element `input[n] !== output[n]`.
+
+We're also able to extract the callback function so that we end up with a pure, testable function. My expectation from a `map` call, is always that it is side effect free. No exceptions.
+
+```js
+function double(value) {
+  return value * 2;
+}
+
+const input = [1, 2, 3];
+const output = input.map(double);
+```
+
+### Expectations
+
+Now let's take that example from Erik
+
+```js
+return items.map((item) => { 
+  item.userId = userId; 
+  return item; 
+});
+```
+
+And build some code around this, so it get's a bit easier to work with.
+
+```js
+function addUserId(userId) {
+  return (item) => { 
+    item.userId = userId; 
+    return item; 
+  }
+}
+
+const items = [
+  { id: 1 },
+  { id: 2 },
+];
+
+const newItems = items.map(addUserId('abc'));
+```
+
+How do you now feel about mutating the item objects inside that `map`? When you look at the small snippet from Erik, you might be ok with it. But after extracting that callback function, I hope it starts to feel wrong. If you don't see the problem I'm trying to highlight, try answer the following questions:
+
+- what does `items[0]` look like?
+- what does `newItems[0]` look like?
+- what does `items === newItems` return?
+- what does `items[0] === newItems[0]` return?
+- do these answers match your expectations?
+
+## forEach
+
+Now let's simply change that map call to a `forEach`. 
+
+```js
+const items = [
+  { id: 1 },
+  { id: 2 },
+];
+
+items.forEach(addUserId('#abc'));
+```
+
+What does this do with your expectations? Did it change anything?
+
+Whenever I see a `forEach`, I expect side effects. Something is being done for (or to) each value in the array. The fact that forEach doesn't have a return value, strengthens this feeling.
+
+And this is entirely personal, but I stopped using the functional forEach calls to mutate the objects as well. I'm still okay with a `forEach(sideEffect)` but I won't use it to mutate values. I'm using the `for of` loops for that, as I find it easier to recognize them as causing mutations.
+
+```js
+const items = [{ id: 1 }, { id: 2 }];
+
+for (const item of items) {
+  item.userId = userId;
+}
+
+return items;
+```
+
+Please compare that to the original, and feel free to share your thoughts in the comments:
+
+```js
+const items = [{ id: 1 }, { id: 2 }];
+
+const newItems = items.map((item) => {
+  item.userId = userId;
+  return item;
+});
+
+return newItems;
+```
+
+## Reduce
+
+Some would say that `reduce` is meant for mutating values. In my opinion, they're wrong. Reduce is meant for when the shape of the container changes. Think conversions between objects and arrays, or even collections to primitives. Or a change of length of the array. Reduce is more about changing the shape of the entire collection, then it's about changing the shape of individual entries. For that, we have `map`.
+
+I've changed this section a bit, so let me quote [Sebastian Larrieu](https://dev.to/sebalr/comment/197ba) from the comments below:
+
+> _reduce is about transforming a collection into a single value, that's why its param is called accumulator._
+
+Sebastian summarizes the purpose of reduce quite well. Think about computing the sum from an array of numbers. An array of numbers go in, and a single number comes out.
+
+```js
+[1, 2, 3, 4, 5].reduce((sum, value) => sum + value, 0);
+```
+
+But the return value doesn't always have to be a primitive. Grouping for example, is another very valid use case for reduce:
+
+```js
+[1, 2, 3, 4, 5].reduce((groups, value) => {
+  const group = value % 2 ? 'odd' : 'even';
+  groups[group].push(value);
+  return groups;
+}, { even: [], odd: [] });
+```
+
+Until very recently (2 days ago basically), I saw one more purpose for reduce. I used it as alternative for a `filter » map` call, because `reduce` can do the same thing, in a single iteration. Think:
+
+```js
+[1, 2, 3, 4, 5]
+  .filter(value => value > 3)
+  .map(value => value * 2);
+```
+
+Or
+
+```js
+[1, 2, 3, 4, 5].reduce((values, value) => {
+  if (value <= 3) {
+    return values;
+  }
+
+  values.push(value * 2)
+  return values;
+}, []);
+```
+
+The difference here is that `reduce` only walks the array a single time, whereas the `filter` and `map` combo walks the array two times. For 5 entries, this isn't a big deal. For larger lists, ~~it might~~ it's no big deal either. _(I thought it was, but [I was wrong](https://dev.to/aprillion/comment/196j9).)_.
+
+The `filter().map()` is easier to read. I made my code harder to read, for no gain at all. And with that, we are back to the "common sense" issue. Programming isn't all black and white. We can't document, spec, or lint every single rule or choice that we have to make. Use what feels best and take your time to consider the alternatives.
+

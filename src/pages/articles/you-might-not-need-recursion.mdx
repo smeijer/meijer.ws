@@ -1,0 +1,145 @@
+---
+title: You might not need recursion
+description: Flat loops as an alternative for complex recursive functions
+tags: webdev, javascript, recursion
+date: 2021-04-09
+---
+
+A recursive function repeatedly calls itself until a condition is met that makes it stop. Recursive functions are tricky to get right. They require a solid exit strategy and will result in an error telling you that the `Maximum call stack size exceeded` if you mess up.
+
+Recursion is often used to process tree-like structures, and sometimes to fetch an unknown number of pages from external paginated APIs. In this article I'm going to show you an alternative for that recursive function, that will improve readability.
+
+I'm going to take the "fetch from remote" example and will be working with a fetch mock. I'm won't explain this function in detail, but it has the same signature as `fetch`, and returns a result existing of `nodes`, an `endCursor`, and `hasMore` to tell us if there are more pages available. The idea is to fetch more pages, as long as `hasMore` equals `true`.
+
+```js
+const db = Array.from({ length: 10 }).map((_, idx) => ({ id: idx }));
+
+async function fetch(url, { body } = {}) {
+  let after = JSON.parse(body || '{}').after;
+
+  if (typeof after === 'undefined') {
+    after = -1;
+  }
+
+  return {
+    json: async () => {
+      const nodes = db.slice(after + 1, after + 3);
+      const lastNode = nodes.slice(-1)[0];
+      const endCursor = lastNode ? lastNode.id : null;
+      const hasMore = lastNode ? lastNode.id < db.length - 1 : false;
+
+      return { nodes, endCursor, hasMore };
+    },
+  };
+}
+
+async function fetchPage({ after }) {
+  return fetch('https://example.com', {
+    body: JSON.stringify({ after }),
+  }).then((response) => response.json());
+}
+```
+
+It's okay to directly forget that snippet. I'm just sharing it so that you have all the code that I'm working with, and you'll be able to run it in a repl if you want to. If you've worked with APIs before, this structure is likely to look familiar.
+
+### Recursive function
+
+Here you'll see the most traditional approach for a recursive function. First, we fetch a page from the API. If there are no more pages (indicated by `hasMore`), we return the result and walk back up the tree. Otherwise, we call `fetchAllNodes` again. Note, that this is the same function as we are currently running. That's what makes it "recursive". The function calls itself.
+
+```js
+async function fetchAllNodes(after) {
+  const result = await fetchPage({ after });
+
+  if (!result.hasMore) {
+    return result.nodes;
+  }
+
+  // recursive call
+  const innerNodes = await fetchAllNodes(result.endCursor);
+  return [...result.nodes, ...innerNodes];
+}
+```
+
+The return statement of this function merges the "direct result" and the "nested result" before it returns. Note that this is not always directly the final result. A function like this walks "down the tree" before it walks back "up the tree". Visualized differently, the call stack looks something like this:
+
+```bash
+fetchAllNodes(undefined)
+  # result.nodes = [{ id: 0 }, { id: 1 }]
+  
+  fetchAllNodes(1)
+    # result.nodes = [{ id: 2 }, { id: 3 }]
+    
+    fetchAllNodes(3)
+      # result.nodes = [{ id: 4 }, { id: 5 }]
+      
+      fetchAllNodes(5)
+        # result.nodes = [{ id: 6 }, { id: 7 }]
+        
+        fetchAllNodes(7)
+          # result.nodes = [{ id: 8 }, { id: 9 }]
+          return [{ id: 8 }, { id: 9 }]
+ 
+        # merge results
+        return [{ id: 6 }, { id: 7 }, { id: 8 }, { id: 9 }]
+        
+      # merge results
+      return [{ id: 4 }, { id: 5 }, { id: 6 }, …, …, { id: 9 }]
+      
+     # merge results
+    return [{ id: 2 }, { id: 3 }, { id: 4 }, …, …, …, …, { id: 9 }]
+    
+  # merge results
+  return [{ id: 0 }, { id: 1 }, { id: 2 }, …, …, …, …, …, …, { id: 9 }]]
+```
+
+You'll see that the fifth call to this function is wrapped by the fourth, which is wrapped by the third, which is wrapped by the second, which is wrapped by the first. 
+
+Now, this is a request chain that completes in 5 calls. Imagine this when fetching pages from a remote with tens, or even hundreds of pages. The call stack keeps growing, and all variables inside that function stay in memory. Not just one page-result, but all of them. Merged, as well as individual. Garbage collection can only clean up after the final result has been returned, and all requests have come to an end.
+
+## Tail call optimization
+
+Tail call optimization should be able to reduce the performance hunger of the situation above, by optimizing functions that have a function call as a return statement. 
+
+To make use of this optimization, we should return the function call instead of the node array. To be able to still merge the results, we need to adjust the function signature and pass the current result as argument.
+
+```js
+async function fetchAllNodes(after, nodes = []) {
+  const result = await fetchPage({ after });
+  const allNodes = [...nodes, ...result.nodes];
+
+  if (!result.hasMore) {
+    return allNodes;
+  }
+
+  // recursive tail call
+  return fetchAllNodes(result.endCursor, allNodes);
+}
+```
+
+Even though tail call optimization is part of the ECMAScript specification, at the moment of writing, Safari is the only browser that [has this implemented](https://kangax.github.io/compat-table/es6/#test-proper_tail_calls_(tail_call_optimisation)). So which style you prefer, is mostly a personal preference at the time being.
+
+## Iterative
+
+Like I already mentioned in the title; _you might not need recursion_. The functions above can be rewritten to a more simple while loop:
+
+```js
+async function fetchAllNodes() {
+  const nodes = [];
+  let after;
+
+  while (after !== null) {
+    const result = await fetchPage({ after });
+    nodes.push(...result.nodes);
+    after = result.endCursor;
+  }
+
+  return nodes;
+}
+```
+
+It looks so simple and obvious when you see it. And yet, there are articles that will explain how to fetch recursively. Compared to the recursive version, the last example has a reduced memory footprint, because we don't need to keep track of all frames and in-between results. This is a single function call, in a single frame. 
+
+When you run into more complex scenarios, it will be easier to add things like error handling, scheduling, retries, or even to add workers that will do stuff in parallel.
+
+But maybe even more importantly; the loop is way easier to read and understand.
+

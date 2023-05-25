@@ -1,0 +1,154 @@
+---
+title: Trivia or Job Interview?
+description: The interview process is broken, I can build, I can't play.
+tags: javascript, webdev, interview
+date: 2021-05-04
+---
+
+I've built multiple SaaS, and some are used by multinationals. Yet, I fail miserably at tricky interview questions. In this article, I'm going to show you a few recent questions I got, and share my thoughts.
+
+In case you haven't seen any of my work. In the last 12 months, I've launched [testing-playground.com](https://testing-playground.com), [updrafts.app](https://updrafts.app), [rake.red](https://rake.red) and a bunch of [open source projects](https://meijer.ws/open-source). I like to believe that I know what I'm talking about.
+
+## Question 1
+
+> *Here is a simple design of a navbar menu, we are struggling to stick the `login` button to the right edge of the `<nav>` (borders are added for a better understanding).*
+
+![image](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/felxzv89t6jhfx4m498x.png)
+
+```html
+<nav>
+  <a href="#">Home</a>
+  <a href="#">Products</a>
+  <a href="#">About</a>
+  <a href="#">Log in</a>
+</nav>
+
+<style>
+  nav { display: flex }
+  a { margin: 0.4rem; padding: 0.4rem; }
+</style>
+```
+
+**Options - Single Choice**
+
+- `a:last-of-type { margin-left: auto; }`
+- `a:last-of-type { margin-left: 100%; }`
+- `a:last-of-type { float: right; }`
+- `a:last-child { margin-left: auto; }`
+- `nav:last-child { float: right; }`
+
+### My thoughts
+
+The interview existed of 12 questions, that had to be answered within 16 minutes. That sounds doable, until you meet the trick questions.
+
+Have you thought about the question? I think that `a:last-child { margin-left: auto; }` is the correct answer. But `a:last-of-type { margin-left: auto; }` works as well. As this is an automated interview, I can only hope that I choose whatever the interviewer prefers. As `a:last-of-type` is listed first, this is easy to get tricked by. Time is limited, so when the candidate is confident that an option works, they are going to choose that, and move on to the next question.
+
+I usually tend to group the left and right options, and add a `justify-content: space-between`. Why is that not an option? Is that wrong? Can we talk about it?
+
+## Question 2
+
+```tsx
+const raiseError = (message: string) => {
+  const err = new MyError(message);
+  throw err;
+};
+```
+
+What is the return type of this function in TypeScript?
+
+**Options - Single Choice**
+
+- `MyError`
+
+- `void`
+- `null`
+
+- `undefined`
+
+- `never`
+
+### My thoughts
+
+The clock was ticking, and I chose `void`. As that's how I would annotate this function. Makes sense, right? Think again! The return type of this function isn't `void`, it's `never`. As it's impossible for this function to return.
+
+To make it return `void`, the throwing should be conditional. (wrapped with an `if`)
+
+I believe this question is wrong because it doesn't say much about your TypeScript experience. I mean, how many dedicated throw functions do you have in your codebase? Most functions are constructed in a way that they have a return path. Either with a value, undefined, or void.
+
+And when you do come across this edge case in your day job, how hard would it be to place your cursor at the function, and wait for that pretty tool-tip to appear, telling you the exact return type?
+
+## Question 3
+
+Which HTTP methods are idempotent?
+
+**Options - Multiple Choice**
+
+- All of them are idempotent as it is a stateless protocol
+- None of the HTTP methods are idempotent.
+- All of them except for POST, CONNECT and sometimes PATCH.
+- All of them except for POST, OPTIONS and TRACE.
+
+### My thoughts
+
+First of all, this was a test for a `frontend developer` position. Are frontend developers really expected to know if certain HTTP methods are idempotent or not? Isn't that for the API developers to know? I really did not know the answer to this question.
+
+After the test, I found out that the HTTP spec does have this specified, while I assumed that it was for the API spec (like `open-api`) to decide.
+
+Anyways, I guessed that `all of them` are idempotent, as HTTP doesn't hold state. My database does. But according to [MDN](https://developer.mozilla.org/en-US/docs/Glossary/Idempotent#technical_knowledge), it should have been `all of them except for POST, OPTIONS, and TRACE`. Today I learned.
+
+Now the question is, what if I make my `POST` handler `idempotent`? Doesn't this question depend a tiny bit on the API that we're talking about?
+
+## Question 4
+
+Which of the following browser actions/events are triggered by changing the CSS property `opacity`?
+
+**Options - Multiple Choice**
+
+- Layout operations performed
+- Painting/Rasterizing
+- Page composited together
+- None of the above
+
+### My thoughts
+
+Seriously? For what would we need this? I guess that the browser does a `repaint`, so that excludes the last option. `Opacity` doesn't change the layout, so there wouldn't be any `layout operations`. But what about `Page composited together`? I don't know. I really don't. Does that make me a bad developer? 
+
+Let's move on. Do you still want that opacity on your navbar?
+
+## Trick Questions
+
+There were six more weird technical questions that made more or less sense than the four above. But they all had one thing in common. It felt like they were trying to trick me, and it are questions that I don't need to know to be able to develop solid applications.
+
+When I would need to know it, I'm able to open my browser, and find the right answer in a matter of minutes. I'm a developer, but I suck at trivia.
+
+Two more questions to wrap this up? Remember... your time is ticking:
+
+**Question 11**
+
+How would you explain a complicated technical problem to a colleague having none to very little technical understanding?
+
+> _Write answer here..._
+
+**Question 12**
+
+How would you go about getting a buy-in for your project from multiple stakeholders at work?
+
+> _Write answer here..._
+
+I don't know what you want me to say. Do you have more details? Can I get another coffee and 30 minutes of your time? Let's talk about it.
+
+## My score
+
+The "nice" thing about this automated test, is that you'll get your score right away. I had a total score of 47%. I suck at React, HTTP, Communication, well, basically in every area.
+
+![image](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ekbriyjxvp2lyoutk8vr.png)
+
+As expected, a few hours after my submission, I got the following mail. A little surprised that that part wasn't automated as well.
+
+> Hi Stephan,
+> 
+> Thanks for doing the skills test! It was a tough decision as we've had so many great applications, but we've decided to move forward with other candidates. **Really looking for folks who've got more experience with javascript.**
+
+Well, this really was a motivational experience _(not)_. Do you know the saying _"You've dodged a bullet?"_. That's how I came to think about this kind of interview tests. 
+
+As I also operate on the hiring side, this provides me valuable insights into how the industry works. But if any recruiting person is reading this, please stop it. You're hiring developers specialized in interviews. Not in creating awesome software.

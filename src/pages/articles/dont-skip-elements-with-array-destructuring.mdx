@@ -1,0 +1,95 @@
+---
+title: Don't skip elements with array destructuring
+description: Prefer [].slice(2) over [,,rest]
+tags: es6, javascript, development, webdev
+date: 2020-12-22
+---
+
+> *"Did you know that you can use an empty 'placeholder' comma, to skip elements when destructuring arrays?"*
+
+That was the "[*Javascript Tip tweet*](https://twitter.com/SimonHoiberg/status/1341371004459884544?s=20)" by [Simon Høiberg](https://twitter.com/SimonHoiberg) that was shown on my timeline earlier today. The tweet includes an image showing the following example code:
+
+```js
+const users = [
+  'ravinwashere',
+  'FrancescoCiull4',
+  'jackdomleo7',
+  'dmokafa',
+];
+
+const [, , ...restUsers] = users;
+
+console.log(restUsers);
+```
+
+Did you read the code? Nice! So please try to answer the following question without looking back: "*How many users were skipped*?" How hard did you find it to figure that out?
+
+What if I told you that there was a better way to skip elements? One that doesn't depend on how many commas were typed. One that has been around for ages, and that shows you the number of elements to skip, with a clear and hard to miss integer.
+
+```javascript
+const remainingUsers = users.slice(2);
+```
+
+So, how was that? 
+
+That should only be hard when you're not familiar with the method. The `slice` method accepts two arguments, `start: number`, and an optional `end: number`. When the start argument is a positive number, it skips `n` elements. Start can also be negative so that it starts slicing from the end of the array. The end number is optional and tells slice what the end index is. This is nice, because `[, , ...restUsers, lastUser]` is not possible.
+
+Another method that can be used, is `splice`. [Slice][slice] and [splice][splice] look a lot alike, but they are not the same! Where `slice` won't change the source array, `splice` does.  Slice can be used to create a new subset of the source array by removing elements from the start and/or end. Splice can be used to mutate the source array by removing and adding elements. 
+
+So just to fix that one code snippet by Simon, if you need to skip a few, please use `slice`. 
+
+```js
+const users = [
+  'ravinwashere',
+  'FrancescoCiull4',
+  'jackdomleo7',
+  'dmokafa',
+];
+
+const remainingUsers = users.slice(2);
+// ['jackdomleo7', 'dmokafa']
+```
+
+## Array Destructuring
+
+Now what about destructuring? It's definitely useful! It's just that using it to skip elements like that example, is confusing! How many commas did we type again? 
+
+When it's not confusing, is when you need to separate the first 2 or 3 from the others. Imagine that you want to render something like `this tweet was liked by stephan, amelia, and 3 others`. Oh, and just because it's a rest element, doesn't mean that you need to name the variable `rest`. Please keep using descriptive names.
+
+In other words, something like this:
+
+```js
+const users = [
+  'ravinwashere',
+  'FrancescoCiull4',
+  'jackdomleo7',
+  'dmokafa',
+];
+
+const [first, second, ...others] = users;
+
+const caption = `liked by ${first}, ${second} and ${others.length} others`; 
+```
+
+I'm not going into the details about slice or splice here. I'm just trying to give a bit of color and context to a bite-sized tweet. If you're interested in reading more about those methods, please let me know in the comments, and I'm happy to dedicate an article to those methods.
+
+For now, check MDN if you want to read more about [slice][slice] or [splice][splice].
+
+## Exceptions
+
+One more thing. As always; there are exceptions where we don't have many other options than using destructuring to skip elements. Those exceptions are fine. For example, a custom react hook where you don't need the first returned value:
+
+```js
+const [, setState] = useCustomState();
+```
+
+When you come across a requirement like that, please consider adding an unused variable instead. Most linters are configured in such a way, that it won't report them if they are the leading part of an array, or otherwise ignore them when they are prefixed with an `_`.
+
+```js
+const [_state, setState] = useCustomState();
+```
+
+Please decide the best way to approach things, on a case-by-case basis.
+
+[slice]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice
+[splice]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice

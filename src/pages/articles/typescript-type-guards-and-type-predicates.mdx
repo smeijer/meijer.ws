@@ -1,0 +1,119 @@
+---
+title: TypeScript Type Guards and Type Predicates
+description: How to use Type Guards to narrow types in TypeScript.
+tags: webdev, typescript, typeguards, development
+date: 2021-03-22
+---
+
+Union types enable us to accept parameters of multiple, different types. Provide either type `x` or `y`. Sometimes, these types aren't 100% compatible. They serve the same goal but have different properties. At a later stage, we might want to run some code based on the exact type. This is where type guards and type predicates come in.
+
+## Getting Started
+
+Let's start with declaring some types. I like to look at some code when trying to explain stuff. It makes me grasp the concept better.
+
+Assume that we are building a blog and have two types, that form a single union.
+
+```ts
+type Article = {
+  frontMatter: Record<string, unknown>;
+  content: string;
+}
+
+type NotFound = { 
+  notFound: true;
+}
+
+type Page = Article | NotFound;
+```
+
+The concrete types are `Article` and `NotFound`, while `Page` is the union. The goal is to write a function to render a page. I'm not going into details about the requirements of checking if a blog exists, and when to invoke that `notFound` function, but imagine that we have a single render function. Based on the contents in the database, we render either the article, or a not found page. Something like:
+
+```ts
+function handleRequest(slug: string): string {
+  const article = db.articles.findOne({ slug });
+  const page = article ?? { notFound: true };
+  return render(page);
+}
+```
+
+The challenge that we're dealing with, is when we need to know if `handleRequest` passed an `Article` or a `NotFound` type to `render`. In JavaScript, you'd use something like:
+
+```js
+function render(page: Page) {
+  if (page.content) {
+    return page.content;
+  }
+
+  return '404 — not found';
+}
+```
+
+But in TypeScript, that's not going to work. It will throw an Error mentioning that the property `content` does not exist on type `Page`.
+
+```shell
+Property 'content' does not exist on type 'Page'.
+  Property 'content' does not exist on type 'NotFound'.
+```
+
+That's because not all the types in the union include that property. To fix this, we need to add a type guard.
+
+## Type Guard
+
+A type guard is an expression that performs a runtime check that guarantees the type in the current scope.
+
+The quick fix is to replace that `page.content` check with something TypeScript would understand:
+
+```ts
+function render(page: Page) {
+  if ('content' in page) {
+    return page.content;
+  }
+
+  return '404 — not found';
+}
+```
+
+This works, but it does come at a maintainability cost. The benefit of TypeScript is that it will warn us when we remove a property that's being used. With this change, TypeScript won't warn us when we rename the `content` property to `body` for example.  Or when we made a typo in `'content'`.
+
+This is why type predicates are interesting.
+
+## Type Predicate
+
+The type predicate, is the return type of a function like this:
+
+```ts
+function isArticle(page: Page): page is Article {
+  return 'content' in page;
+}
+```
+
+It's not the whole function that's the predicate. The predicate is `page is Article`. Also good to know, `'content' in page` is not a type guard in this context. It's a simple expression. The type guard is the `if` statement that causes TypeScript to narrow the type.
+
+So, the function above looks quite similar to that earlier type guard and comes with the same maintainability issue. But, now that we've extracted it, we can also solve that. 
+
+```ts
+function isArticle(page: Page): page is Article {
+  return typeof (page as Article).content !== 'undefined';
+}
+```
+
+This works and will error when we refactor `Article` and remove the `content` property.
+
+Functions that are declared as type predicate, must return a boolean. When the return value is `true`, TypeScript assumes that the return type is the one that's declared in the type predicate. If this function returns true, TypeScript assumes that the provided argument `page` is of type `Article`.
+
+When we'd call this method inside our render function:
+
+```ts
+function render(page: Page) {
+  if (isArticle(page)) {
+    return page.content;
+  }
+
+  return '404 — not found';
+}
+```
+
+TypeScript knows that `page.content` exists, because inside the if scope, `page` is of type `Article`. The `if (isArticle(page))` expression, is a type guard.
+
+After the if statement, `page` is not of type `Article`. And because our union only has 2 types, TypeScript is also aware that it must be of type `NotFound`  at that stage.
+
