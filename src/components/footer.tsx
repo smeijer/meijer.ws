@@ -25,8 +25,8 @@ export function Footer() {
                 <NavLink href="/">/</NavLink>
                 <NavLink href="/articles">Articles</NavLink>
                 <NavLink href="/projects">Projects</NavLink>
-                <NavLink href="/about">About</NavLink>
                 <NavLink href="/uses">Uses</NavLink>
+                <NavLink href="/about">About</NavLink>
               </div>
               <p className="text-sm text-zinc-400 dark:text-zinc-500">
                 &copy; {new Date().getFullYear()} {profile.author.name}. All rights

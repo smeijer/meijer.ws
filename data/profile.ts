@@ -19,7 +19,8 @@ export const profile = {
   author: {
     name: 'Stephan Meijer',
     pitch: 'Software engineer, creator, and open source maintainer.',
-    bio: `I'm Stephan, a software engineer and open source maintainer based in Leeuwarden, Netherlands. I'm the maker of several open source projects, including testing-playground.com where I help developers improve their testing skills.`,
+    bio: `Startup Engineer. Perhaps you use some of my [open source](/projects?q=open-source) projects, or [products](/projects?q=product). If so, I'd love to [hear from you](https://go.meijer.ws/twitter)!`,
+    // bio: ` a software engineer and open source maintainer based in Leeuwarden, Netherlands. I'm the maker of several open source projects, including testing-playground.com where I help developers improve their testing skills.`,
     email: 'stephan@meijer.ws',
     profilePhoto: portraitImage,
     avatar: avatarImage,

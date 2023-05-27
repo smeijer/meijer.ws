@@ -1,11 +1,12 @@
 import Head from 'next/head'
-import Image from 'next/image'
 
 import { Card } from '@/components/card'
 import { SimpleLayout } from '@/components/simple-layout'
 import { profile } from '@/../data/profile';
 import { Button } from "@/components/button";
-
+import { useSearchParams } from "next/navigation";
+import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { ReactNode } from "react";
 
 function LinkIcon(props) {
   return (
@@ -18,7 +19,27 @@ function LinkIcon(props) {
   )
 }
 
+function FilterButton({ children, query }: { children: ReactNode, query?: string }) {
+  const param = useSearchParams();
+  const q = param.get('q') || null;
+
+  return (
+    <Button variant={q === query ? 'primary' : 'secondary'} href={`/projects${query ? `?q=${query}` : ''}`} scroll={false}>{children}</Button>
+  )
+}
+
 export default function Projects() {
+  const [animationParent] = useAutoAnimate()
+
+  const params = useSearchParams();
+  const query = params.get('q');
+
+  const projects = query === 'product'
+    ? profile.projects.entries.filter(x => x.tags.includes('saas'))
+    : query === 'open-source'
+    ? profile.projects.entries.filter(x => x.links.github)
+    : profile.projects.entries;
+
   return (
     <>
       <Head>
@@ -26,11 +47,19 @@ export default function Projects() {
         <meta name="description" content={profile.projects.title} />
       </Head>
       <SimpleLayout title={profile.projects.title} intro={profile.projects.intro}>
+        <h3 className="font-bold">Filter by type:</h3>
+        <div className="flex gap-4 mt-4">
+          <FilterButton query="all">all</FilterButton>
+          <FilterButton query="product">product</FilterButton>
+          <FilterButton query="open-source">open-source</FilterButton>
+        </div>
+
         <ul
+          ref={animationParent}
           role="list"
-          className="grid grid-cols-1 gap-x-12 gap-y-16 sm:grid-cols-2 lg:grid-cols-3"
+          className="mt-16 sm:mt-20 grid grid-cols-1 gap-x-12 gap-y-16 sm:grid-cols-2 lg:grid-cols-3"
         >
-          {profile.projects.entries.map((project) => {
+          {projects.map((project) => {
             const link = project.link ? new URL(project.link) : null;
             const linkLabel = link ? link.hostname : null;
 
@@ -39,9 +68,9 @@ export default function Projects() {
                 <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-md shadow-zinc-800/5 ring-1 ring-zinc-900/5 dark:border dark:border-zinc-700/50 dark:bg-zinc-800 dark:ring-0">
                   {project.logo && <div dangerouslySetInnerHTML={{ __html: project.logo.content }} className="h-8 w-8 [&>*]:h-8 [&>*]:w-8" />}
                 </div>
-                <h2 className="mt-6 text-base font-semibold text-zinc-800 dark:text-zinc-100">
+                <div className="mt-6 text-base font-semibold text-zinc-800 dark:text-zinc-100">
                   {project.link ? <Card.Link href={project.link}>{project.name}</Card.Link> : project.name}
-                </h2>
+                </div>
                 <Card.Description className="flex-auto">{project.description}</Card.Description>
                 {project.link ? <p className="relative z-10 mt-6 flex text-sm font-medium text-zinc-400 transition group-hover:text-teal-500 dark:text-zinc-200">
                   <LinkIcon className="h-6 w-6 flex-none" />

@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import Image from 'next/image'
+import Image, { StaticImageData } from "next/image";
 import Link, { LinkProps } from "next/link";
 import clsx from 'clsx'
 
@@ -17,8 +17,11 @@ import { date } from '@/lib/date'
 import { generateRssFeed } from '@/lib/rss-feed'
 import { getAllArticles } from '@/lib/articles'
 import { profile } from '@/../data/profile';
-import { ComponentType, useState } from "react";
+import { ComponentType, ReactNode, useState } from "react";
 import { Newsletter } from "@/components/newsletter";
+import Markdown from "markdown-to-jsx";
+import stripIndent from "strip-indent";
+import heroImage from '@/images/hero.png';
 
 
 
@@ -81,8 +84,6 @@ function SocialLink({ icon: Icon, ...props }: { icon: ComponentType<any> } & Lin
   )
 }
 
-
-
 function Resume() {
   return (
     <div className="rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40">
@@ -136,30 +137,6 @@ function Resume() {
   )
 }
 
-function Photos() {
-  return (
-    <div className="mt-16 sm:mt-20">
-      <div className="-my-4 flex justify-center gap-5 overflow-hidden py-4 sm:gap-8">
-        {profile.photos.map((image, imageIndex) => (
-          <div
-            key={imageIndex}
-            className={clsx(
-              'relative aspect-[9/10] w-44 flex-none overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-800 sm:w-72 sm:rounded-2xl',
-              imageIndex % 2 ? '-rotate-2' : 'rotate-2',
-            )}
-          >
-            <Image
-              src={image.src}
-              alt=""
-              sizes="(min-width: 640px) 18rem, 11rem"
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
 
 export default function Home({ articles }) {
   return (
@@ -168,24 +145,46 @@ export default function Home({ articles }) {
         <title>{`${profile.author.name} - ${profile.author.pitch}`}</title>
         <meta name="description" content={profile.author.bio} />
       </Head>
-      <Container className="mt-9">
-        <div className="max-w-2xl">
-          <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-            {profile.author.pitch}
-          </h1>
-          <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            {profile.author.bio}
-          </p>
-          <div className="mt-6 flex gap-6">
-            {profile.links.twitter ? (<SocialLink href={profile.links.twitter} aria-label="Follow on Twitter" icon={TwitterIcon} />) : null}
-            {profile.links.github ? (<SocialLink href={profile.links.github} aria-label="Follow on GitHub" icon={GitHubIcon} />): null}
-            {profile.links.linkedin ? (<SocialLink href={profile.links.linkedin} aria-label="Follow on LinkedIn" icon={LinkedInIcon} />) : null}
-            {profile.links.instagram ? (<SocialLink href={profile.links.instagram} aria-label="Follow on Instagram" icon={InstagramIcon} />) : null}
+
+
+      <Container className="bg-zinc-50 dark:bg-black sm:pl-8">
+        <div className="flex gap-4 sm:gap-16 items-center flex-col sm:flex-row">
+          <div className="pt-16 lg:py-32 sm:pb-16 lg:pb-32 sm:w-1/2">
+            <h2 className="text-4xl font-bold tracking-tight text-zinc-500 dark:text-zinc-400 sm:text-5xl">
+              I'm <span className="text-zinc-900 dark:text-zinc-100">{profile.author.name.split(' ')[0]}</span>
+            </h2>
+            <p className="prose mt-6 text-xl sm:text-2xl text-zinc-600 dark:text-zinc-400">
+              <Markdown>{stripIndent(profile.author.bio)}</Markdown>
+            </p>
+            <div className="mt-6 flex gap-6">
+              {profile.links.twitter ? (<SocialLink href={profile.links.twitter} aria-label="Follow on Twitter" icon={TwitterIcon} />) : null}
+              {profile.links.github ? (<SocialLink href={profile.links.github} aria-label="Follow on GitHub" icon={GitHubIcon} />): null}
+              {profile.links.linkedin ? (<SocialLink href={profile.links.linkedin} aria-label="Follow on LinkedIn" icon={LinkedInIcon} />) : null}
+              {profile.links.instagram ? (<SocialLink href={profile.links.instagram} aria-label="Follow on Instagram" icon={InstagramIcon} />) : null}
+            </div>
+          </div>
+
+          <div className="flex justify-center py-8 sm:w-1/2">
+            <Image
+              src={profile.author.profilePhoto}
+              alt=""
+              sizes="(min-width: 1024px) 32rem, 20rem"
+              className="w-full h-72 sm:max-w-xs sm:h-auto aspect-video sm:aspect-square rounded-2xl object-cover object-[0_-20px] sm:object-[0_0] sm:rotate-3"
+            />
           </div>
         </div>
+
+
       </Container>
-      <Photos />
-      <Container className="mt-24 md:mt-28">
+
+      <Container.Outer className="bg-zinc-50 dark:bg-black">
+        <div className="relative h-12">
+
+        <div className="absolute top-0 -left-px -right-px rounded-t-2xl bg-white dark:bg-zinc-900 h-12 border-b-0 border border-zinc-100 dark:border-zinc-300/10 "/>
+        </div>
+      </Container.Outer>
+
+      <Container className="mt-2 md:mt-14">
         <div className="mx-auto grid max-w-xl grid-cols-1 gap-y-20 lg:max-w-none lg:grid-cols-2">
           <div className="flex flex-col gap-16">
             {articles.map((article) => (

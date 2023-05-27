@@ -17,10 +17,11 @@ async function main() {
 
     // if there aren't any public packages, it's about the repo.
     if (!packages.length) {
+
       result.push({
         ...repo,
         highlight: Boolean(project.highlight),
-        tags: project.tags?.sort() || [],
+        tags: repo.tags?.sort() || [],
         name: project.name || repo.name,
         description: project.description || repo.description,
       });
