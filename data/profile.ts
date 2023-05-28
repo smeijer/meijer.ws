@@ -20,7 +20,6 @@ export const profile = {
     name: 'Stephan Meijer',
     pitch: 'Software engineer, creator, and open source maintainer.',
     bio: `Startup Engineer. Perhaps you use some of my [open source](/projects?q=open-source) projects, or [products](/projects?q=product). If so, I'd love to [hear from you](https://go.meijer.ws/twitter)!`,
-    // bio: ` a software engineer and open source maintainer based in Leeuwarden, Netherlands. I'm the maker of several open source projects, including testing-playground.com where I help developers improve their testing skills.`,
     email: 'stephan@meijer.ws',
     profilePhoto: portraitImage,
     avatar: avatarImage,
@@ -122,6 +121,16 @@ export const profile = {
         title: 'Blue Yeti X USB Microphone',
         description: 'I use this for all of my video calls. It’s a great mic and I love the built-in gain meter. I have it mounted on a Blue Compass boom arm, which is a great addition.',
         // link: 'https://www.logitechg.com/products/streaming-gear/yeti-x-professional-microphone.988-000244.html'
+      },
+      {
+        group: 'Workstation',
+        title: 'Sony h.ear (WH-H900N) Bluetooth Headphones',
+        description: 'I use these headphones to cancel out everyone near me. They’re comfortable, have great sound, a good battery life, and great to cancel out the noise around me.',
+      },
+      {
+        group: 'Workstation',
+        title: 'JBL Live PRO+ Bluetooth Earbuds',
+        description: 'I use these earbuds when I’m on the go. They’re good for phone calls, and have great noise cancellation. They\'re not as comfortable as the Sony headphones, but they\'re much easier to carry around.',
       },
       {
         group: 'Workstation',
