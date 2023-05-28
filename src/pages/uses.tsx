@@ -5,6 +5,17 @@ import { Section } from '@/components/section'
 import { SimpleLayout } from '@/components/simple-layout'
 import { profile } from '@/../data/profile';
 import { ReactNode } from "react";
+import { SocialHead } from "@/components/social-head";
+
+export const meta = {
+  title: `Uses - ${profile.author.name}`,
+  description: profile.uses.title,
+  image: {
+    words: `What ${profile.author.callSign} uses`,
+    image: '/smeijer.jpg',
+    author: false,
+  },
+}
 
 function ToolsSection({ children, ...props }: { title: ReactNode, children?: ReactNode }) {
   return (
@@ -38,10 +49,7 @@ for (let entry of profile.uses.entries) {
 export default function Uses() {
   return (
     <>
-      <Head>
-        <title>{`Uses - ${profile.author.name}`}</title>
-        <meta name="description" content={profile.uses.title} />
-      </Head>
+      <SocialHead {...meta} />
       <SimpleLayout title={profile.uses.title} intro={profile.uses.intro}>
         <div className="space-y-20">
           {Object.entries(grouped).map(([title, entries]) => (

@@ -4,7 +4,7 @@
         <title>Stephan Meijer</title>
         <link>http://localhost:3000</link>
         <description>All of my long-form thoughts on programming, growth, world views and more, collected in chronological order.</description>
-        <lastBuildDate>Fri, 26 May 2023 07:22:01 GMT</lastBuildDate>
+        <lastBuildDate>Sun, 28 May 2023 19:52:23 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <image>
@@ -1108,7 +1108,7 @@ handle <span class="token number">3</span>
             <guid>http://localhost:3000/articles/simplify-your-dev-environment-with-pm2</guid>
             <pubDate>Sun, 21 Mar 2021 00:00:00 GMT</pubDate>
             <description><![CDATA[Use PM2 to turn multiple startup commands into a single one.]]></description>
-            <content:encoded><![CDATA[<p>Do you recognize that scenario were starting a project in dev mode, requires multiple actions to be taken? I think we all have or had those cases. Start a local database, start a node app, and maybe even start some file watchers to watch and compile css files or other assets.</p>
+            <content:encoded><![CDATA[<p>Do you recognise that scenario were starting a project in dev mode, requires multiple actions to be taken? I think we all have or had those cases. Start a local database, start a node app, and maybe even start some file watchers to watch and compile css files or other assets.</p>
 <p>We are well aware that there are recommended ways to solve this. If you&#x27;d ask around, you&#x27;ll often be advised to solve this with docker (compose).</p>
 <p>There is an easier way to this tho! One that doesn&#x27;t directly make you a DevOps, but lets you stick to the tech that you&#x27;re comfortable with.</p>
 <h2>Getting Started</h2>

@@ -14,6 +14,18 @@ import {
   TwitterIcon,
 } from '@/components/social-icons'
 import { ComponentType, Fragment, ReactComponentElement, ReactNode } from "react";
+import { getPublicURL } from "@/lib/url";
+import { SocialHead } from "@/components/social-head";
+
+export const meta = {
+  title: `About - ${profile.author.name}`,
+  description: profile.author.bio,
+  image: {
+    words: `About ${profile.author.callSign}`,
+    image: profile.author.imagePath,
+    author: false,
+  },
+}
 
 type SocialLinkProps = {
   className?: string;
@@ -52,10 +64,7 @@ export default function About() {
 
   return (
     <>
-      <Head>
-        <title>{`About - ${profile.author.name}`}</title>
-        <meta name="description" content={profile.author.bio} />
-      </Head>
+      <SocialHead {...meta} />
       <Container className="mt-16 sm:mt-32">
         <div className="grid grid-cols-1 gap-y-16 lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:gap-y-12">
           <div className="lg:pl-20">

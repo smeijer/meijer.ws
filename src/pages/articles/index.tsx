@@ -7,6 +7,18 @@ import { getAllArticles } from '@/lib/articles'
 import { profile } from '@/../data/profile';
 import { getTags, TagFilters, useQuery } from "@/components/tag-filters";
 import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { PageMeta, SocialHead } from "@/components/social-head";
+import Image from "next/image";
+
+export const meta: PageMeta = {
+  title: `Articles - ${profile.author.name}`,
+  description: profile.blog.title,
+  image: {
+    words: `Ideas, experiences, and opinions, from over 15 years of product work.`,
+    image: profile.author.imagePath,
+    author: false,
+  }
+}
 
 function Article({ article }) {
   return (
@@ -25,6 +37,7 @@ function Article({ article }) {
         <Card.Description>{article.description}</Card.Description>
         <Card.Cta>Read article</Card.Cta>
       </Card>
+
       <Card.Eyebrow
         as="time"
         className="mt-1 hidden md:block"
@@ -43,10 +56,7 @@ export default function ArticlesIndex({ articles }) {
 
   return (
     <>
-      <Head>
-        <title>{`Articles - ${profile.author.name}`}</title>
-        <meta name="description" content={profile.blog.title} />
-      </Head>
+      <SocialHead {...meta} />
       <SimpleLayout
         title={profile.blog.title}
         intro={profile.blog.intro}
@@ -68,6 +78,7 @@ export default function ArticlesIndex({ articles }) {
 export async function getStaticProps() {
   const articles = (await getAllArticles())
     .map(({ component, ...meta }) => meta);
+
   return {
     props: {
       articles,

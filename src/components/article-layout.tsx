@@ -7,6 +7,11 @@ import { date } from '@/lib/date'
 import { profile } from '@/../data/profile';
 import { Share } from "@/components/share";
 import React from "react";
+import { SocialHead } from "@/components/social-head";
+import Image from 'next/image'
+
+import portraitImage from '@/images/portrait.jpg'
+
 
 function ArrowLeftIcon(props) {
   return (
@@ -35,13 +40,12 @@ export function ArticleLayout({
     return children
   }
 
-
   return (
     <>
-      <Head>
-        <title>{`${meta.title} - ${profile.author}`}</title>
-        <meta name="description" content={profile.author.pitch} />
-      </Head>
+      <SocialHead
+        title={`${meta.title} - ${profile.author}`}
+        description={meta.description}
+      />
       <Container className="mt-16 lg:mt-32">
         <div className="xl:relative">
           <div className="mx-auto max-w-2xl">
@@ -61,6 +65,11 @@ export function ArticleLayout({
                 <h1 className="mt-6 text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
                   {meta.title}
                 </h1>
+
+                {meta.cover && <div className="mt-8 w-full h-96 overflow-hidden relative rounded-2xl">
+                  <Image fill className="object-cover" src={meta.cover} alt="" />
+                </div>}
+
                 <time
                   dateTime={meta.date}
                   className="order-first flex items-center text-base text-zinc-400 dark:text-zinc-500"

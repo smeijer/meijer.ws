@@ -1,5 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+## generated
+/src/pages/api/og/pages.json
+
 # dependencies
 /node_modules
 /.pnp
@@ -13,6 +16,7 @@ tsconfig.tsbuildinfo
 
 # next.js
 /.next/
+/static
 /out/
 
 # production

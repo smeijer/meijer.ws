@@ -14,15 +14,17 @@ import avatarImage from '@/images/avatar.jpg'
 
 import packages from '@/../data/packages.json';
 
-
 export const profile = {
   author: {
     name: 'Stephan Meijer',
-    pitch: 'Software engineer, creator, and open source maintainer.',
-    bio: `Startup Engineer. Perhaps you use some of my [open source](/projects?q=open-source) projects, or [products](/projects?q=product). If so, I'd love to [hear from you](https://go.meijer.ws/twitter)!`,
+    callSign: 'Stephan',
+    pitch: 'Product Engineer, Creator, and Open Source Maintainer.',
+    bio: `Product Engineer. Perhaps you use some of my [open source](/projects?q=open-source) projects, or [products](/projects?q=product). If so, I'd love to [hear from you](https://go.meijer.ws/twitter)!`,
     email: 'stephan@meijer.ws',
     profilePhoto: portraitImage,
     avatar: avatarImage,
+    twitter: '@meijer_s',
+    imagePath: '/smeijer.jpg',
   },
   photos: [
     { src: image1, alt: "" },

@@ -7,7 +7,6 @@ async function importArticle(articleFilename) {
   )
 
   return {
-    slug: articleFilename.replace(/(\/index)?\.mdx$/, ''),
     ...meta,
     component,
   }
@@ -16,8 +15,17 @@ async function importArticle(articleFilename) {
 export async function getAllArticles() {
   const articleFilenames = await glob(['*.mdx', '*/index.mdx'], {
     cwd: path.join(process.cwd(), 'src/pages/articles'),
-  })
+  });
 
   const articles = await Promise.all(articleFilenames.map(importArticle))
   return articles.sort((a, z) => new Date(z.date).getTime() - new Date(a.date).getTime())
+}
+
+export async function getArticle(slug: string) {
+  const articleFilenames = await glob(['*.mdx', '*/index.mdx'], {
+    cwd: path.join(process.cwd(), 'src/pages/articles'),
+  });
+
+  const slugs = articleFilenames.map((filename) => filename.split('/')[0]);
+  return slugs.find((s) => s === slug);
 }

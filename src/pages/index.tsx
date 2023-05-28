@@ -21,9 +21,18 @@ import { ComponentType, ReactNode, useState } from "react";
 import { Newsletter } from "@/components/newsletter";
 import Markdown from "markdown-to-jsx";
 import stripIndent from "strip-indent";
-import heroImage from '@/images/hero.png';
+import { generatePageList } from "@/lib/open-graph";
+import { PageMeta, SocialHead } from "@/components/social-head";
 
-
+export const meta: PageMeta = {
+  title: `${profile.author.name} - ${profile.author.pitch}`,
+  description: profile.author.bio,
+  image: {
+    words: `${profile.author.pitch}`,
+    image: profile.author.imagePath,
+    author: false,
+  }
+}
 
 function BriefcaseIcon(props) {
   return (
@@ -140,10 +149,7 @@ function Resume() {
 export default function Home({ articles }) {
   return (
     <>
-      <Head>
-        <title>{`${profile.author.name} - ${profile.author.pitch}`}</title>
-        <meta name="description" content={profile.author.bio} />
-      </Head>
+      <SocialHead {...meta} />
 
       <Container className="bg-zinc-50 dark:bg-black sm:pl-8">
         <div className="flex gap-4 sm:gap-16 items-center flex-col sm:flex-row">
@@ -203,6 +209,8 @@ export async function getStaticProps() {
   if (process.env.NODE_ENV === 'production') {
     await generateRssFeed()
   }
+
+  await generatePageList();
 
   const articles =  (await getAllArticles())
     .slice(0, 4)

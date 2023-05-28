@@ -6,6 +6,17 @@ import { profile } from '@/../data/profile';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import React, { ReactNode } from "react";
 import { getTags, TagFilters, useQuery } from "@/components/tag-filters";
+import { PageMeta, SocialHead } from "@/components/social-head";
+
+export const meta: PageMeta = {
+  title: `Projects - ${profile.author.name}`,
+  description: profile.projects.title,
+  image: {
+    words: `Things ${profile.author.callSign} made, worth sharing`,
+    image: profile.author.imagePath,
+    author: false,
+  }
+}
 
 function LinkIcon(props) {
   return (
@@ -17,7 +28,6 @@ function LinkIcon(props) {
     </svg>
   )
 }
-
 
 export default function Projects() {
   const [animationParent] = useAutoAnimate()
@@ -36,10 +46,7 @@ export default function Projects() {
 
   return (
     <>
-      <Head>
-        <title>{`Projects - ${profile.author.name}`}</title>
-        <meta name="description" content={profile.projects.title} />
-      </Head>
+      <SocialHead {...meta} />
       <SimpleLayout title={profile.projects.title} intro={profile.projects.intro}>
         <TagFilters path="/projects" options={[{ tag: 'product', count: 0 }, { tag: 'open-source', count: 0 }, ...tags]} />
 
