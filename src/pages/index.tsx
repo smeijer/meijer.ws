@@ -137,7 +137,6 @@ function Resume() {
   )
 }
 
-
 export default function Home({ articles }) {
   return (
     <>
@@ -145,7 +144,6 @@ export default function Home({ articles }) {
         <title>{`${profile.author.name} - ${profile.author.pitch}`}</title>
         <meta name="description" content={profile.author.bio} />
       </Head>
-
 
       <Container className="bg-zinc-50 dark:bg-black sm:pl-8">
         <div className="flex gap-4 sm:gap-16 items-center flex-col sm:flex-row">

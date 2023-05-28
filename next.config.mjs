@@ -32,6 +32,7 @@ const matterMore = () => (tree, file) => {
   frontMatter.timeToRead = readingTime(content).text;
   frontMatter.title = frontMatter.title || title || null;
   frontMatter.intro = frontMatter.intro || intro || null;
+  frontMatter.tags = Array.isArray(frontMatter.tags) ? frontMatter.tags : typeof frontMatter.tags === 'string' ? frontMatter.tags.split(',').map(x => x.trim()) : [];
 
   const { layout: name = 'ArticleLayout', ...meta } = frontMatter
   const layoutFileName = name.replace(/[A-Z]/g, m => "-" + m.toLowerCase()).replace(/^-/, "");

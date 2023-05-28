@@ -5,8 +5,8 @@ import { Container } from '@/components/container'
 import { Prose } from '@/components/prose'
 import { date } from '@/lib/date'
 import { profile } from '@/../data/profile';
-import { Newsletter } from "@/components/newsletter";
 import { Share } from "@/components/share";
+import React from "react";
 
 function ArrowLeftIcon(props) {
   return (
@@ -35,6 +35,7 @@ export function ArticleLayout({
     return children
   }
 
+
   return (
     <>
       <Head>
@@ -54,6 +55,7 @@ export function ArticleLayout({
                 <ArrowLeftIcon className="h-4 w-4 stroke-zinc-500 transition group-hover:stroke-zinc-700 dark:stroke-zinc-500 dark:group-hover:stroke-zinc-400" />
               </button>
             )}
+
             <article>
               <header className="flex flex-col">
                 <h1 className="mt-6 text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">

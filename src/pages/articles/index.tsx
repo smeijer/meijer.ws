@@ -5,6 +5,8 @@ import { SimpleLayout } from '@/components/simple-layout'
 import { date } from '@/lib/date'
 import { getAllArticles } from '@/lib/articles'
 import { profile } from '@/../data/profile';
+import { getTags, TagFilters, useQuery } from "@/components/tag-filters";
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 
 function Article({ article }) {
   return (
@@ -34,6 +36,11 @@ function Article({ article }) {
 }
 
 export default function ArticlesIndex({ articles }) {
+  const tags = getTags(articles);
+  const query = useQuery();
+  const entries = query ? articles.filter(x => x.tags.includes(query)) : articles;
+  const [animationParent] = useAutoAnimate();
+
   return (
     <>
       <Head>
@@ -44,9 +51,11 @@ export default function ArticlesIndex({ articles }) {
         title={profile.blog.title}
         intro={profile.blog.intro}
       >
+        <TagFilters options={tags} path="/articles" />
+
         <div className="md:border-l md:border-zinc-100 md:pl-6 md:dark:border-zinc-700/40">
-          <div className="flex max-w-3xl flex-col space-y-16">
-            {articles.map((article) => (
+          <div ref={animationParent} className="flex max-w-3xl flex-col space-y-16">
+            {entries.map((article) => (
               <Article key={article.slug} article={article} />
             ))}
           </div>

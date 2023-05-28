@@ -3,10 +3,9 @@ import Head from 'next/head'
 import { Card } from '@/components/card'
 import { SimpleLayout } from '@/components/simple-layout'
 import { profile } from '@/../data/profile';
-import { Button } from "@/components/button";
-import { useSearchParams } from "next/navigation";
 import { useAutoAnimate } from '@formkit/auto-animate/react';
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
+import { getTags, TagFilters, useQuery } from "@/components/tag-filters";
 
 function LinkIcon(props) {
   return (
@@ -19,26 +18,21 @@ function LinkIcon(props) {
   )
 }
 
-function FilterButton({ children, query }: { children: ReactNode, query?: string }) {
-  const param = useSearchParams();
-  const q = param.get('q') || null;
-
-  return (
-    <Button variant={q === query ? 'primary' : 'secondary'} href={`/projects${query ? `?q=${query}` : ''}`} scroll={false}>{children}</Button>
-  )
-}
 
 export default function Projects() {
   const [animationParent] = useAutoAnimate()
 
-  const params = useSearchParams();
-  const query = params.get('q');
+  const query = useQuery();
 
   const projects = query === 'product'
     ? profile.projects.entries.filter(x => x.tags.includes('saas'))
     : query === 'open-source'
     ? profile.projects.entries.filter(x => x.links.github)
+    : query
+    ? profile.projects.entries.filter(x => x.tags.includes(query))
     : profile.projects.entries;
+
+  const tags = getTags(profile.projects.entries).filter(x => x.tag !== 'saas');
 
   return (
     <>
@@ -47,17 +41,12 @@ export default function Projects() {
         <meta name="description" content={profile.projects.title} />
       </Head>
       <SimpleLayout title={profile.projects.title} intro={profile.projects.intro}>
-        <h3 className="font-bold">Filter by type:</h3>
-        <div className="flex gap-4 mt-4">
-          <FilterButton query="all">all</FilterButton>
-          <FilterButton query="product">product</FilterButton>
-          <FilterButton query="open-source">open-source</FilterButton>
-        </div>
+        <TagFilters path="/projects" options={[{ tag: 'product', count: 0 }, { tag: 'open-source', count: 0 }, ...tags]} />
 
         <ul
           ref={animationParent}
           role="list"
-          className="mt-16 sm:mt-20 grid grid-cols-1 gap-x-12 gap-y-16 sm:grid-cols-2 lg:grid-cols-3"
+          className="sm:mt-20 grid grid-cols-1 gap-x-12 gap-y-16 sm:grid-cols-2 lg:grid-cols-3"
         >
           {projects.map((project) => {
             const link = project.link ? new URL(project.link) : null;
