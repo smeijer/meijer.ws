@@ -43,7 +43,7 @@ export function ArticleLayout({
   return (
     <>
       <SocialHead
-        title={`${meta.title} - ${profile.author}`}
+        title={`${meta.title} - ${profile.author.name}`}
         description={meta.description}
       />
       <Container className="mt-16 lg:mt-32">

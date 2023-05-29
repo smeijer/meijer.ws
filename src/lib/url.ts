@@ -10,6 +10,7 @@ export function getPublicURL(path = '/', protocol = true) {
     url = url.replace(/^https?:\/\//, '');
   }
 
-  // drop trailing slash
+  // drop trailing slash, unless it's the root
+  if (url.includes('?')) return url;
   return url.replace(/\/$/, '');
 }

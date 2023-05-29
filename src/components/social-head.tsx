@@ -3,19 +3,6 @@ import { profile } from "../../data/profile";
 import { useRouter } from "next/router";
 import { getPublicURL } from "@/lib/url";
 
-interface SocialProps {
-  color?: string;
-  keywords?: string[];
-  name?: string;
-  title: string;
-  socialTitle?: string;
-  description: string;
-  socialImage?: string;
-  coverImage?: string;
-  icons?: string[];
-  url?: string;
-}
-
 const extMimeMap = {
   png: 'image/png',
   jpg: 'image/jpg',
@@ -40,7 +27,6 @@ const defaults = {
 }
 
 export function SocialHead({ title, description, keywords = [] }: PageMeta) {
-
   const router = useRouter()
   const url = getPublicURL(router.asPath);
   const image = getPublicURL('/api/og?path=' + router.asPath);

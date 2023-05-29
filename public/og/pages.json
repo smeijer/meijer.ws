@@ -53,14 +53,6 @@
       "author": false
     }
   },
-  "/articles/no-react-server-components-wont-make-your-life-simpler": {
-    "title": "No, react server components won't make your life simpler",
-    "description": "Fullstack development, or rather isomorphic development, isn't as simple as they say.",
-    "image": {
-      "words": "No, react server components won't make your life simpler",
-      "image": "/articles/no-react-server-components-wont-make-your-life-simpler.png"
-    }
-  },
   "/articles/simpler-dev-environments-with-procfiles": {
     "title": "Simpler Dev Environments with Procfiles",
     "description": "Use Procfiles to turn multiple startup commands into a single one.",

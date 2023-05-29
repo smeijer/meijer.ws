@@ -76,8 +76,7 @@ export default function ArticlesIndex({ articles }) {
 
 export async function getStaticProps() {
   const articles = (await getAllArticles())
-    .map(({ component, ...meta }) => meta)
-    .filter(x => x.published !== false);
+    .map(({ component, ...meta }) => meta);
 
   return {
     props: {

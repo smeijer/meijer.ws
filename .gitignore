@@ -9,6 +9,7 @@
 .pnp.js
 
 /public/rss
+/public/og
 tsconfig.tsbuildinfo
 
 # testing
