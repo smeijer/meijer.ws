@@ -176,7 +176,7 @@ export default function Home({ articles, articleCount }) {
         <div className="flex gap-4 sm:gap-16 items-center flex-col sm:flex-row">
           <div className="pt-16 lg:py-32 sm:pb-16 lg:pb-32 sm:w-1/2">
             <h2 className="text-4xl font-bold tracking-tight text-zinc-500 dark:text-zinc-400 sm:text-5xl">
-              I'm <span className="text-zinc-900 dark:text-zinc-100">{profile.author.name.split(' ')[0]}</span>
+              {`I'm `}<span className="text-zinc-900 dark:text-zinc-100">{profile.author.callSign}</span>
             </h2>
             <p className="prose mt-6 text-xl sm:text-2xl text-zinc-600 dark:text-zinc-400">
               <Markdown>{stripIndent(profile.author.bio)}</Markdown>
