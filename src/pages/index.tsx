@@ -110,7 +110,7 @@ function Resume() {
     <div className="rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40">
       <h2 className="flex text-sm font-semibold text-zinc-900 dark:text-zinc-100">
         <BriefcaseIcon className="h-6 w-6 flex-none" />
-        <span className="ml-3">Active work</span>
+        <span className="ml-3">Active projects</span>
       </h2>
       <ol className="mt-6 space-y-4">
         {resume.map((role, roleIndex) => (
@@ -170,7 +170,7 @@ function Resume() {
   )
 }
 
-export default function Home({ articles }) {
+export default function Home({ articles, articleCount }) {
   return (
     <>
       <SocialHead {...meta} />
@@ -215,6 +215,8 @@ export default function Home({ articles }) {
             {articles.map((article) => (
               <Article key={article.slug} article={article} />
             ))}
+
+            <Button variant="secondary" href="/articles">Read more articles</Button>
           </div>
           <div className="space-y-10 lg:pl-16 xl:pl-24">
             <Newsletter />
@@ -233,13 +235,15 @@ export async function getStaticProps() {
 
   await generatePageList();
 
-  const articles =  (await getAllArticles())
+  const allArticles = await getAllArticles();
+  const articles =  allArticles
     .slice(0, 4)
     .map(({ component, ...meta }) => meta);
 
   return {
     props: {
       articles,
+      articleCount: allArticles.length,
     },
   }
 }
