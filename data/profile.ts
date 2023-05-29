@@ -73,6 +73,7 @@ export const profile = {
       logo: magicBellLogo,
       start: '2021',
       end: 'Present',
+      link: 'https://magicbell.com',
     },
     {
       company: 'DM.app',

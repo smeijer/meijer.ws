@@ -17,12 +17,13 @@ import { date } from '@/lib/date'
 import { generateRssFeed } from '@/lib/rss-feed'
 import { getAllArticles } from '@/lib/articles'
 import { profile } from '@/../data/profile';
-import { ComponentType, ReactNode, useState } from "react";
+import React, { ComponentType, ReactNode, useState } from "react";
 import { Newsletter } from "@/components/newsletter";
 import Markdown from "markdown-to-jsx";
 import stripIndent from "strip-indent";
 import { generatePageList } from "@/lib/open-graph";
 import { PageMeta, SocialHead } from "@/components/social-head";
+import { isLocalLink } from "@/lib/link";
 
 export const meta: PageMeta = {
   title: `${profile.author.name} - ${profile.author.pitch}`,
@@ -94,30 +95,53 @@ function SocialLink({ icon: Icon, ...props }: { icon: ComponentType<any> } & Lin
 }
 
 function Resume() {
+  const resume = [
+    ...profile.resume.entries.filter(x => isNaN(Date.parse(x.end))),
+    ...profile.projects.entries.filter(x => x.highlight).map(x => ({
+      ...x,
+      company: x.name,
+      title: 'Founder',
+      start: String(new Date(x.date).getFullYear()),
+      end: 'Present',
+    })).slice(0, 4).sort(x => x.stars),
+  ]
+
   return (
     <div className="rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40">
       <h2 className="flex text-sm font-semibold text-zinc-900 dark:text-zinc-100">
         <BriefcaseIcon className="h-6 w-6 flex-none" />
-        <span className="ml-3">Work</span>
+        <span className="ml-3">Active work</span>
       </h2>
       <ol className="mt-6 space-y-4">
-        {profile.resume.entries.map((role, roleIndex) => (
-          <li key={roleIndex} className="flex gap-4">
-            <div className="relative mt-1 flex h-10 w-10 flex-none items-center justify-center rounded-full shadow-md shadow-zinc-800/5 ring-1 ring-zinc-900/5 dark:border dark:border-zinc-700/50 dark:bg-zinc-800 dark:ring-0">
-              <Image src={role.logo} alt="" className="h-7 w-7" unoptimized />
+        {resume.map((role, roleIndex) => (
+          <li key={roleIndex} className="flex gap-4 group relative">
+            <div className="z-10 relative mt-1 flex h-10 w-10 flex-none items-center justify-center rounded-full shadow-md shadow-zinc-800/5 ring-1 ring-zinc-900/5 dark:border dark:border-zinc-700/50 dark:bg-zinc-800 bg-white dark:ring-0">
+              {'content' in role.logo
+                ? <div dangerouslySetInnerHTML={{ __html: role.logo.content }} className="h-7 w-7 [&>*]:h-7 [&>*]:w-7" />
+                : <Image src={role.logo} alt="" className="h-7 w-7" unoptimized />
+              }
             </div>
             <dl className="flex flex-auto flex-wrap gap-x-2">
               <dt className="sr-only">Company</dt>
               <dd className="w-full flex-none text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                {role.company}
-              </dd>
+                {'link' in role && role.link
+                  ?
+                    <>
+                      <div className="absolute -inset-x-4 -inset-y-2 z-0 scale-95 bg-zinc-50 opacity-0 transition group-hover:scale-100 group-hover:opacity-100 dark:bg-zinc-800/50 rounded-2xl" />
+                      <Link target="_blank" href={role.link}>
+                        <span className="absolute -inset-x-4 -inset-y-6 z-20 sm:-inset-x-6 sm:rounded-2xl" />
+                        <span className="relative z-10">{role.company}</span>
+                      </Link>
+                    </>
+                  : role.company}
+                  </dd>
               <dt className="sr-only">Role</dt>
-              <dd className="text-xs text-zinc-500 dark:text-zinc-400">
+              <dd className="text-xs text-zinc-500 dark:text-zinc-400 relative">
                 {role.title}
               </dd>
               <dt className="sr-only">Date</dt>
-              <dd
-                className="ml-auto text-xs text-zinc-400 dark:text-zinc-500"
+               <dd
+                className="ml-auto text-xs text-zinc-400 dark:text-zinc-500 relative"
                 aria-label={`${role.start} until ${role.end}`}
               >
                 <time dateTime={role.start}>
@@ -177,14 +201,11 @@ export default function Home({ articles }) {
             />
           </div>
         </div>
-
-
       </Container>
 
       <Container.Outer className="bg-zinc-50 dark:bg-black">
         <div className="relative h-12">
-
-        <div className="absolute top-0 -left-px -right-px rounded-t-2xl bg-white dark:bg-zinc-900 h-12 border-b-0 border border-zinc-100 dark:border-zinc-300/10 "/>
+          <div className="absolute top-0 -left-px -right-px rounded-t-2xl bg-white dark:bg-zinc-900 h-12 border-b-0 border border-zinc-100 dark:border-zinc-300/10 "/>
         </div>
       </Container.Outer>
 
