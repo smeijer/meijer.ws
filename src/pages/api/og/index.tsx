@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { ImageResponse } from '@vercel/og';
 import { profile } from '@/../data/profile';
 import { NextRequest } from "next/server";
@@ -39,7 +40,7 @@ const  OgImageHandler = async (req: NextRequest) => {
 
           {image.author !== false && <div tw="flex">
             {/*// @ts-ignore*/}
-            <img width="128" height="128" src={imageData} tw="rounded-full" />
+            <img alt="" width="128" height="128" src={imageData} tw="rounded-full" />
 
             <div tw="pl-4 flex flex-col justify-center text-zinc-400">
               <h2 tw="text-4xl leading-4 font-bold tracking-tight">{profile.author.name}</h2>
@@ -50,7 +51,7 @@ const  OgImageHandler = async (req: NextRequest) => {
 
         <div tw="flex h-full w-2/5 py-12 pr-12">
           <div tw="flex w-full h-full rounded-2xl overflow-hidden">
-            {image.image && <img tw="w-full h-full" style={{ objectFit: 'cover' }} src={getPublicURL(image.image)} />}
+            {image.image && <img alt="" tw="w-full h-full" style={{ objectFit: 'cover' }} src={getPublicURL(image.image)} />}
           </div>
         </div>
       </div>

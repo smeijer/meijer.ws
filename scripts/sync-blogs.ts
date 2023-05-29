@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 const BASE_URL = 'https://meijer.ws/articles';
 const COUNT = 1000;
-const UPDATE_CANONICAL = false;
+const UPDATE_CANONICAL = true;
 
 const { parsed: env } = dotenv.config({ path: '.env.local' });
 
@@ -21,7 +21,13 @@ const dt = (path: string, data?: Record<string, unknown>) => {
   }).then(async (x) => x.json());
 }
 
+const renamed = {
+  'a-typescript-valueof-implementation-and-how-it-s-built-4gim': 'how-to-implement-a-generic-valueof-utility-in-typescript',
+};
+
 function cleanSlug(slug: string) {
+  if (renamed[slug]) return renamed[slug];
+
   return slug
     .replace(/-\w+$/, '')
     .replaceAll('it-s', 'its')
@@ -34,20 +40,20 @@ async function main() {
   for (let { id, path } of articles) {
     const article = await dt(id);
 
-    if (UPDATE_CANONICAL && !article.canonical_url.startsWith(BASE_URL)) {
-      const canonical_url = `${BASE_URL}/${cleanSlug(article.slug)}`;
-      console.log(`updating canonical to ${canonical_url}`);
-      await dt(id, { canonical_url });
-    }
-
     // remove the hash from the slug`
     const slug = cleanSlug(article.slug);
+
+    const canonicalUrl = `${BASE_URL}/${slug}`;
+    if (UPDATE_CANONICAL && article.canonical_url !== canonicalUrl) {
+      console.log(`updating canonical to ${canonicalUrl}`);
+      await dt(id, { canonicalUrl });
+    }
+
     let content = article.body_markdown;
 
     // add frontmatter
     const matter = `date: ${article.created_at.slice(0, 10)}\n`
     content = content.replace(/^---\n\n/m, `${matter}---\n\n`);
-    content = content.replace(/^published.*\n/m, '');
     content = content.replace(/^cover_image.*\n/m, '');
 
     // bump all headings one level if we used h1s'
@@ -67,7 +73,7 @@ async function main() {
     content = content.replace(/```typescript/gm, '```tsx');
 
     // remove footer
-    content= content.replace(/^---\n*_:wave:.*\n*/m, '');
+    content = content.replace(/^---\n*_:wave:.*\n*/m, '');
     console.log(`saving ${slug}`);
     await fs.writeFile(`src/pages/articles/${slug}.mdx`, content);
   }
