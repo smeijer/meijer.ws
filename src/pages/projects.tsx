@@ -9,7 +9,7 @@ import { getTags, TagFilters, useQuery } from "@/components/tag-filters";
 import { PageMeta, SocialHead } from "@/components/social-head";
 
 export const meta: PageMeta = {
-  title: `Projects - ${profile.author.name}`,
+  title: `Projects of ${profile.author.name}`,
   description: profile.projects.title,
   image: {
     words: `Things ${profile.author.callSign} made, worth sharing`,

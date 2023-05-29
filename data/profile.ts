@@ -19,7 +19,7 @@ export const profile = {
     name: 'Stephan Meijer',
     callSign: 'Stephan',
     pitch: 'Product Engineer, Creator, and Open Source Maintainer.',
-    bio: `Product Engineer. Perhaps you use some of my [open source](/projects?q=open-source) projects, or [products](/projects?q=product). If so, I'd love to [hear from you](https://go.meijer.ws/twitter)!`,
+    bio: `Perhaps you use some of my [open source](/projects?q=open-source) projects, or [products](/projects?q=product). If so, I'd love to [hear from you](https://go.meijer.ws/twitter)!`,
     email: 'stephan@meijer.ws',
     profilePhoto: portraitImage,
     avatar: avatarImage,

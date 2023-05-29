@@ -18,7 +18,7 @@ import { getPublicURL } from "@/lib/url";
 import { SocialHead } from "@/components/social-head";
 
 export const meta = {
-  title: `About - ${profile.author.name}`,
+  title: `About ${profile.author.name}`,
   description: profile.author.bio,
   image: {
     words: `About ${profile.author.callSign}`,

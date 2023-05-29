@@ -5,7 +5,7 @@ import { profile } from '@/../data/profile';
 import { PageMeta, SocialHead } from "@/components/social-head";
 
 export const meta = {
-  title: `You’re subscribed - ${profile.author.name}`,
+  title: `You’re subscribed`,
   description: "Thanks for subscribing to my newsletter.",
   image: {
     words: `Thanks for subscribing!`,

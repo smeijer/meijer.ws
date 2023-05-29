@@ -2,6 +2,7 @@ import Head from 'next/head';
 import { profile } from "../../data/profile";
 import { useRouter } from "next/router";
 import { getPublicURL } from "@/lib/url";
+import { stripLinks } from "@/lib/link";
 
 const extMimeMap = {
   png: 'image/png',
@@ -30,6 +31,9 @@ export function SocialHead({ title, description, keywords = [] }: PageMeta) {
   const router = useRouter()
   const url = getPublicURL(router.asPath);
   const image = getPublicURL('/api/og?path=' + router.asPath);
+
+  title = stripLinks(title);
+  description = stripLinks(description);
 
   return (
     <Head>

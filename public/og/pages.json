@@ -1,7 +1,7 @@
 {
   "/about": {
-    "title": "About - Stephan Meijer",
-    "description": "Product Engineer. Perhaps you use some of my [open source](/projects?q=open-source) projects, or [products](/projects?q=product). If so, I'd love to [hear from you](https://go.meijer.ws/twitter)!",
+    "title": "About Stephan Meijer",
+    "description": "Perhaps you use some of my [open source](/projects?q=open-source) projects, or [products](/projects?q=product). If so, I'd love to [hear from you](https://go.meijer.ws/twitter)!",
     "image": {
       "words": "About Stephan",
       "image": "/smeijer.jpg",
@@ -9,8 +9,8 @@
     }
   },
   "/": {
-    "title": "Stephan Meijer - Product Engineer, Creator, and Open Source Maintainer.",
-    "description": "Product Engineer. Perhaps you use some of my [open source](/projects?q=open-source) projects, or [products](/projects?q=product). If so, I'd love to [hear from you](https://go.meijer.ws/twitter)!",
+    "title": "Stephan Meijer",
+    "description": "Perhaps you use some of my [open source](/projects?q=open-source) projects, or [products](/projects?q=product). If so, I'd love to [hear from you](https://go.meijer.ws/twitter)!",
     "image": {
       "words": "Product Engineer, Creator, and Open Source Maintainer.",
       "image": "/smeijer.jpg",
@@ -18,7 +18,7 @@
     }
   },
   "/projects": {
-    "title": "Projects - Stephan Meijer",
+    "title": "Projects of Stephan Meijer",
     "description": "Things I've made, worth sharing.",
     "image": {
       "words": "Things Stephan made, worth sharing",
@@ -27,7 +27,7 @@
     }
   },
   "/thank-you": {
-    "title": "You’re subscribed - Stephan Meijer",
+    "title": "You’re subscribed",
     "description": "Thanks for subscribing to my newsletter.",
     "image": {
       "words": "Thanks for subscribing!",
@@ -36,7 +36,7 @@
     }
   },
   "/uses": {
-    "title": "Uses - Stephan Meijer",
+    "title": "What Stephan uses",
     "description": "Software I use, gadgets I love, and other things I recommend.",
     "image": {
       "words": "What Stephan uses",
@@ -45,7 +45,7 @@
     }
   },
   "/articles": {
-    "title": "Articles - Stephan Meijer",
+    "title": "Articles by Stephan Meijer",
     "description": "Writing about code, growth, and world views.",
     "image": {
       "words": "Ideas, experiences, and opinions, from over 15 years of product work.",

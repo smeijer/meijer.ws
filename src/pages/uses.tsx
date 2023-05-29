@@ -8,7 +8,7 @@ import { ReactNode } from "react";
 import { SocialHead } from "@/components/social-head";
 
 export const meta = {
-  title: `Uses - ${profile.author.name}`,
+  title: `What ${profile.author.callSign} uses`,
   description: profile.uses.title,
   image: {
     words: `What ${profile.author.callSign} uses`,

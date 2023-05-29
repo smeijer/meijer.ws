@@ -1,7 +1,5 @@
-import Head from 'next/head'
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import Link, { LinkProps } from "next/link";
-import clsx from 'clsx'
 
 import { Button } from '@/components/button'
 import { Card } from '@/components/card'
@@ -23,10 +21,9 @@ import Markdown from "markdown-to-jsx";
 import stripIndent from "strip-indent";
 import { generatePageList } from "@/lib/open-graph";
 import { PageMeta, SocialHead } from "@/components/social-head";
-import { isLocalLink } from "@/lib/link";
 
 export const meta: PageMeta = {
-  title: `${profile.author.name} - ${profile.author.pitch}`,
+  title: profile.author.name,
   description: profile.author.bio,
   image: {
     words: `${profile.author.pitch}`,

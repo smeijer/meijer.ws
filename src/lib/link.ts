@@ -7,3 +7,7 @@ export function isLocalLink(href: string | UrlObject) {
   if (href.startsWith(process.env.NEXT_PUBLIC_SITE_URL)) return true;
   return /https?:\/\//i.test(href) === false;
 }
+
+export function stripLinks(text: string) {
+  return text.replaceAll(/\[(.*?)]\((.*?)\)/g, '$1')
+}

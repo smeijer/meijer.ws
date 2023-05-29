@@ -10,7 +10,7 @@ import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { PageMeta, SocialHead } from "@/components/social-head";
 
 export const meta: PageMeta = {
-  title: `Articles - ${profile.author.name}`,
+  title: `Articles by ${profile.author.name}`,
   description: profile.blog.title,
   image: {
     words: `Ideas, experiences, and opinions, from over 15 years of product work.`,
