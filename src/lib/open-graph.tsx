@@ -3,6 +3,7 @@ import path from "path";
 import fs from "fs/promises";
 
 import { getAllArticles } from "@/lib/articles";
+import { stripLinks } from "@/lib/link";
 
 type Page = {
   title: string;
@@ -27,14 +28,16 @@ export async function generatePageList() {
     `../pages/${page}`
     ).then(x => ({
       ...x.meta,
+      title: stripLinks(x.meta.title),
+      description: stripLinks(x.meta.description),
       path: cleanPath(page),
   }))));
 
   const articles: Page[] = await getAllArticles({
     includeDrafts: true,
   }).then(x => x.map(article => ({
-    title: article.title,
-    description: article.description,
+    title: stripLinks(article.title),
+    description: stripLinks(article.description),
     path: cleanPath(article.path),
     image: {
       words: article.title,
