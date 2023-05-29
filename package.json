@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=--inspect next dev",
+    "pre:build": "tsx scripts/check-covers.ts",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
