@@ -8,7 +8,6 @@ import { profile } from '@/../data/profile';
 import { getTags, TagFilters, useQuery } from "@/components/tag-filters";
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { PageMeta, SocialHead } from "@/components/social-head";
-import Image from "next/image";
 
 export const meta: PageMeta = {
   title: `Articles - ${profile.author.name}`,
@@ -77,7 +76,8 @@ export default function ArticlesIndex({ articles }) {
 
 export async function getStaticProps() {
   const articles = (await getAllArticles())
-    .map(({ component, ...meta }) => meta);
+    .map(({ component, ...meta }) => meta)
+    .filter(x => x.published !== false);
 
   return {
     props: {
