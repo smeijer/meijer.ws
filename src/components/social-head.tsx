@@ -34,6 +34,7 @@ export function SocialHead({ title, description, keywords = [] }: PageMeta) {
 
   title = stripLinks(title);
   description = stripLinks(description);
+  const sitename = new URL(getPublicURL('/')).hostname;
 
   return (
     <Head>
@@ -71,7 +72,7 @@ export function SocialHead({ title, description, keywords = [] }: PageMeta) {
       <meta property="og:type" content="website" />
       <meta property="og:url" content={url} />
       <meta property="og:title" content={title} />
-      <meta property="og:site_name" content={title} />
+      <meta property="og:site_name" content={sitename} />
       <meta property="og:image" content={image} />
       <meta property="og:image:alt" content={description} />
       <meta property="og:image:width" content="1200" />
