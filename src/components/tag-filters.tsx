@@ -8,7 +8,7 @@ export function TagFilters({ options, path }: { path: string, options: string[] 
 
   return (
     <section className="mb-16 select-none">
-      <h3 className="font-bold">Filter by type:</h3>
+      <h3 className="font-bold text-zinc-800 dark:text-zinc-100">Filter by type:</h3>
       <div className="flex flex-wrap gap-x-4 gap-y-2 mt-4">
         {tags.map(option => {
           const param = option === 'all' ? null : option.toLowerCase().replaceAll(' ', '-')
