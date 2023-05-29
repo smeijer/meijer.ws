@@ -137,7 +137,7 @@ export const profile = {
       },
       {
         group: 'Workstation',
-        title: 'Garmin vívomove® Style',
+        title: 'Garmin vívomove Style',
         description: 'I love this watch. It’s a hybrid smartwatch, which means it looks like a regular watch, but it has a small screen that shows notifications, and tracks my health. It’s a great watch, and I love their Body Battery feature.',
         // link: 'https://www.garmin.com/en-US/p/662825/pn/010-02240-01',
       },
