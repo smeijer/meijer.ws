@@ -12,15 +12,18 @@ async function importArticle(articleFilename) {
   }
 }
 
-export async function getAllArticles() {
+export async function getAllArticles({ includeDrafts = false } = {}) {
   const articleFilenames = await glob(['*.mdx', '*/index.mdx'], {
     cwd: path.join(process.cwd(), 'src/pages/articles'),
   });
 
   const articles = await Promise.all(articleFilenames.map(importArticle))
-  return articles
-    .filter(x => x.published !== false)
-    .sort((a, z) => new Date(z.date).getTime() - new Date(a.date).getTime())
+    .then(articles =>
+      articles.sort((a, z) => new Date(z.date).getTime() - new Date(a.date).getTime())
+    );
+
+  if (includeDrafts) return articles;
+  return articles.filter(x => x.published !== false);
 }
 
 export async function getArticle(slug: string) {

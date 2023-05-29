@@ -30,7 +30,9 @@ export async function generatePageList() {
       path: cleanPath(page),
   }))));
 
-  const articles: Page[] = await getAllArticles().then(x => x.map(article => ({
+  const articles: Page[] = await getAllArticles({
+    includeDrafts: true,
+  }).then(x => x.map(article => ({
     title: article.title,
     description: article.description,
     path: cleanPath(article.path),
