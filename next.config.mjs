@@ -92,6 +92,21 @@ const nextConfig = {
   experimental: {
     scrollRestoration: true,
   },
+  async redirects() {
+    return [
+      { source: '/blog', destination: '/articles', permanent: true },
+
+      // short links
+      { source: '/twitter', destination: 'https://go.meijer.ws/twitter', permanent: false },
+      { source: '/github', destination: 'https://go.meijer.ws/github', permanent: false },
+      { source: '/linkedin', destination: 'https://go.meijer.ws/linkedin', permanent: false },
+      { source: '/email', destination: 'https://go.meijer.ws/email', permanent: false },
+      { source: '/devto', destination: 'https://go.meijer.ws/devto', permanent: false },
+      { source: '/noor', destination: 'https://go.meijer.ws/noor', permanent: false },
+      { source: '/sponsor', destination: 'https://go.meijer.ws/sponsor', permanent: false },
+      { source: '/sponsor-once', destination: 'https://go.meijer.ws/sponsor-once', permanent: false },
+    ];
+  },
 }
 
 const withMDX = nextMDX({
