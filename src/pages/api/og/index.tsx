@@ -15,7 +15,10 @@ const avatar = fetch(new URL('./smeijer.jpg', import.meta.url)).then((res) =>
 const pages = fetch(getPublicURL('/og/pages.json')).then(x => x.json());
 
 const  OgImageHandler = async (req: NextRequest) => {
-  const { searchParams } = req.nextUrl;
+  // convertkit messes the url up like:                  ⌄⌄⌄
+  //    /api/og?path=%2Farticles%2Fisomorphic-development%3Fck_subscriber_id%3D2020065464
+  const search = new URL(req.url).search.replaceAll('%3F', '&');
+  const searchParams = new URLSearchParams(search);
   const [pageData, imageData] = await Promise.all([pages, avatar]);
 
   const path = searchParams.get('path');
