@@ -46,8 +46,8 @@ const  OgImageHandler = async (req: NextRequest) => {
             <img alt="" width="128" height="128" src={imageData} tw="rounded-full" />
 
             <div tw="pl-4 flex flex-col justify-center text-zinc-400">
-              <h2 tw="text-4xl leading-4 font-bold tracking-tight">{profile.author.name}</h2>
-              <span tw="leading-0">{getPublicURL(page.url, false) }</span>
+              <div tw="text-4xl font-bold tracking-tight">{profile.author.name}</div>
+              <div tw="text-xl font-bold">{getPublicURL(page.url, false)}</div>
             </div>
           </div>}
         </div>
