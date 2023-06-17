@@ -1,0 +1,60 @@
+---
+title: Linking Packages with Yalc
+description: Effective package development using Yalc.
+date: 2023-06-17
+published: true
+tags: nodejs, javascript, tooling
+---
+
+As web developers, we often work on projects involving multiple packages or modules, that are under simultaneous development, making it necessary to link them together to test integration. The traditional approach for this uses `npm link`, which creates a symbolic link between the package in development and the global `node_modules` directory. The better way is to use `yalc`.
+
+## What is Yalc?
+
+[Yalc](https://npmjs.com/yalc) is a simple package manager for local package development. It acts as a simple local repository for your packages that you can publish to and install from, just like you would with a remote package registry, such as npm or yarn. Yalc simplifies package linking by avoiding some of the complexities and pitfalls associated with `npm link`, yet it's much easier to work with than running a local registry like [verdaccio](https://npmjs.com/verdaccio). Yalc is a set of scripts, not a running service.
+
+### Why use Yalc over npm link?
+
+`npm link` creates a symbolic link for your local package in the global `node_modules` directory. This can lead to confusion as packages can unknowingly share dependencies, causing unintended side effects. If you've ever tried to link a package that depends on react, the "[invalid hook call](https://legacy.reactjs.org/warnings/invalid-hook-call-warning.html)" error might sound familiar.
+
+Yalc operates more like a local publishing system. Instead of linking, it pushes the package content into the consumer project, mimicking the process of publishing and installing a package. This results in an experience closer to working with an actual dependency, minimizing environment inconsistencies and unexpected behavior.
+
+### How to use Yalc?
+
+Using Yalc is straightforward. First, you need to install it globally on your machine:
+
+```shell
+npm install -g yalc
+```
+
+After it's installed, navigate to the directory of the package. Then make sure to build the package and run `yalc publish`. Yalc only copies the files over that should be published to NPM, so building is essential.
+
+```shell
+npm run build
+yalc publish
+```
+
+After running that command, your package has been "published" to the global Yalc store at `~/.yalc/packages`. Then, in your consumer project, you can install it as you would with a regular npm package:
+
+```shell
+yalc add <your-package-name>
+```
+
+That does a couple of things. It updates the `yalc.lock` at your project, copies the package over from the global store, to the local one at `.yalc`, and modifies `package.json` to add the dependency or update it to point to the files in the `.yalc/<your-package-name>` directory.
+
+Your package is now added to your project as if it were a regular dependency. When you change your package and want to update it in your project, you can rebuild it, and use `yalc push` to push an update. `yalc push` will publish the package to the global store, and push the changes to all linked projects local stores in one command.
+
+```shell
+yalc push
+```
+
+For the best experience, you want to hook up `yalc push` to your `build --watch` command, so that it automatically pushes changes to your linked projects. But manual pushing goes a long way too.
+
+### Retreat and Restore
+
+As I mentioned earlier; yalc doesn't create symlinks, it copies the publishable assets of the package into your project. Your project will get a `.yalc` directory, containing the package, and a `yalc.lock` file. Both can be committed to your repository, but if you should or not is up to you. I don't, but I can imagine some use cases where you might need to.
+
+If you don't commit them you'll have to run `yalc retreat --all` before you commit. That command removes all yalc references from the package.json. Complementary, `yalc restore` reads your `yalc.lock` and restores any missing links.
+
+### Final words
+
+While `npm link` offers a quick way to link local packages, Yalc provides a more robust and predictable workflow that mimics using a real dependency. Using Yalc, you can avoid some of the pitfalls of `npm link` and make your local package development more efficient and reliable.
