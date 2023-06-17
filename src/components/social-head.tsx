@@ -29,8 +29,8 @@ const defaults = {
 
 export function SocialHead({ title, description, keywords = [] }: PageMeta) {
   const router = useRouter()
-  const url = getPublicURL(router.asPath);
-  const image = getPublicURL('/api/og?path=' + router.asPath);
+  const url = getPublicURL(router.pathname);
+  const image = getPublicURL('/api/og?path=' + router.pathname);
 
   title = stripLinks(title);
   description = stripLinks(description);
@@ -46,6 +46,7 @@ export function SocialHead({ title, description, keywords = [] }: PageMeta) {
       <meta name="msapplication-TileColor" content={defaults.color} />
       <meta name="theme-color" content={defaults.color} />
       <meta name="keywords" content={keywords.join(', ')} />
+      <link rel="canonical" href={url} />
 
       {/*<!-- icons -->*/}
       {defaults.icons.flatMap((href) => {
