@@ -13,7 +13,7 @@ export function TagFilters({ options, path }: { path: string, options: string[] 
         {tags.map(option => {
           const param = option === 'all' ? null : option.toLowerCase().replaceAll(' ', '-')
           return (
-            <Button key={option} data-p={param} variant={param && param === query ? 'primary' : 'secondary'} href={param ? `${path}?q=${param}` : path} scroll={false}>{option}</Button>
+            <Button rel="nofollow" key={option} variant={param && param === query ? 'primary' : 'secondary'} href={param ? `${path}?q=${param}` : path} scroll={false}>{option}</Button>
           )
         })}
       </div>
