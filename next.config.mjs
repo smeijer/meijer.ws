@@ -105,6 +105,9 @@ const nextConfig = {
       { source: '/noor', destination: 'https://go.meijer.ws/noor', permanent: false },
       { source: '/sponsor', destination: 'https://go.meijer.ws/sponsor', permanent: false },
       { source: '/sponsor-once', destination: 'https://go.meijer.ws/sponsor-once', permanent: false },
+
+      // moved articles
+      { source: '/articles/a-typescript-valueof-implementation-and-how-its-built', destination: '/articles/how-to-implement-a-generic-valueof-utility-in-typescript', permanent: true },
     ];
   },
 }

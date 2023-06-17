@@ -46,6 +46,8 @@ async function main() {
     const canonicalUrl = `${BASE_URL}/${slug}`;
     if (UPDATE_CANONICAL && article.canonical_url !== canonicalUrl) {
       console.log(`updating canonical to ${canonicalUrl}`);
+      // dev.to has a bug where it doesn't update the canonical if it was already set
+      await dt(id, { canonicalUrl: null });
       await dt(id, { canonicalUrl });
     }
 
