@@ -21,7 +21,7 @@ function Article({ article }) {
   return (
     <article className="md:grid md:grid-cols-4 md:items-baseline">
       <Card className="md:col-span-3">
-        <Card.Title href={`/articles/${article.slug}`}>
+        <Card.Title href={article.path}>
           {article.title}
         </Card.Title>
         <Card.Eyebrow
@@ -63,7 +63,7 @@ export default function ArticlesIndex({ articles }) {
         <div className="md:border-l md:border-zinc-100 md:pl-6 md:dark:border-zinc-700/40">
           <div ref={animationParent} className="flex max-w-3xl flex-col space-y-16">
             {entries.map((article) => (
-              <Article key={article.slug} article={article} />
+              <Article key={article.path} article={article} />
             ))}
           </div>
         </div>
@@ -74,11 +74,17 @@ export default function ArticlesIndex({ articles }) {
 
 export async function getStaticProps() {
   const articles = (await getAllArticles())
-    .map(({ component, ...meta }) => meta);
+    .map((article) => ({
+      path: article.path.replace(/\.mdx$/, ''),
+      title: article.title,
+      description: article.description,
+      date: article.date,
+      tags: article.tags,
+    }));
 
   return {
     props: {
       articles,
-    },
+    }
   }
 }
