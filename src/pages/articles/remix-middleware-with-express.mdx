@@ -1,0 +1,68 @@
+---
+title: Remix Middleware using Express
+published: true
+description: How to reduce boilerplate in your Remix loaders using Express middleware.
+tags: nodejs, remix, express
+date: 2021-06-20
+---
+
+-- path-to-regexp
+
+
+As soon as you'll add some level of authentication to your Remix app, you'll get to deal with code repetition in your actions and loaders. As Remix' nature is to run your loaders in parallel, you'll need to repeat permission checks in every action and loader that needs to be protected. It's not enough to do it in the root loader, as the other loaders will still run unprotected.
+
+This is where Express middleware comes in handy. You can use it to wrap your Remix handlers and do the permission checks there. This way, you can keep your loaders clean and free of boilerplate. Less boilerplate, and a smaller chance of forgetting to add a permission check somewhere.
+
+For this article, we'll be working with the [Remix cookie storage](https://remix.run/docs/en/1.17.1/utils/sessions), but the concept can be applied to any repetitive code in your loaders.
+
+```ts
+import { createCookieSessionStorage } from '@remix-run/node';
+
+export const { getSession } = createCookieSessionStorage({
+  cookie: {
+    name: '_session',
+    sameSite: 'lax',
+    path: '/',
+    httpOnly: true,
+    secure: true,
+    secrets: ['some big secret'],
+  },
+});
+
+export async function loader({ request, params }: LoaderArgs) {
+  const session = await getSession(
+    request.headers.get('Cookie')
+  );
+
+  if (!session.has('userId')) {
+    throw new Response('Unauthorized', { status: 401 });
+  }
+
+  // loader implementation
+  const project = await db.projects.findOne({ _id: params.id });
+  return json(project);
+}
+
+export async function action({ request }: ActionArgs) {
+  const session = await getSession(
+    request.headers.get('Cookie')
+  );
+
+  if (!session.has('userId')) {
+    throw new Response('Unauthorized', { status: 401 });
+  }
+
+  // action implementation
+  const body = await request.formData();
+  await db.projects.updateOne(
+    { _id: params.id },
+    { $set: { name: body.get('name') } },
+  );
+
+  return redirect('.');
+}
+```
+
+Let's say you have a Remix app with a `root` loader and a `dashboard` loader. The `dashboard` loader is protected and should only be accessible to logged-in users. You can do this by checking the session in the `root` loader and redirecting to the login page if the user is not logged in.
+
+```js

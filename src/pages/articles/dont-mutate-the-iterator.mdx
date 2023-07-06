@@ -43,7 +43,7 @@ It's an old problem that we know of iterating over indexes using a for loop, lik
 So how do we fix this? Well, we can't mutate the iterator we're iterating over. So we need to create a new iterator. We can do this by using the `Array.from` method.
 
 ```ts
-function deleteEmptyHeaders(headers) {
+function deleteEmptyHeaders(headers: Headers) {
   const entries = Array.from(headers.entries());
   entries.forEach(([key, value]) => {
     if (value && value !== 'undefined' && value !== 'null') return;
@@ -55,7 +55,7 @@ function deleteEmptyHeaders(headers) {
 Instead of `Array.from` we can also use the spread operator `[...headers.entries()]`, and calling the `.entries()` method is optional as it's the default method to be called on such actions. So let's apply this:
 
 ```ts
-function deleteEmptyHeaders(headers) {
+function deleteEmptyHeaders(headers: Headers) {
   [...headers].forEach(([key, value]) => {
     if (value && value !== 'undefined' && value !== 'null') return;
     headers.delete(key);
@@ -108,7 +108,7 @@ Yep. `headers.set` coerces the value into a string. `header.set('key', null)` wi
 Sure, possible. This is the direct translation, including the same bug. Using `forEach` or a traditional loop is about personal preference. Switching between them doesn't change a thing.
 
 ```ts
-function deleteEmptyHeaders(headers) {
+function deleteEmptyHeaders(headers: Headers) {
   for (const [key, value] of headers) {
     if (value && value !== 'undefined' && value !== 'null') continue;
     headers.delete(key);
@@ -125,7 +125,7 @@ Just a couple of lines and so many opinions and lessons. The "common for loop" c
 This is the final solution I came up with and the way I've implemented it in [fetch-addons].
 
 ```ts
-function deleteEmptyHeaders(headers) {
+function deleteEmptyHeaders(headers: Headers) {
   for (const [key, value] of [...headers]) {
     if (value && value !== 'undefined' && value !== 'null') continue;
     headers.delete(key);
@@ -138,7 +138,6 @@ request.headers.set('x-user-id', userId); // string | null | undefined
 // somewhere in a middleware
 deleteEmptyHeaders(request.headers);
 ```
-
 
 [not mutating]: https://meijer.ws/articles/stop-mutating-in-map-reduce-and-foreach "Stop mutating in map, reduce and forEach"
 [mutating]: https://meijer.ws/articles/dont-stop-mutating "Don't stop mutating"
