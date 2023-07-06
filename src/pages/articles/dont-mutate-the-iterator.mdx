@@ -139,17 +139,6 @@ request.headers.set('x-user-id', userId); // string | null | undefined
 deleteEmptyHeaders(request.headers);
 ```
 
-The alternative would be to create an helper method to not set the header value if it's empty, but that'll only work if you have full control over all the places where headers are set. Going the middleware route is safer for my use case.
-
-```ts
-function setHeader(headers: Headers, key: string, value?: string | null) {
-  if (value === '' || value == null) return;
-  headers.set(key, value);
-}
-
-setHeader(request.headers, 'x-api-key', apiKey);
-setHeader(request.headers, 'x-user-id', userId);
-```
 
 [not mutating]: https://meijer.ws/articles/stop-mutating-in-map-reduce-and-foreach "Stop mutating in map, reduce and forEach"
 [mutating]: https://meijer.ws/articles/dont-stop-mutating "Don't stop mutating"
