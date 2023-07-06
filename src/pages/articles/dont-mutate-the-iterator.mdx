@@ -1,0 +1,158 @@
+---
+title: Don't mutate the iterator
+published: true
+description: Don't mutate the iterator you're iterating over
+tags: javascript, typescript
+date: 2023-07-06
+---
+
+Or better said, don't mutate the iterator you're iterating over. This is a common mistake that can lead to unexpected results. And yes, despite writing about [mutating] and [not mutating] before, I still [got bitten][twitter thread] by it. So let's take a look at what happened.
+
+## The problem
+
+I needed to remove all empty headers before a request. For this, I created a function that mutates the `request.headers` object. Let's take a look:
+
+```ts
+function deleteEmptyHeaders(headers: Headers) {
+  headers.forEach((value, key) => {
+    if (value && value !== 'undefined' && value !== 'null') return;
+    headers.delete(key);
+  });
+}
+```
+
+This function iterates over the headers, and removes the ones that are "empty". Usage would be like:
+
+```js
+const headers = new Headers();
+headers.set('a', '');
+headers.set('b', '');
+headers.set('c', '');
+headers.set('d', '');
+
+deleteEmptyHeaders(headers);
+Object.fromEntries(headers); // { b: '', d: '' } // ?!?
+```
+
+The problem is that we're mutating the iterator we're iterating over. By removing the first header, the second header shifts up to the first position. Like when you're pulling a book from a pile of books. As the iterator is now in the _new_ second position, it never processes "header b" but instead processes "header c" as the new second header. And so on.
+
+It's an old problem that we know of iterating over indexes using a for loop, like `for (let i = 0; i < items.length; i++)`. When we remove an item from the array, the indexes shift, and skip items. The same thing happens here. It's just harder to spot.
+
+## The solution
+
+So how do we fix this? Well, we can't mutate the iterator we're iterating over. So we need to create a new iterator. We can do this by using the `Array.from` method.
+
+```ts
+function deleteEmptyHeaders(headers) {
+  const entries = Array.from(headers.entries());
+  entries.forEach(([key, value]) => {
+    if (value && value !== 'undefined' && value !== 'null') return;
+    headers.delete(key);
+  })
+}
+```
+
+Instead of `Array.from` we can also use the spread operator `[...headers.entries()]`, and calling the `.entries()` method is optional as it's the default method to be called on such actions. So let's apply this:
+
+```ts
+function deleteEmptyHeaders(headers) {
+  [...headers].forEach(([key, value]) => {
+    if (value && value !== 'undefined' && value !== 'null') return;
+    headers.delete(key);
+  })
+}
+```
+
+Now we don't modify the iterator we're iterating over, and we end up with the expected result. Or said differently, the index of the current header isn't affected by the delete action, as we read a different pile than we modify.
+
+_Please do notice that the `key` and `value` props got reversed when we moved from `headers.forEach` to `array.forEach`._
+
+## Bonus
+
+Twitter being Twitter, I got a lot of feedback on my snippet. From folks being unable to spot the bug, to folks saying that a `return` in a `forEach` is bad practice, to completely burning me down. So let's take a look at some of the feedback.
+
+> folks that write code like this, get what they deserve
+
+Yeah, thanks for the constructive feedback. Now go away. I didn't want to quote this one at first, but it's important to highlight that this is not the way to give feedback. It's not constructive, and it's not helpful. It's just rude.
+
+> don't mutate
+
+A couple of folks suggested that I shouldn't mutate. Well, I don't have another option. I need to modify the request headers before the request is made. And [request.headers] is a read-only property. It is what it is. Tho I agree that generally speaking, modifying the input arguments is not good practice. As always, there are exceptions to the rule.
+
+The other option would be to not set the header in the first place. If you have that option, go with it. At other times, cleanup is the only option we have.
+
+> don't return in `forEach`
+
+I don't get it. The callback is a function. We can use early returns to reduce indentation and keep code readable. I don't see the problem here. Some folks suggested using `continue` or `break` instead, but that's not going to work. It's a function; we can't use those keywords. Returning from a `forEach` to exit early is fine. Note that it won't stop the iteration, but it will stop the execution of the callback.
+
+> key and value are reversed
+
+Yeah, I know. It is the function signature tho. Seriously, why did TC39 decide to put the `value` first? It's so confusing.
+
+```ts
+const headers = new headers();
+
+// value, key
+headers.forEach((value, key) => {});
+
+// key, value
+[...headers].forEach(([key, value]) => {});
+```
+
+> you're checking `'null'` and `'undefined'` instead of `null` and `undefined`
+
+Yep. `headers.set` coerces the value into a string. `header.set('key', null)` will result in `headers.get('key') === 'null'`.
+
+> use a common loop
+
+Sure, possible. This is the direct translation, including the same bug. Using `forEach` or a traditional loop is about personal preference. Switching between them doesn't change a thing.
+
+```ts
+function deleteEmptyHeaders(headers) {
+  for (const [key, value] of headers) {
+    if (value && value !== 'undefined' && value !== 'null') continue;
+    headers.delete(key);
+  }
+}
+```
+
+Interestingly enough, this makes the bug easier to spot for me. It's hard to say if that's because I'm used to this pattern or because I now know it's there.
+
+## Conclusion
+
+Just a couple of lines and so many opinions and lessons. The "common for loop" could have been suggested in a kinder tone, but seeing this implementation in a traditional loop does remind me why I so strongly prefer those over helper methods like `map` and `forEach`.
+
+This is the final solution I came up with and the way I've implemented it in [fetch-addons].
+
+```ts
+function deleteEmptyHeaders(headers) {
+  for (const [key, value] of [...headers]) {
+    if (value && value !== 'undefined' && value !== 'null') continue;
+    headers.delete(key);
+  }
+}
+
+request.headers.set('x-api-key', apiKey);
+request.headers.set('x-user-id', userId); // string | null | undefined
+
+// somewhere in a middleware
+deleteEmptyHeaders(request.headers);
+```
+
+The alternative would be to create an helper method to not set the header value if it's empty, but that'll only work if you have full control over all the places where headers are set. Going the middleware route is safer for my use case.
+
+```ts
+function setHeader(headers: Headers, key: string, value?: string | null) {
+  if (value === '' || value == null) return;
+  headers.set(key, value);
+}
+
+setHeader(request.headers, 'x-api-key', apiKey);
+setHeader(request.headers, 'x-user-id', userId);
+```
+
+[not mutating]: https://meijer.ws/articles/stop-mutating-in-map-reduce-and-foreach "Stop mutating in map, reduce and forEach"
+[mutating]: https://meijer.ws/articles/dont-stop-mutating "Don't stop mutating"
+[twitter thread]: https://twitter.com/meijer_s/status/1676506116736397312 "Link to Twitter"
+[request.headers]: https://developer.mozilla.org/en-US/docs/Web/API/Request/headers "MDN: Request.headers"
+[fetch-addons]: https://npmjs.com/fetch-addons "Fetch Addons"
