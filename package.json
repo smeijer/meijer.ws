@@ -7,7 +7,8 @@
     "pre:build": "tsx scripts/check-covers.ts",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "to-devto": "tsx scripts/to-devto.ts"
   },
   "browserslist": "defaults, not ie <= 11",
   "dependencies": {
