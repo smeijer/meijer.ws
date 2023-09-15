@@ -24,6 +24,8 @@ The "**Environment secrets**" can be used to add secrets that can only be used i
 
 Be sure to click "Save protection rules" when done.
 
+![environments on github](/articles/manual-approvals-in-github-actions-2.png)
+
 ## The Action
 
 To make this work, all you need to do is add `environment: npm` to your job definition. Remember that I've also added secrets to that environment? I can use those secrets in jobs that run on this environment, but not on the other jobs.
