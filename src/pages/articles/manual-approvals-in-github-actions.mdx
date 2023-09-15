@@ -1,0 +1,100 @@
+---
+title: Manual Approvals in GitHub Actions
+published: true
+description: How to use manual approvals in GitHub Actions to wait for a human to approve a release.
+tags: github, tooling
+date: 2023-11-15
+---
+
+In the world of continuous deployment we like to automate everything, and remove the human factor.  For me, that's not always desired. I like to batch changes in a single release when I know that I'm going to merge more changes during a reasonable timeframe. I also don't always value "approve to merge" the same as "approve to release".
+
+Though not much used in open-source projects, manual approvals are possible when using GitHub Actions. In my experience, it's a game changer.
+
+To do so, we'll need to use GitHub Environments. In this article I'll explain you how make a GitHub Action job wait for a human. I'll use NPM publishing as example, but it's trivial to apply the same to say publish your website to your webhost.
+
+## The Environment
+
+To add an environment, you'll need to go to your GitHub repository > settings > environments. Click "New environment", and give it a name. I'll name it "**NPM**".
+
+Once created, you can adjust the settings for that environment. Make sure to enable the "Required reviewers", and to add your own name to the list of reviewers.
+
+The "**required reviewers**" is what will show us the "approve button". The wait timer can be used to say deploy to production 1 day after the change was deployed to staging. We don't need that, just enable the required reviewers.
+
+The "**Environment secrets**" can be used to add secrets that can only be used in jobs bound to this environment. I've added my `NPM_TOKEN` there.
+
+Be sure to click "Save protection rules" when done.
+
+## The Action
+
+To make this work, all you need to do is add `environment: npm` to your job definition. Remember that I've also added secrets to that environment? I can use those secrets in jobs that run on this environment, but not on the other jobs.
+
+```yml
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    # environment is the magic key ✨
+    environment: npm
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - uses: bahmutov/npm-install@v1
+
+      - name: Build
+        run: npm run build
+
+      - name: Release
+        uses: cycjimmy/semantic-release-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+```
+
+And now the `release` job will only run after one of the reviewers has approved. Note that any other job still runs, unless you've build in a [dependency](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idneeds) using `needs: [release]`.
+
+![manual approval on github](/articles/manual-approvals-in-github-actions-1.png)
+
+## Only publish the most recent change
+
+Waiting for a human introduces one challenge. What if the last commit has been published, and you'll accidentally publish an older commit? To make sure that won't happen, we can use `concurrency`.
+
+```yaml
+name: CI
+
+on: # ...
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs: # ...
+```
+
+By adding the [concurrency](https://docs.github.com/en/actions/using-jobs/using-concurrency) option, GitHub will cancel every currently running job except for the current one. Making it impossible to approve a release when there is a more recent publishable commit. If you need more control over this, it's worth checking out [styfle/cancel-workflow-action/](https://github.com/styfle/cancel-workflow-action).
+
+Honestly, I believe that `concurrency` is also worth adding without a manual step. Race conditions on GitHub actions are possible. Waiting for the task scheduler might cause a more recent commit to be published before the older one.
+
+## Don't run on forks
+
+Bit out of scope, so a bonus item. Too often I'm seeing that forks also try to publish to NPM. Obviously, it'll fail due to lack of permissions. We can easily prevent that using a simple run condition so the job won't run on a fork.
+
+```yml
+
+name: CI
+
+on: #...
+
+jobs:
+  release:
+    if: github.event_name == 'push' && github.repository == 'smeijer/leaflet-geosearch'
+    runs-on: ubuntu-latest
+    environment: npm
+    steps:
+      # ...
+```
