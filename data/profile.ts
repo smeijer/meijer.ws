@@ -121,8 +121,18 @@ export const profile = {
       },
       {
         group: 'Workstation',
+        title: 'Dygma Defy',
+        description: 'I needed a split keyboard for my RSI, and this one looked like the popular MoonLander, but wireless. I can’t stand cables on my desk. The thing requires getting used to, but I’m happy with it.',
+      },
+      {
+        group: 'Workstation',
+        title: 'Insta360 Link 4K Webcam',
+        description: 'I use this webcam for all of my video calls. It’s a great webcam with a clear image, and a great field of view. I have it directly mounted on and plugged into my monitor.',
+      },
+      {
+        group: 'Workstation',
         title: 'Blue Yeti X USB Microphone',
-        description: 'I use this for all of my video calls. It’s a great mic and I love the built-in gain meter. I have it mounted on a Blue Compass boom arm, which is a great addition.',
+        description: 'I use this microphone for all of my video calls. It’s a great mic and I love the built-in mute button. Again, plugged into the monitor. I used to have it on a Blue Compass boom arm, but returned to the desk stand.',
         // link: 'https://www.logitechg.com/products/streaming-gear/yeti-x-professional-microphone.988-000244.html'
       },
       {
@@ -140,6 +150,11 @@ export const profile = {
         title: 'Garmin vívomove Style',
         description: 'I love this watch. It’s a hybrid smartwatch, which means it looks like a regular watch, but it has a small screen that shows notifications, and tracks my health. It’s a great watch, and I love their Body Battery feature.',
         // link: 'https://www.garmin.com/en-US/p/662825/pn/010-02240-01',
+      },
+      {
+        group: 'Workstation',
+        title: 'Netgear Nighthawk M2',
+        description: 'I use this mobile router when I’m on the go. It’s basically a powerbank that can create a hotspot from a SIM card, existing WiFi, UTP or USB. It should be able to host a network drive as well, though I haven’t tried that yet.',
       },
       {
         group: 'Development tools',
