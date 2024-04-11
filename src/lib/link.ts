@@ -9,5 +9,5 @@ export function isLocalLink(href: string | UrlObject) {
 }
 
 export function stripLinks(text: string) {
-  return text.replaceAll(/\[(.*?)]\((.*?)\)/g, '$1')
+  return (text || '').replaceAll(/\[(.*?)]\((.*?)\)/g, '$1')
 }
