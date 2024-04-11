@@ -43,6 +43,7 @@
     "@types/react-dom": "^18.2.4",
     "abstract-syntax-tree": "^2.20.6",
     "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
     "eslint": "8.26.0",
     "eslint-config-next": "13.0.2",
     "prettier": "^2.8.7",
