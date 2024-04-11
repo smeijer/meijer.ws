@@ -1,0 +1,162 @@
+---
+title: Improve your Dev Stack with process-compose
+published: true
+description: Use process-compose to manage your dev services.
+tags: tooling, devops, orchestration
+date: 2024-04-11
+---
+
+As developers, we often run multiple services to work on a single project. I've managed my projects with [makefiles], [PM2], [Tmux], [Procfiles], and many other solutions. They all had their pros and cons, but none of them felt like the perfect solution. I always kept looking for a _"docker (compose) for development environments"_. The problem with docker itself is that it works fine for a database, but not for something like `go` or `node` services, where you want to restart the service on file changes, and use hot reloading.
+
+In this article, I'll introduce you to [process-compose], a tool that identifies itself as follows:
+
+> Process Compose is a simple and flexible scheduler and orchestrator to manage non-containerized applications.
+
+And that's exactly what it is. It's a single binary that enables you to define your services in a `process-compose.yaml` file, and then start them all with a single command. It's like `docker-compose`, but for binaries on your system. Complete with health checks, restarts, and logs like we know from docker-compose, and with support for hot reloading like you depend on in your local development environment.
+
+## Let's get started
+
+You can install `process-compose` using `brew`, or by downloading the binary from the [releases page]. See their [installation page] for other options.
+
+```shell
+brew install f1bonacc1/tap/process-compose
+```
+
+Once you have `process-compose` installed, you can create a `process-compose.yaml` file in your project root. Here's an example of a `process-compose.yaml` file for a random node.js project:
+
+```yaml
+version: "0.5"
+
+processes:
+  app:
+    command: npm run dev
+```
+
+Next, run `process-compose up` in the same directory as your `process-compose.yaml` file. This will start the `apps` process, and you should see the output of the `npm run dev` command in your terminal. If you don't like the visual output, you can run `process-compose up -t=false` to run the process without TUI.
+
+That's it in essence, add as many `processes` as you like. For example one to run your db server, one to start your tests in watch mode, or one to compile your css using `postcss`.
+
+A more complete example could look like this:
+
+```yaml
+processes:
+  app:
+    command: npm run dev
+    environment:
+      - "MONGO_URI=mongodb://localhost:27017"
+  postcss:
+    command: postcss input.css -o output.css
+  mongo:
+    command: mongod --dbpath ../.db
+```
+
+Adding the environment variables to this file is completely optional, you can keep using your current preferred way of setting environment variables.
+
+## Process Dependencies
+
+You can also define dependencies between processes. For example, you might want to start your database before starting your app. You can do this by adding a `depends_on` key to your process.
+
+```yaml
+processes:
+  app:
+    command: npm run dev
+    # …
+    depends_on: // [!code highlight]
+      mongo: // [!code highlight]
+        condition: process_started // [!code highlight]
+  mongo:
+    command: mongod --dbpath ../.db
+```
+
+Run `process-compose up mongo` when you only want to start the `mongo` process, and not the `app` process. When running `process-compose up app` it will start the `mongo` process first, and then the `app` process as you've told it that `app` cannot run without `mongo`.
+
+## Health checks
+
+It's possible to define health checks for your processes. This helps with two things. By defining a health check, your process can automatically restart when it becomes "unhealthy". It also makes it possible for depending services to delay their start until the process is truly ready. Think of the time between starting your database and it being ready to accept connections.
+
+A health check is defined by adding a `readiness_probe` key to your process.
+
+```yaml
+processes:
+  # …
+  mongo:
+    command: mongod --dbpath ../.db
+    readiness_probe: // [!code highlight]
+      exec: // [!code highlight]
+        command: 'mongosh --eval "db.stats()"' // [!code highlight]
+```
+
+Add an `availability` key to make sure the process is restarted when it becomes "unhealthy":
+
+```yaml
+processes:
+  # …
+  mongo:
+    command: mongod --dbpath ../.db
+    readiness_probe:
+      exec:
+        command: 'mongosh --eval "db.stats()"'
+    availability: // [!code highlight]
+      restart: always // [!code highlight]
+```
+
+To make the `app` process wait for `mongo` to not just be started, but also be ready, you can add change the `depends_on.condition` to `process_healthy`.
+
+```yaml
+processes:
+  app:
+    command: npm run dev
+    # …
+    depends_on:
+      mongo:
+        condition: process_started // [!code --]
+        condition: process_healthy // [!code ++]
+```
+
+And while we're at it, we can also make sure that the `app` process is restarted when it crashes. How the health check is done is up to you, but for most servers, a simple curl would do. Combine it with a grep if you'd like.
+
+```yaml
+processes:
+  app:
+    command: npm run dev
+    # …
+    readiness_probe: // [!code highlight]
+      exec: // [!code highlight]
+        command: 'curl http://localhost:3000 | grep -i "<!doctype html>"' // [!code highlight]
+```
+
+That's it. Now run `process-compose up`, and you'll see the database starting first, and the app as soon as the database is "healthy".
+
+There are a couple options available to configure the max number of errors and retries available for health checks, but I'll forward you to their [documentation][health-checks] for that.
+
+## Working directory
+
+One more quick tip for if you're working with a mono-repo, or when you're simply not ready to commit the `process-compose.yaml` file to your project. You can specify the working directory per service, like:
+
+```yaml
+processes:
+  app:
+    command: npm run dev
+    working_dir: ./packages/docs // [!code highlight]
+    # …
+  mongo:
+    command: mongod --dbpath ./my-app
+    working_dir: ~/mongo-data // [!code highlight]
+    # …
+```
+
+This makes sure that the `command` is run in the context of the `working_dir`, think `cd $working_dir && sh -c $command`.
+
+## Final words
+
+I've been using `process-compose` for a couple of weeks now, and I'm loving it. It's a simple tool that does exactly what I need. Power on my machine, run `process-compose up`, and all my services are started and running in watch mode.
+
+[PM2]: https://meijer.ws/articles/simplify-your-dev-environment-with-pm2
+[Tmux]: https://gist.github.com/smeijer/0e3604a51e9393d2ac009cef6ce0fb48
+[Procfiles]: https://meijer.ws/articles/simpler-dev-environments-with-procfiles
+
+[process-compose]: https://f1bonacc1.github.io/process-compose
+[installation page]: https://f1bonacc1.github.io/process-compose/installation
+[releases page]: https://github.com/F1bonacc1/process-compose/releases
+[health-checks]: https://f1bonacc1.github.io/process-compose/health
+[makefiles]: https://x.com/meijer_s/status/1777662281586741686
