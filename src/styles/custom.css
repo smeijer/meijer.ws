@@ -22,6 +22,22 @@
   text-decoration: underline;
 }
 
+.prose img {
+  margin-left: -1rem;
+  margin-right: -1rem;
+  max-width: calc(100% + 2rem);
+  border-radius: 0;
+}
+
+@media (min-width: 640px) {
+  .prose img {
+    border-radius: 1rem;
+    margin-left: 0;
+    margin-right: 0;
+    max-width: 100%;
+  }
+}
+
 .shiki {
   border: none;
   background-color: #27272ae6 !important;

@@ -14,6 +14,12 @@ In this article, I'll introduce you to [process-compose], a tool that identifies
 
 And that's exactly what it is. It's a single binary that enables you to define your services in a `process-compose.yaml` file, and then start them all with a single command. It's like `docker-compose`, but for binaries on your system. Complete with health checks, restarts, and logs like we know from docker-compose, and with support for hot reloading like you depend on in your local development environment.
 
+Before we set things up, let's take a quick look at an example screen from a bigger project of mine. This is what process-compose looks like:
+
+![process-compose session](/articles/improve-your-dev-stack-with-process-compose-1.png)
+
+I like the TUI, but it can be disabled with `-t=false` if that's not your thing. Plus, logs can be tailed in another terminal with `process-compose process logs $process`.
+
 ## Let's get started
 
 You can install `process-compose` using `brew`, or by downloading the binary from the [releases page]. See their [installation page] for other options.
@@ -97,7 +103,7 @@ processes:
       exec:
         command: 'mongosh --eval "db.stats()"'
     availability: // [!code highlight]
-      restart: always // [!code highlight]
+      restart: on_failure // [!code highlight]
 ```
 
 To make the `app` process wait for `mongo` to not just be started, but also be ready, you can add change the `depends_on.condition` to `process_healthy`.
