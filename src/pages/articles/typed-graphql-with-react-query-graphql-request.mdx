@@ -18,13 +18,13 @@ GraphQL Code Generator can generate fully typed React hooks if you tell it to, b
 
 To get that up and running, you'll need to install a few dev dependencies:
 
-```
-npm i -D 
-  @graphql-codegen/cli 
-  @graphql-codegen/typed-document-node
-  @graphql-codegen/typescript 
-  @graphql-codegen/typescript-operations 
-  @graphql-typed-document-node/core
+```shell
+npm i -D \
+  @graphql-codegen/cli \
+  @graphql-codegen/typed-document-node \
+  @graphql-codegen/typescript \
+  @graphql-codegen/typescript-operations \
+  @graphql-typed-document-node/core \
 ```
 
 And now the more exciting part, our codegen config (`codegen.yml`). We don't have a schema stored in code, and because the back-end is in Ruby, `graphql-codegen` won't be able to extract the types out of the back-end source files either. So instead, we provide our GraphQL endpoint. It's an easy setup, but the one downside is that our server must be running when we want to generate new types.
