@@ -6,11 +6,11 @@ tags: nodejs, tooling
 date: 2022-06-01
 ---
 
-Throughout the time, I've tried a number of different ways to manage my development environment. From Make files, to [PM2][1] and [Tmux][2]. 
+Throughout the time, I've tried a number of different ways to manage my development environment. From Make files, to [PM2][1] and [Tmux][2].
 
 Tmux, is well.., tmux. [Tmuxinator][3] makes it manageable, but the "layout" definition is far from readable, and copying errors from history to your clipboard, is a true pain in the ass.
 
-I still recommend taking a look at PM2 if you need more than "get things running". It comes with a lot of options, but that also means that your config script comes with some verbosity. 
+I still recommend taking a look at PM2 if you need more than "get things running". It comes with a lot of options, but that also means that your config script comes with some verbosity.
 
 This article explains how I cover my simple use cases. Those that don't require additional file watchers (see PM2), or split panes to separate logs while sticking to a single terminal (see Tmux). For those, I use Procfiles.
 
@@ -22,19 +22,19 @@ So a Procfile is a simple `key: command` format. And much like a Dockerfile, it'
 
 For [MagicBell][8], our procfile looks as follows:
 
-```
+```makefile
 server: bin/rails s -p 3000 -e development
 worker: bin/bundle exec sidekiq
 webpack: bin/webpacker-dev-server
 ```
 
-That's it. That's all the config you need to get multiple services up and running through a single command. 
+That's it. That's all the config you need to get multiple services up and running through a single command.
 
 Obviously, we still need to install a runner to handle this procfile. Meet [foreman][4], or one of it's forks. Foreman is a Ruby script, so for that you'll need to have Ruby installed. There are many forks though. Such as [shoreman][5], which is a dependency free shell script, or [node-foreman][6], which is a javascript fork. I go with node-foreman, for the simple reason that I'm a node guy and I like that I can `npm install` it to the dependencies of my node projects.
 
 So, go ahead, and install `node-foreman`. For the sake of this howto, let's go global. Drop the `-g` if you have a concrete project at hand.
 
-```
+```shell
 npm i -g node-foreman
 ```
 
@@ -42,11 +42,11 @@ Node-foreman installs a binary named `nf`. With this installed, it's as simple a
 
 ## A bit more… tabs
 
-The above might be all you need. But sometimes, I like to have my startup process a bit personalised. For that, I use scripts that I store under my home directory. 
+The above might be all you need. But sometimes, I like to have my startup process a bit personalised. For that, I use scripts that I store under my home directory.
 
 For MagicBell, my config exists of two files. One custom procfile, saved as `~/scripts/magicbell.proc`:
 
-```
+```makefile
 server: bin/rails s -p 3000 -e development
 worker: bin/bundle exec sidekiq
 webpack: bin/webpacker-dev-server
@@ -55,7 +55,7 @@ codegen: yarn codegen -w
 
 And the "executable" script that I run, saved as `~/scripts/start-magicbell` (don't forget to `chmod +x`)
 
-```
+```shell
 #!/usr/bin/env bash
 
 cd ~/dev/magicbell/backend
@@ -64,13 +64,13 @@ ttab docker-compose up
 bundle install
 yarn install
 yarn db:migrate
- 
+
 nf start -j ~/scripts/magicbell.proc -e .env.development
 ```
 
 When read that script, you'll notice `ttab`. [ttab][7] is a small utility that allows us to start commands in a new terminal tab. That way, I can start postgres & redis in one terminal instance (tab) while running everything else in another. Ttab is optional, but I highly recommend using it for simplicity.
 
-```
+```shell
 npm i -g ttab
 ```
 
