@@ -11,7 +11,7 @@ export function Share({ url, className }: { url: string, className?: string }) {
         <span className="ml-3">Liked this article?</span>
       </h2>
       <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-        If you made it to here, please share your thoughts on Twitter!
+        If you made it to here, please share your thoughts on Twitter, or leave a comment below.
       </p>
       <div className="mt-6 flex gap-4">
         <Button href={`https://twitter.com/intent/tweet?url=${url}`} variant="primary" className="flex-none">

@@ -11,6 +11,7 @@ import { SocialHead } from "@/components/social-head";
 import Image from 'next/image'
 
 import portraitImage from '@/images/portrait.jpg'
+import { ArticleComments } from "@/components/article-comments";
 
 
 function ArrowLeftIcon(props) {
@@ -82,6 +83,13 @@ export function ArticleLayout({
             </article>
 
             <Share className="mt-20" url={`${process.env.NEXT_PUBLIC_SITE_URL}${path}`} />
+            
+            <ArticleComments
+              repo={process.env.NEXT_PUBLIC_GISCUS_REPO}
+              repoId={process.env.NEXT_PUBLIC_GISCUS_REPO_ID}
+              category={process.env.NEXT_PUBLIC_GISCUS_CATEGORY}
+              categoryId={process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID}
+            />
           </div>
         </div>
       </Container>
