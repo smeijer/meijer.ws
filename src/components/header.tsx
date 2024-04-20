@@ -7,6 +7,7 @@ import clsx from 'clsx'
 
 import { Container } from '@/components/container'
 import { profile } from '@/../data/profile';
+import { changeGiscusTheme } from "@/components/article-comments";
 
 function CloseIcon(props) {
   return (
@@ -184,6 +185,7 @@ function ModeToggle() {
     let darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
     let isSystemDarkMode = darkModeMediaQuery.matches
     let isDarkMode = document.documentElement.classList.toggle('dark')
+    changeGiscusTheme(isDarkMode ? 'dark' : 'light');
 
     if (isDarkMode === isSystemDarkMode) {
       delete window.localStorage.isDarkMode
