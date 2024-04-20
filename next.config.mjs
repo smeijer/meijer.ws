@@ -96,6 +96,23 @@ const nextConfig = {
   experimental: {
     scrollRestoration: true,
   },
+  async headers() {
+    return [
+      {
+        source: "/giscus.css",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "*",
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "OPTIONS, GET, HEAD",
+          },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       { source: '/blog', destination: '/articles', permanent: true },
