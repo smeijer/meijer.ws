@@ -11,8 +11,8 @@ jobs:
       - name: sync discussions
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-          NEXT_PUBLIC_GISCUS_REPO: smeijer/blog-comments
-          NEXT_PUBLIC_GISCUS_REPO_ID: R_kgDOLwktSA
-          NEXT_PUBLIC_GISCUS_CATEGORY: Announcements
-          NEXT_PUBLIC_GISCUS_CATEGORY_ID: DIC_kwDOLwktSM4Ceznj
+          GISCUS_REPO: smeijer/blog-comments
+          GISCUS_REPO_ID: R_kgDOLwktSA
+          GISCUS_CATEGORY: Announcements
+          GISCUS_CATEGORY_ID: DIC_kwDOLwktSM4Ceznj
         run: ./node_modules/.bin/tsx ./scripts/to-discussions.ts

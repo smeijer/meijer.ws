@@ -10,6 +10,12 @@ const BASE_URL = 'https://meijer.ws';
 
 const { parsed: env } = dotenv.config({ path: '.env.local' });
 
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN || env.GITHUB_TOKEN;
+const GISCUS_REPO= process.env.GISCUS_REPO || env.NEXT_PUBLIC_GISCUS_REPO;
+const GISCUS_REPO_ID= process.env.GISCUS_REPO_ID || env.NEXT_PUBLIC_GISCUS_REPO_ID;
+const GISCUS_CATEGORY= process.env.GISCUS_CATEGORY || env.NEXT_PUBLIC_GISCUS_CATEGORY;
+const GISCUS_CATEGORY_ID= process.env.GISCUS_CATEGORY_ID || env.NEXT_PUBLIC_GISCUS_CATEGORY_ID;
+
 function getOg(slug: string) {
   return `https://meijer.ws/api/og?path=/articles/${slug}`;
 }
@@ -49,7 +55,7 @@ export async function createDiscussion(
   const response = await fetch(GITHUB_GRAPHQL_API_URL, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+      Authorization: `Bearer ${GITHUB_TOKEN}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -75,7 +81,7 @@ export async function updateDiscussion(
   const response = await fetch(GITHUB_GRAPHQL_API_URL, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+      Authorization: `Bearer ${GITHUB_TOKEN}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -114,7 +120,7 @@ type GetDiscussionResponse = {
 }
 
 export async function getDiscussions(input: { categoryId: string }) {
-  const [owner, repo] = env.NEXT_PUBLIC_GISCUS_REPO.toLowerCase().split('/');
+  const [owner, repo] = GISCUS_REPO.toLowerCase().split('/');
 
   let cursor = '';
   const discussions: GetDiscussionResponse['data']['repository']['discussions']['nodes']  = [];
@@ -123,7 +129,7 @@ export async function getDiscussions(input: { categoryId: string }) {
     const response = await fetch(GITHUB_GRAPHQL_API_URL, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+        Authorization: `Bearer ${GITHUB_TOKEN}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -179,7 +185,7 @@ async function main() {
   }
 
   const discussions = await getDiscussions({
-    categoryId: env.NEXT_PUBLIC_GISCUS_CATEGORY_ID,
+    categoryId: GISCUS_CATEGORY_ID,
   });
 
   const githubDiscussions = new Map(discussions.map(x => [x.title, x]));
@@ -211,8 +217,8 @@ async function main() {
 
     console.log(`[github] publish: ${canonicalUrl}`);
     await createDiscussion({
-      repositoryId: env.NEXT_PUBLIC_GISCUS_REPO_ID,
-      categoryId: env.NEXT_PUBLIC_GISCUS_CATEGORY_ID,
+      repositoryId: GISCUS_REPO_ID,
+      categoryId: GISCUS_CATEGORY_ID,
       title: article.slug,
       body,
     });
