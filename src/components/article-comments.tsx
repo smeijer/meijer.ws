@@ -1,26 +1,9 @@
 import { useEffect } from "react";
 import { getColorScheme } from "@/lib/dark-mode";
 
-type GiscusTheme =
-  "cobalt" |
-  "custom_example" |
-  "dark" |
-  "dark_dimmed" |
-  "dark_high_contrast" |
-  "dark_protanopia" |
-  "dark_tritanopia" |
-  "light" |
-  "light_high_contrast" |
-  "light_protanopia" |
-  "light_tritanopia" |
-  "noborder_dark" |
-  "noborder_gray" |
-  "noborder_light" |
-  "preferred_color_scheme" |
-  "purple_dark" |
-  "transparent_dark";
+export function changeGiscusTheme(scheme: 'light' | 'dark') {
+  const theme =  new URL(`giscus-${scheme}.css`, process.env.NEXT_PUBLIC_SITE_URL).toString();
 
-export function changeGiscusTheme(theme: GiscusTheme) {
   const iframes = document.querySelectorAll<HTMLIFrameElement>('iframe.giscus-frame');
   iframes.forEach((iframe) => {
     iframe.contentWindow.postMessage({
@@ -34,6 +17,10 @@ export function changeGiscusTheme(theme: GiscusTheme) {
 }
 
 export function ArticleComments ({ repo, repoId, category, categoryId }) {
+  // this is loaded from the giscus.app domain, we need a full url
+  const scheme = getColorScheme();
+  const theme = new URL(`giscus-${scheme}.css`, process.env.NEXT_PUBLIC_SITE_URL).toString();
+
   useEffect(() => {
     const script = document.createElement('script');
     const commentsDiv = document.getElementById('post-comments');
@@ -48,7 +35,7 @@ export function ArticleComments ({ repo, repoId, category, categoryId }) {
     script.setAttribute('data-reactions-enabled', '1');
     script.setAttribute('data-emit-metadata', '0');
     script.setAttribute('data-input-position', 'top');
-    script.setAttribute('data-theme', getColorScheme());
+    script.setAttribute('data-theme', theme);
     script.setAttribute('data-lang', 'en');
     script.setAttribute('data-loading', 'lazy');
     script.setAttribute('crossorigin', 'anonymous');
@@ -57,7 +44,7 @@ export function ArticleComments ({ repo, repoId, category, categoryId }) {
     } catch (error) {
       console.error('Error while rendering giscus widget.', error);
     }
-  }, [repo, repoId, category, categoryId]);
+  }, [repo, repoId, category, categoryId, theme]);
 
   return (
     <div id="post-comments" className="mt-20">

@@ -97,21 +97,13 @@ const nextConfig = {
     scrollRestoration: true,
   },
   async headers() {
-    return [
-      {
-        source: "/giscus.css",
-        headers: [
-          {
-            key: "Access-Control-Allow-Origin",
-            value: "*",
-          },
-          {
-            key: "Access-Control-Allow-Methods",
-            value: "OPTIONS, GET, HEAD",
-          },
-        ],
-      },
-    ];
+    return ['/giscus.css', '/giscus-light.css', '/giscus-dark.css'].map(source => ({
+      source,
+      headers: [
+        { key: "Access-Control-Allow-Origin", value: "https://giscus.app" },
+        { key: "Access-Control-Allow-Methods", value: "OPTIONS, GET" },
+      ],
+    }));
   },
   async redirects() {
     return [

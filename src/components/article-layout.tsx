@@ -83,7 +83,7 @@ export function ArticleLayout({
             </article>
 
             <Share className="mt-20" url={`${process.env.NEXT_PUBLIC_SITE_URL}${path}`} />
-            
+
             <ArticleComments
               repo={process.env.NEXT_PUBLIC_GISCUS_REPO}
               repoId={process.env.NEXT_PUBLIC_GISCUS_REPO_ID}
