@@ -86,7 +86,7 @@
 }
 
 .shiki .line.diff.add:before {
-  content: "-";
+  content: "+";
   color: #50FA7B;
 }
 
@@ -107,6 +107,10 @@
 
 .shiki .line.highlighted.warning {
   background-color: #FFB86C40;
+}
+
+.shiki .line.plain span {
+  color: inherit !important;
 }
 
 .markdown-alert {

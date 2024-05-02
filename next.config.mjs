@@ -7,6 +7,8 @@ import AST from "abstract-syntax-tree";
 import path from 'path';
 import { createHmac } from 'node:crypto';
 import fs from 'fs';
+
+import { createCommentNotationTransformer } from '@shikijs/transformers';
 import rehypeShiki from '@shikijs/rehype'
 import { transformerNotationDiff, transformerNotationHighlight, transformerNotationFocus, transformerNotationErrorLevel } from '@shikijs/transformers';
 import rehypeSlug from 'rehype-slug'
@@ -125,6 +127,21 @@ const nextConfig = {
   },
 }
 
+function transformShellOutput() {
+  const className = 'shell-output';
+
+  return createCommentNotationTransformer(
+    'shikijs-plain',
+    // comment-start             | marker    | word           | range | comment-end
+    /^\s*(?:\/\/|\/\*|<!--|#)\s+\[!code plain]\s*(?:\*\/|-->)?/,
+    function ([_, word, range], line) {
+      this.addClassToHast(line, 'plain')
+      return true
+    },
+    true, // remove empty lines
+  )
+}
+
 const withMDX = nextMDX({
   extension: /\.mdx?$/,
   options: {
@@ -145,6 +162,7 @@ const withMDX = nextMDX({
           transformerNotationHighlight(),
           transformerNotationFocus(),
           transformerNotationErrorLevel(),
+          transformShellOutput(),
         ]
       }],
       [rehypeGithubAlerts, {
