@@ -1,0 +1,16 @@
+{
+  "$schema":  "https://raw.githubusercontent.com/jetpack-io/devbox/0.10.4/.schema/devbox.schema.json",
+  "packages": ["nodejs@20.12.2"],
+  "env": {
+    "PS1": "📝 meijer.ws > ",
+    "PATH": "$PATH:$PWD/node_modules/.bin"
+  },
+  "shell": {
+    "init_hook": [
+      "npm install --prefer-offline --no-audit --no-progress"
+    ],
+    "scripts": {
+      "dev": "next dev"
+    }
+  }
+}

@@ -1,0 +1,172 @@
+---
+title: Orchestrate your Dev Environment using Devbox
+published: true
+description: Use Devbox to manage your portable, isolated, dev environment, on any machine.
+tags: tooling, devops, orchestration
+date: 2024-05-02
+---
+
+I've written about [process-compose] a while back, and [Devbox] neatly complements that workflow. If you haven't read that post yet, I recommend to do so before or after this post. Devbox is the missing piece in having a Docker like experience, for local dev environments. Where process-compose orchestrates services like docker-compose, Devbox isolates environments like the Docker containers, but without the cost of virtualization.
+
+In other words, we can simply run `devbox services up` in the project root to start the database and other dev services (like node, ruby, go, etc), with exactly the versions we expect (just like Docker), without needing to install anything beyond Devbox, and without affecting other projects, while still enjoying file watchers / hot-reloading (unlike Docker).
+
+Or well, things will obviously still install, but you get me right? We also don't install Postgres when running a Dockerfile.
+
+## Getting Started
+
+First things first, we need to install Devbox. Devbox is built around [Nix], and requires the Nix Package Manager, which it will automatically install if you don't have it yet. The good news is, you didn't even need to know that, or anything about Nix honestly. Run the command below to install Devbox.
+
+```shell
+curl -fsSL https://get.jetify.com/devbox | bash
+```
+
+When that's done, we move on to your project. I'm going to use my blog as example, which is built on Next.js. I've also configured Devbox for projects which are a mix of Ruby, Go, Node, Postgresql, Redis and DynamoDB, and the setup is honestly trivial to adjust.
+
+Navigate to your project, and run:
+
+```shell
+devbox init
+```
+
+That command creates a `devbox.json` file, which you should commit to your repository. First, I'm going to show you what it's all about. Run `devbox shell`, and assuming you have node.js installed, run `node --version` in that shell (or `go version` or `ruby --version`, you get it). You'll see the currently installed version, right?
+
+Now, exit this shell, run `devbox shell --pure`, and run the same version command as before. Your runtime is now unavailable! We'll fix that, but this is what is going to ensure you that the environment is the same, reproducible, isolated environment, on every machine contributing to the project.
+
+```shell
+devbox shell --pure
+Starting a devbox shell... # [!code plain]
+
+(devbox) $ node
+bash: node: command not found # [!code error] # [!code plain]
+````
+
+
+What happened is that `devbox shell` creates a shell with packages from your project installed on top of everything already on your system, while the `--pure` flag creates an isolated shell inheriting almost no variables from the current environment.
+
+## Adding packages
+
+There's little fun to a shell without packages, so let's search and add some. We can run the `devbox` command in the Devbox shell, or just in your own terminal from the project root. Those are the same.
+
+Run `devbox search nodejs` to see what nodejs packages are available. Funny enough, as of today, [devbox search] is much better, so I'll spare you the rant on how much their search sucked.
+
+I still have node v18 installed on my system, but let's use Devbox to upgrade my site to node v20.
+
+```shell
+devbox add nodejs@20.12.2
+```
+
+This installs nodejs in my Devbox environment, and adds the package to `devbox.json`. Run `node -v` to confirm that it's installed, and run it outside of `devbox shell` to confirm that the globally installed node is left unaffected.
+
+If we'd commit this change, and someone else runs `devbox shell --pure` on their system, node v20.12.2 will automatically downloaded and installed if it wasn't already, and then be directly available.
+
+```json
+{
+  "packages": [], // [!code --]
+  "packages": ["nodejs@20.12.2"], // [!code ++]
+  "shell": { }
+}
+```
+
+I'm explicit about what nodejs version to install. It would be fine to add `nodejs@20` or `nodejs@latest`, but I'm not a big fan of surprise upgrades.
+
+Use the search, and add other packages that you depend on. There's also [nixhub] if you prefer to search using your browser. And yes, you can even add Docker as a package, and keep running some services trough Docker, without expecting your contributors to manually configure Docker on their system.
+
+## Scripts
+
+With node installed, I'm moving on to the `devbox run` command, and `scripts` section in your `devbox.json`. You might recognize it from `npm run` and `package.json#scripts`, and it is indeed very much the same. With one exception, you can define them as string, or as string array for actions requiring multiple commands.
+
+I'll add a script to run next in development mode:
+
+
+```json
+{
+  "packages": ["nodejs@20.12.2"],
+  "shell": {
+    "scripts": {
+      "dev": "next dev" // [!code ++]
+    }
+  }
+}
+```
+
+Let's run it!
+
+```shell
+devbox run dev
+.devbox/gen/scripts/dev.sh: line 7: next: command not found # [!code plain]
+Error: error running script "dev" in Devbox: exit status 127 # [!code plain] # [!code error]
+```
+
+What's that about!? Well, because `next` is a locally installed node module, it doesn't exist on your `PATH`. We'll need to fix your path, and can do so using the `devbox.json`:
+
+```json
+{
+  "packages": ["nodejs@20.12.2"],
+  "env": { // [!code ++]
+    "PATH": "$PATH:$PWD/node_modules/.bin" // [!code ++]
+  }, // [!code ++]
+  "shell": {
+    "scripts": {
+      "dev": "next dev"
+    }
+  }
+}
+```
+
+With this change, all binaries living in `./node_modules/.bin` become executables in your Devbox shell, but again, not outside of it! Which is a good thing.
+
+Running `devbox run dev` will now start nextjs, using node installed with and isolated by Devbox. Meaning, every contributor using `devbox` is guaranteed to use the same (patch) version of node.
+
+Other env vars like your `DB_URL`, `PORT`, or `NODE_ENV` can also be added to the `env` property, or loaded with `devbox run --env-file .env dev` or `devbox run --env key=val dev`. I recommend setting the `PS1` env var to your project name, so it's always obvious on what project you're working:
+
+```json
+{
+  "packages": ["nodejs@20.12.2"],
+  "env": {
+    "PS1": "📝 meijer.ws > ",
+    "PATH": "$PATH:$PWD/node_modules/.bin"
+  }
+}
+```
+
+```shell
+devbox shell --pure
+Starting a devbox shell... # [!code plain]
+(devbox) 📝 meijer.ws > # [!code plain]
+```
+
+## Init hooks
+
+Init hooks are scripts that Devbox runs before starting a shell. You can add anything there, but do know they're run every single time a new shell is created. So, you don't want them to take too long on successive runs.
+
+One thing I like to add for smaller projects, is an npm install. I hear you think; _but that's slooow!_. Let me tell you, it doesn't have to be! Using `--prefer-offline` and `--no-audit` I'm always using the intended dependencies, at the cost of ~400ms for those cases when I'm already up-to-date.
+
+```json
+{
+  "packages": ["nodejs@20.12.2"],
+  "env": {
+    "PS1": "📝 meijer.ws > ",
+    "PATH": "$PATH:$PWD/node_modules/.bin"
+  },
+  "init_hooks": [ // [!code ++]
+    "npm install --prefer-offline --no-audit --no-progress" // [!code ++]
+  ] // [!code ++]
+}
+```
+
+If the initialization is more complex, or more time consuming, I'd recommend moving that to a `script` instead. It is possible to optimize initialization using makefiles, as those have the ability to run commands only when needed, but that's a topic for another time.
+
+Ideally contributors don't run `npm install` in your project root, but run your script, like `devbox run install-deps`. The last ensures that everyone uses the same package manager, while the former could trigger changes in package-lock.json, even when nothing was changed.
+
+## Services
+
+Devbox power truly shines when running `services` with it. Services are to Devbox, what docker-compose is to Docker. Services are defined in a `process-compose.yaml` file and managed using `devbox services`. As Devbox simply wraps [process-compose][process-compose-site], I highly recommend to checkout my [article about process-compose][process-compose] for more info on this subject.
+
+Just know that running `process-compose up` runs your globally installed applications, while `devbox services up` runs applications installed using `devbox add`, as if you started them from a `devbox shell`. So when reading that article, replace every `process-compose up` with `devbox services up` to get the most out of it.
+
+[process-compose]: /articles/improve-your-dev-stack-with-process-compose
+[Nix]: https://nixos.org/
+[nixhub]: https://nixhub.io/
+[Devbox]: https://www.jetify.com/devbox
+[devbox search]: https://x.com/jetpack_john/status/1785772078299566451
+[process-compose-site]: https://f1bonacc1.github.io/process-compose
