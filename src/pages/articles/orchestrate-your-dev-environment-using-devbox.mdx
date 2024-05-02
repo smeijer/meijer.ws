@@ -123,7 +123,7 @@ Other env vars like your `DB_URL`, `PORT`, or `NODE_ENV` can also be added to th
 {
   "packages": ["nodejs@20.12.2"],
   "env": {
-    "PS1": "📝 meijer.ws > ",
+    "PS1": "📝 meijer.ws > ", // [!code ++]
     "PATH": "$PATH:$PWD/node_modules/.bin"
   }
 }
@@ -132,7 +132,7 @@ Other env vars like your `DB_URL`, `PORT`, or `NODE_ENV` can also be added to th
 ```shell
 devbox shell --pure
 Starting a devbox shell... # [!code plain]
-(devbox) 📝 meijer.ws > # [!code plain]
+(devbox) 📝 meijer.ws > # [!code plain] # [!code highlight]
 ```
 
 ## Init hooks
