@@ -1,0 +1,15 @@
+version: "0.5"
+
+processes:
+  prepare:
+    working_dir: .
+    command: npm i
+
+  next:
+    working_dir: .
+    command: "next dev"
+    environment:
+      - NODE_OPTIONS=--inspect
+    depends_on:
+      prepare:
+        condition: process_completed_successfully
