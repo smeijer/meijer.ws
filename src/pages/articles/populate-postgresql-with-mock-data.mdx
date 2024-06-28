@@ -1,0 +1,391 @@
+---
+title: Populate PostgreSQL with Mock Data
+published: true
+description: Learn how to efficiently generate and insert realistic mock data into your database.
+tags: postgresql, database, mocks, testing
+date: 2024-06-28
+---
+
+In the world of testing and debugging database query performance, having a rich dataset to work with is crucial. Working with production is - for good reasons - not always an option, so this is where mock data comes in. In this article, we will walk through the process of populating your PostgreSQL database with mock data efficiently.
+
+There are two ways to generate mock data. One is using [pgbench], and the other is using straight forward sql queries, like I'm doing here. The benefit of the latter is that it uses the sql syntax that you're already familiar with.
+
+Let’s dive in!
+
+## Creating the table
+
+We'll need a table to populate first. Something simple, but not too simple. Something that has date fields, a few columns that can be filtered upon, and a relational field. I've considered `users`, `articles`, and `comments`, but those are too straight forward. So, let's go with a `notifications` table instead.
+
+I think the columns in the snippet below speak for themselves. The primary column (`id`) is an auto-incrementing integer, `created_at` defaults to the creation date, and `deleted_at` is `null` unless the record is deleted, also known as "soft delete".
+
+```sql
+create table notifications (
+  id         serial primary key,
+  user_id    varchar(21)  not null,
+  created_at timestamp    not null default current_timestamp,
+  deleted_at timestamp,
+  topic      varchar(100) not null,
+  category   varchar(50)  not null,
+  title      varchar(100) not null,
+  body       text         not null,
+  action_url text
+);
+```
+
+## Inserting data
+
+In the most basic form, we can use a single insert statement to create our first record in the table. As `created_at` has a default value, and `deleted_at` is nullable, we can skip those fields.
+
+```sql
+insert into notifications (user_id, topic, category, title, body, action_url)
+values ('user_1', 'ticket.1', 'support', 'new comment', 'someone posted a comment', 'https://example.com');
+```
+
+That works, but it'll only give us one single record. By wrapping that statement in an SQL loop, we can generate an arbitrary number of rows. I'll go with 100k records, which takes about 400ms on my m1, but feel free change it to your needs. A million records takes about 4 seconds, and 10k is pretty much instantaneous. For the sake of following this article, there's no value in using insanely high numbers.
+
+```sql
+do $$
+  begin
+    for i in 1..100000 loop
+      insert into notifications (user_id, topic, category, title, body, action_url)
+      values ('user_1', 'ticket.1', 'support', 'new comment', 'someone posted a comment', 'https://example.com');
+    end loop;
+  end
+$$;
+```
+
+Done? Here's the first catch. What do you think the `created_at` distribution to be like?
+
+```sql
+select distinct(notifications.created_at), count(*) from notifications group by created_at;
+```
+
+The only thing that's unique on all those records, is the `id`. As the entire loop runs in the same transaction, all records share the same `created_at` timestamp. Inserting them with a explicit `now()` won't change a thing. The `now()` will be evaluated only once for that transaction.
+
+So now that we have our looping stuff covered, let's work on some realistic data. Feel free to drop the data we've created so far.
+
+```sql
+delete from notifications;
+```
+
+## Creating realistic mock data
+
+Let's get some basics first. We'll use `random` to generate random numbers. Run the query below to generate a random number between 0 and 10, and prepend it with `prefix_`. The `::int` cast drops the decimals by casting the double to an integer, and the `||` is the postgres operator to join two strings together.
+
+```sql
+select 'prefix_' || (random() * 10)::int);
+```
+
+If you'd generate a bunch of records using that, you'd see that the edges only receive half the counts. That's because postgres rounds numbers when it casts. So 0 to 0.49 results in 0, while 0.5 to 1.49, with a larger range, results in 1. To fix this, we'll use `floor` instead of casting.
+
+```sql
+select 'prefix_' || floor(random() * 10);
+```
+
+With that out of the way, let's generate some real data. We'll also generate values for the `created_at` and `deleted_at` columns, as we want to have different creation dates, and simulate deleted records.
+
+```sql
+do $$
+  begin
+    for i in 1..100000 loop
+      insert into notifications (
+        user_id, created_at, deleted_at, topic, category, title, body, action_url
+      )
+      values
+        (
+          'user_' || floor(random() * 10),
+          now() - (random() * (interval '365 days')),
+          case when (random() < 0.1) then now() - (random() * (interval '365 days')) else null end,
+          'topic_' || floor(random() * 3),
+          'category_' || floor(random() * 5),
+          'title_' || random(),
+          'body_' || random(),
+          'https://example.com/action_' || floor(random() * 10)
+        );
+    end loop;
+  end
+$$;
+```
+
+Let's go over it. We're generating 10 different user ids, ranging between `user_0` and `user_9`. The `created_at` is a random date in the past year, and `deleted_at` is a random date in the past year but only for 10% of the records. We generate 3 different `topic` slugs, 5 different `category` slugs, 10 different `action_url`s, and `title` and `body` are as unique as the return value of `random`.
+
+In table form, the results look as follows:
+
+| id | user\_id | created\_at | deleted\_at | topic | category | title | body | action\_url |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 8624472 | user\_6 | 2023-10-02 01:33:13.945627 | null | topic\_2 | category\_2 | title\_0.3232199895675727 | body\_8.791831810839312e-05 | https://example.com/action_9 |
+| 8624473 | user\_6 | 2024-05-28 22:49:47.441388 | null | topic\_1 | category\_1 | title\_0.09790312873550633 | body\_0.2394737779460101 | https://example.com/action_5 |
+| 8624474 | user\_7 | 2023-10-23 09:21:28.057830 | null | topic\_1 | category\_3 | title\_0.1352823523507105 | body\_0.18890461627790245 | https://example.com/action_9 |
+| 8624475 | user\_8 | 2023-10-27 05:30:57.561024 | null | topic\_2 | category\_2 | title\_0.8801958309865334 | body\_0.4694115793737623 | https://example.com/action_4 |
+| 8624476 | user\_6 | 2023-08-25 22:17:27.044749 | 2023-10-03 07:24:25.328914 | topic\_0 | category\_0 | title\_0.37070383714597455 | body\_0.29896368763604997 | https://example.com/action_4 |
+
+Except for the `deleted_at` column, for most cases, this is fine data to work with. The problem with the `deleted_at` is that it's a random date in the past year. So according to this data, it can be that a notification gets deleted before it was created. Let's confirm?
+
+```sql
+select count(*) from notifications where deleted_at <= created_at;
+```
+
+That query returned `4931` records in my sample set of 100k records. Not a big deal you'd say, but depending on your query and indexes, this might cause a different execution plan. In the real world, notifications always get deleted after they're created. Let's apply that to our mock data.
+
+First, we'll `declare` two variables to use, `created_at` and `deleted_at`. Next, we'll compute the values for those variables inside the loop. Note that we've updated the `created_at` to be at least 3 days ago. The `deleted_at` field will be a random date between `created_at` and 3 days later, while assuming that 60% of the notifications gets deleted.
+
+```sql
+do $$
+  declare # [!code ++]
+    created_at timestamp; # [!code ++]
+    deleted_at timestamp; # [!code ++]
+  begin
+    for i in 1..100000 loop
+      created_at := now() - (interval '3 days') - (random() * (interval '362 days')); # [!code ++]
+      deleted_at := case when (random() < 0.6) then created_at + (random() * (interval '3 days')) else null end; # [!code ++]
+
+      insert into notifications (
+        user_id, created_at, deleted_at, topic, category, title, body, action_url
+      )
+      values
+        (
+          'user_' || floor(random() * 10),
+          now() - (random() * (interval '365 days')), # [!code --]
+          created_at, # [!code ++]
+          case when (random() < 0.1) then now() - (random() * (interval '365 days')) else null end, # [!code --]
+          deleted_at, # [!code ++]
+          'topic_' || floor(random() * 3),
+          'category_' || floor(random() * 5),
+          'title_' || random(),
+          'body_' || random(),
+          'https://example.com/action_' || floor(random() * 10)
+        );
+    end loop;
+  end
+$$;
+```
+
+Now let's run some count queries to confirm. First, the total number of deleted notifications, which returns 60,133 in my case.
+
+```sql
+select count(*) from notifications where deleted_at is not null;
+```
+
+And, confirm that no notification gets deleted before it was created. This query should now return zero records.
+
+```sql
+select count(*) from notifications where deleted_at <= created_at;
+```
+
+Done? Yeah, in most cases you would be. Let's explore further though.
+
+## Selecting mock data from arrays
+
+Sometimes, we have conditional data. For example, a topic like `ticket-14` is more likely to belong to category `support` than to `billing`, while topic `invoice-2024001323` likely belongs to the latter. We can tackle that issue by selecting mock data from a json array.
+
+```sql
+do $$
+  declare
+    created_at timestamp;
+    deleted_at timestamp;
+    mocks      jsonb := '[ # [!code ++]
+                 {"topic": "ticket.1", "category": "support"}, # [!code ++]
+                 {"topic": "ticket.2", "category": "support"}, # [!code ++]
+                 {"topic": "invoice.1", "category": "billing"} # [!code ++]
+               ]'; # [!code ++]
+    mock       jsonb; # [!code ++]
+  begin
+    for i in 1..100000 loop
+      created_at := now() - (interval '3 days') - (random() * (interval '362 days'));
+      deleted_at := case when (random() < 0.6) then created_at + (random() * (interval '3 days')) else null end;
+      mock := (select * from jsonb_array_elements(mocks) order by random() limit 1); # [!code ++]
+
+      insert into notifications (
+        user_id, created_at, deleted_at, topic, category, title, body, action_url
+      )
+      values
+        (
+          'user_' || floor(random() * 10),
+          created_at,
+          deleted_at,
+          'topic_' || floor(random() * 3), # [!code --]
+          mock ->> 'topic', # [!code ++]
+          'category_' || floor(random() * 5), # [!code --]
+          mock ->> 'category', # [!code ++]
+          'title_' || random(),
+          'body_' || random(),
+          'https://example.com/action_' || floor(random() * 10)
+        );
+    end loop;
+  end
+$$;
+```
+
+We've updated our snippet to declare some `mocks` to select from, and we declare a variable `mock` to hold the currently selected mock. We select a random mock, by sorting the `jsonb_array_elements` in random order, and then taking the first one. Instead of composing the category and topic names like `'category_' || floor(random() * 5)`, we now pick it off the selected mock using `mock->>'category'`. And that's it. If we run that, we'll get a table structure like:
+
+| id | user\_id | created\_at | deleted\_at | topic | category | title | body | action\_url |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 8844162 | user\_4 | 2024-06-12 15:15:32.618132 | null | invoice.1 | billing | title\_0.3608451505671937 | body\_0.46718680220695674 | https://example.com/action_9 |
+| 8844163 | user\_2 | 2023-08-30 22:26:07.968703 | 2023-09-02 16:01:51.310201 | invoice.1 | billing | title\_0.009334412911044865 | body\_0.6736005343473828 | https://example.com/action_0 |
+| 8844164 | user\_5 | 2024-03-17 16:19:56.861889 | 2024-03-19 07:18:33.630549 | ticket.2 | support | title\_0.5610265932170151 | body\_0.8488794347626261 | https://example.com/action_6 |
+
+I've only created three mocks here, but you can fill in the gaps.
+
+## Random strings
+
+Another thing that doesn't feel quite right, is the `body`. I need it to be a `text` value. Something long, and random. We can do so by using `generate_series` and `md5` and `string_agg`. We can use the snippet below to generate a "paragraph" of 20 "words", where every "word" has a length of 10 characters.
+
+```sql
+select string_agg(substring(md5(random()::text), 1, 10), ' ')
+from generate_series(1, 20))
+```
+
+If we add some randomness that, we'll get:
+
+```sql
+select string_agg(substring(md5(random()::text), 1, 1 + floor(random() * 9)::int), ' ')
+from generate_series(1, 400 + floor(random() * 600)::int));
+```
+
+The text obviously doesn't make sense, as it's just a bunch of characters. But for the sake of testing database performance, it suits well. This snippet generates a sequence between 400 and 1000 "words" where each "word" contains of 1 to 10 characters. Note that the type casts are needed, because neither `generate_series` nor `md5` accepts doubles.
+
+Let's add it to our mock generator:
+
+```sql
+do $$
+  declare
+    created_at timestamp;
+    deleted_at timestamp;
+    mocks      jsonb := '[
+                 {"topic": "ticket.1", "category": "support"},
+                 {"topic": "ticket.2", "category": "support"},
+                 {"topic": "invoice.1", "category": "billing"}
+               ]';
+    mock       jsonb;
+    body       text; # [!code ++]
+  begin
+    for i in 1..100000 loop
+      created_at := now() - (interval '3 days') - (random() * (interval '362 days'));
+      deleted_at := case when (random() < 0.6) then created_at + (random() * (interval '3 days')) else null end;
+      mock := (select * from jsonb_array_elements(mocks) order by random() limit 1);
+      body := (select string_agg(substring(md5(random()::text), 1, 1 + floor(random() * 9)::int), ' ') # [!code ++]
+              from generate_series(1, 400 + floor(random() * 600)::int)); # [!code ++]
+
+      insert into notifications (
+        user_id, created_at, deleted_at, topic, category, title, body, action_url
+      )
+      values
+        (
+          'user_' || floor(random() * 10),
+          created_at,
+          deleted_at,
+          mock ->> 'topic', # [!code ++]
+          mock ->> 'category', # [!code ++]
+          'title_' || random(),
+          body,
+          'https://example.com/action_' || floor(random() * 10)
+        );
+    end loop;
+  end
+$$;
+```
+
+Now please do note, that will drastically slow down our generation. For 100k records, we'll drop from 400ms to 40 seconds. But, it's a small price to pay.
+
+## Random IDs
+
+I'm not a fan of uuids, but this `user_1` also kinda sucks, so let's create something that looks like an ulid. `md5` generates strings of 32 characters, so let's use that to append a randomish hash to `usr_`.
+
+```sql
+select 'usr_' || substring(md5((random() * 10)::text), 1, 17)
+```
+
+I'm not going to update the big generator above for this little change, but I guess you'll figure out where it goes.
+
+Our data now looks like this:
+
+| id | user\_id | created\_at | deleted\_at | topic | category | title | body | action\_url |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 9054094 | usr\_61866686bdb96d596 | 2023-09-14 08:52:41.332945 | 2023-09-16 23:37:37.460380 | invoice.1 | billing | title\_0.16914560425490066 | body\_0.27022654575856464 | https://example.com/action_1 |
+| 9054095 | usr\_499230746814c1f36 | 2024-04-16 02:51:19.160691 | null | invoice.1 | billing | title\_0.43157439590294544 | body\_0.7300877315414311 | https://example.com/action_7 |
+| 9054096 | usr\_66fb7da58dd6f7223 | 2024-05-28 17:05:30.116981 | null | ticket.2 | support | title\_0.5406698168896469 | body\_0.6944299081660397 | https://example.com/action_4 |
+
+Next up? Some house keeping.
+
+## PostgreSQL functions
+
+Postgres allows us to define our own functions, which we can use to get rid of some repetitive code. I'm just going to dump the functions here, without explanations, but it should be pretty obvious what they do given the function names, and what we've already talked about.
+
+Here's the first one, a function to generate mock ids having a prefix, like the user one:
+
+```sql
+create or replace function mock_id(prefix varchar, size int)
+   returns varchar as $$
+begin
+  return prefix || '_' || substring(md5(random()::text), 1, size);
+end;
+$$ language plpgsql;
+```
+
+Another one for random texts, so that we can easily generate the `body` and reuse the same logic for a shorter `title`. It accepts a `min` and `max` argument, so that your string is always between `min` and `max` characters in length.
+
+```sql
+create or replace function mock_text(min int, max int)
+  returns text as $$
+declare
+  text text;
+begin
+  text := '';
+  max := min + floor(random() * (max - min));
+
+  while length(text) < max loop
+    text := text || ' ' || substring(md5(random()::text), 1, 1 + floor(random() * 9)::int);
+  end loop;
+
+  return left(text, max);
+end;
+$$ language plpgsql;
+```
+
+Using these functions, our generator already looks much better.
+
+```sql
+do $$
+  declare
+    created_at timestamp;
+    deleted_at timestamp;
+    mocks      jsonb := '[
+                 {"topic": "ticket.1", "category": "support"},
+                 {"topic": "ticket.2", "category": "support"},
+                 {"topic": "invoice.1", "category": "billing"}
+               ]';
+    mock       jsonb;
+  begin
+    for i in 1..100000 loop
+      created_at := now() - (interval '3 days') - (random() * (interval '362 days'));
+      deleted_at := case when (random() < 0.6) then created_at + (random() * (interval '3 days')) else null end;
+      mock := (select * from jsonb_array_elements(mocks) order by random() limit 1);
+
+      insert into notifications (
+        user_id, created_at, deleted_at, topic, category, title, body, action_url
+      )
+      values
+        (
+          mock_id('usr', 17), # [!code highlight]
+          created_at,
+          deleted_at,
+          mock ->> 'topic',
+          mock ->> 'category',
+          mock_text(10, 20), # [!code highlight]
+          mock_text(400, 1000), # [!code highlight]
+          'https://example.com/action_' || floor(random() * 10)
+        );
+    end loop;
+  end
+$$;
+```
+
+## Final words
+
+That’s it! You now know how to quickly generate realistic mock data, to simulate real-world scenarios and improve your testing environment.
+
+Generating realistic timestamps, selecting mock data from arrays, and creating random strings help make your mock data more authentic. While it may be resource-intensive, the benefits for testing and optimizing your database are worth it.
+
+Feel free to reach out if you have any questions.
+
+[pgbench]: https://www.postgresql.org/docs/current/pgbench.html
