@@ -79,7 +79,7 @@
 }
 
 .shiki .line.diff.remove {
-  background-color: #FF555540;
+  background-color: #FF555520;
 }
 
 .shiki .line.diff.remove:before {
@@ -88,7 +88,7 @@
 }
 
 .shiki .line.diff.add {
-  background-color: #50FA7B40;
+  background-color: #50FA7B20;
 }
 
 .shiki .line.diff.add:before {
