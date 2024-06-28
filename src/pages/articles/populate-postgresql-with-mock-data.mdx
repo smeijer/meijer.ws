@@ -301,11 +301,13 @@ Our data now looks like this:
 
 | id | user\_id | created\_at | deleted\_at | topic | category | title | body | action\_url |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| 9054094 | usr\_61866686bdb96d596 | 2023-09-14 08:52:41.332945 | 2023-09-16 23:37:37.460380 | invoice.1 | billing | title\_0.16914560425490066 | body\_0.27022654575856464 | https://example.com/action_1 |
-| 9054095 | usr\_499230746814c1f36 | 2024-04-16 02:51:19.160691 | null | invoice.1 | billing | title\_0.43157439590294544 | body\_0.7300877315414311 | https://example.com/action_7 |
-| 9054096 | usr\_66fb7da58dd6f7223 | 2024-05-28 17:05:30.116981 | null | ticket.2 | support | title\_0.5406698168896469 | body\_0.6944299081660397 | https://example.com/action_4 |
+| 10356031 | usr\_c6d1359de2fda5633 | 2024-01-25 03:49:00.583610 | null | invoice.1 | billing | title\_0.5214049053380805 |  Eb0 xMBr8 o3c6qMVCV Bp af 3HvZ uEIKuT…  | https://example.com/action_8 |
+| 10356032 | usr\_1ae2d46b8d10b8aa8 | 2024-06-13 14:12:09.365280 | 2024-06-15 10:13:58.501827 | issue.1 | support | title\_0.5277254587815783 |  VE LLYBzY vU YVE4 VGNVaLquM JcStb… | https://example.com/action_5 |
+| 10356033 | usr\_aa5297aebc9a9d858 | 2023-07-26 11:20:30.095173 | 2023-07-29 02:02:23.294071 | issue.1 | support | title\_0.9042463964162941 |  grm 26mI6lW5o q gqIy eNn tWndb16 CPNu… | https://example.com/action_5 |
+| 10356034 | usr\_8e58cd2a8864ccbe4 | 2024-02-09 13:33:32.009519 | 2024-02-11 22:22:12.779042 | invoice.1 | billing | title\_0.9928273459474433 |  cF OMo1VYm 5Q7O4zeG AZf… | https://example.com/action_2 |
 
-Next up? Some house keeping.
+
+Next up? Some house-keeping.
 
 ## PostgreSQL functions
 
@@ -379,6 +381,15 @@ do $$
   end
 $$;
 ```
+
+| id | user\_id | created\_at | deleted\_at | topic | category | title | body | action\_url |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 10358031 | usr\_2fa77f9fe1abe7993 | 2023-08-07 05:10:40.397870 | 2023-08-09 08:21:06.097324 | issue.1 | support |  RA5cn QOGQ |  KY6yfm5KV Fq9LdRR A3Bx2Z… | https://example.com/action_2 |
+| 10358032 | usr\_52fcc7b027a144a51 | 2024-04-24 14:27:38.310013 | 2024-04-26 15:04:31.123063 | issue.1 | support |  4QL3hIQ0E F  |  ZERkcgv 136Nu pndzI eDs4bm…  | https://example.com/action_1 |
+| 10358033 | usr\_f130113d5a50e855b | 2024-05-23 02:14:18.615083 | null | invoice.1 | billing |  rOxtA1yg yq8OP Z |  f q wcJk2ubk aIGb6t1mi ovcwQ6y 5hX0Equ… | https://example.com/action_5 |
+| 10358034 | usr\_a8b9b42b9a72051ca | 2024-05-02 13:22:47.638520 | null | invoice.1 | billing |  Nr rdekIUh Oh g K8 |  IJt80pY Gv XkPJ oQjjo9 f… | https://example.com/action_6 |
+| 10358035 | usr\_a5938c4f0aa9d1c4b | 2024-05-14 02:46:37.965658 | null | issue.2 | support |  1iByEkrBd SsVKyWR3 |  AF s2swlPGoF 3 6O5T 9FF… | https://example.com/action_1 |
+
 
 ## Final words
 
