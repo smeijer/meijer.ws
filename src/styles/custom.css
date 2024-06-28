@@ -92,6 +92,10 @@
   background-color: #6272A440;
 }
 
+.dark .shiki .line.highlighted {
+  background-color: #6272A410;
+}
+
 .shiki .line.diff:before {
   position: absolute;
   left: 10px;
@@ -100,6 +104,10 @@
 .shiki .line.diff.remove {
   background-color: #FF555520;
 }
+.dark .shiki .line.diff.remove {
+  background-color: #FF555510;
+}
+
 
 .shiki .line.diff.remove:before {
   content: "-";
@@ -108,6 +116,9 @@
 
 .shiki .line.diff.add {
   background-color: #50FA7B20;
+}
+.dark .shiki .line.diff.add {
+  background-color: #50FA7B10;
 }
 
 .shiki .line.diff.add:before {
