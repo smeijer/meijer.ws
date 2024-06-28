@@ -38,6 +38,25 @@
   }
 }
 
+.prose div:has(table) {
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 2rem;
+  border-radius: 0;
+  margin-left: -1rem;
+  margin-right: -1rem;
+  background: var(--tw-prose-code-bg);
+}
+
+@media (min-width: 640px) {
+  .prose div:has(table) {
+    border-radius: 1rem;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+
 .shiki {
   border: none;
   background-color: #27272ae6 !important;
