@@ -8,7 +8,7 @@ import {
   GitHubIcon,
   InstagramIcon,
   LinkedInIcon,
-  TwitterIcon,
+  BlueSkyIcon,
 } from '@/components/social-icons'
 
 import { date } from '@/lib/date'
@@ -182,7 +182,7 @@ export default function Home({ articles, articleCount }) {
               <Markdown>{stripIndent(profile.author.bio)}</Markdown>
             </p>
             <div className="mt-6 flex gap-6">
-              {profile.links.twitter ? (<SocialLink href={profile.links.twitter} aria-label="Follow on Twitter" icon={TwitterIcon} />) : null}
+              {profile.links.bluesky ? (<SocialLink href={profile.links.bluesky} aria-label="Follow on BlueSky" icon={BlueSkyIcon} />) : null}
               {profile.links.github ? (<SocialLink href={profile.links.github} aria-label="Follow on GitHub" icon={GitHubIcon} />): null}
               {profile.links.linkedin ? (<SocialLink href={profile.links.linkedin} aria-label="Follow on LinkedIn" icon={LinkedInIcon} />) : null}
               {profile.links.instagram ? (<SocialLink href={profile.links.instagram} aria-label="Follow on Instagram" icon={InstagramIcon} />) : null}

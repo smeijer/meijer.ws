@@ -11,10 +11,9 @@ import {
   GitHubIcon,
   InstagramIcon,
   LinkedInIcon,
-  TwitterIcon,
+  BlueSkyIcon,
 } from '@/components/social-icons'
-import { ComponentType, Fragment, ReactComponentElement, ReactNode } from "react";
-import { getPublicURL } from "@/lib/url";
+import { ComponentType, Fragment, ReactNode } from "react";
 import { SocialHead } from "@/components/social-head";
 
 export const meta = {
@@ -87,7 +86,7 @@ export default function About() {
           </div>
           <div className="lg:pl-20">
             <ul role="list" className="space-y-4">
-              {profile.links.twitter ? (<SocialLink href={profile.links.twitter} icon={TwitterIcon}>Follow on Twitter</SocialLink>) : null}
+              {profile.links.bluesky ? (<SocialLink href={profile.links.bluesky} icon={BlueSkyIcon}>Follow on BlueSky</SocialLink>) : null}
               {profile.links.github ? (<SocialLink href={profile.links.github} icon={GitHubIcon}>Follow on GitHub</SocialLink>): null}
               {profile.links.linkedin ? (<SocialLink href={profile.links.linkedin} icon={LinkedInIcon}>Follow on LinkedIn</SocialLink>) : null}
               {profile.links.instagram ? (<SocialLink href={profile.links.instagram} icon={InstagramIcon}>Follow on Instagram</SocialLink>) : null}

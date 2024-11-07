@@ -112,6 +112,7 @@ const nextConfig = {
       { source: '/blog', destination: '/articles', permanent: true },
 
       // short links
+      { source: '/bluesky', destination: 'https://go.meijer.ws/bluesky', permanent: false },
       { source: '/twitter', destination: 'https://go.meijer.ws/twitter', permanent: false },
       { source: '/github', destination: 'https://go.meijer.ws/github', permanent: false },
       { source: '/linkedin', destination: 'https://go.meijer.ws/linkedin', permanent: false },
