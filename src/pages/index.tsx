@@ -23,7 +23,7 @@ import clsx from "clsx";
 
 export const meta: PageMeta = {
   title: profile.author.company,
-  description: profile.author.bio,
+  description: profile.author.pitch,
   image: {
     words: `${profile.author.pitch}`,
     image: profile.author.imagePath,

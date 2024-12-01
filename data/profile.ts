@@ -20,7 +20,7 @@ export const profile = {
     company: 'meijer.works',
     name: 'Stephan Meijer',
     callSign: 'Stephan',
-    pitch: 'Product Engineer, Creator, and Open Source Maintainer.',
+    pitch: 'Engineer, innovator, and your dedicated partner in turning ideas into products.',
     bio: `Perhaps you use some of my [open source](/projects?q=open-source) projects, or [products](/projects?q=product). If so, I'd love to [hear from you](https://go.meijer.ws/bluesky)!`,
     email: 'stephan@meijer.ws',
     profilePhoto: portraitImage,

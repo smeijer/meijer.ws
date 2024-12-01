@@ -33,6 +33,10 @@ const  OgImageHandler = async (req: NextRequest) => {
     words: page.image?.words || page.title,
   }
 
+  // disable article images
+  image.image = profile.author.imagePath;
+  image.author = false;
+
   return new ImageResponse(
     (
       <div tw="w-full h-full bg-zinc-900 flex items-stretch justify-between" style={{ fontFamily: 'ui-sans-serif' }}>
