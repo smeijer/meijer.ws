@@ -236,43 +236,45 @@ function MaskedImage({ src }) {
 
 function BulletList({ reverse, image, items }: { reverse?: boolean; image: string; items: { heading: string; description: string }[] }) {
   return (
-    <div className="bg-zinc-50 dark:bg-black mx-auto max-w-7xl px-6 lg:px-8 pb-14 text-zinc-600 dark:text-zinc-400">
-      <div className="mx-auto max-w-2xl lg:max-w-none">
-        <div
-          className={clsx(
-            'lg:flex lg:items-center',
-            reverse ? 'lg:flex-row-reverse lg:justify-start' : 'lg:justify-end'
-          )}
-        >
+    <div className="bg-zinc-50 dark:bg-black mx-auto max-w-7xl px-8 pb-14 text-zinc-600 dark:text-zinc-400">
+      <div className="relative px-4 sm:px-8 lg:px-0">
+        <div className="mx-auto max-w-2xl lg:max-w-none">
           <div
             className={clsx(
-              'flex justify-center lg:w-1/2',
-              reverse ? 'lg:justify-start lg:pl-12' : 'lg:justify-end lg:pr-12'
+              'lg:flex lg:items-center',
+              reverse ? 'lg:flex-row-reverse lg:justify-start' : 'lg:justify-end'
             )}
           >
-            <div className="w-[33.75rem] flex-none lg:w-[45rem]">
-              <div className="justify-center lg:justify-end relative flex aspect-[719/680] w-full grayscale">
-                <MaskedImage src={image} />
+            <div
+              className={clsx(
+                'flex justify-center lg:w-1/2',
+                reverse ? 'lg:justify-start lg:pl-12' : 'lg:justify-end lg:pr-12'
+              )}
+            >
+              <div className="w-[33.75rem] flex-none lg:w-[45rem]">
+                <div className="justify-center lg:justify-end relative flex aspect-[719/680] w-full grayscale">
+                  <MaskedImage src={image} />
+                </div>
               </div>
             </div>
-          </div>
 
-          <div>
-            <ul
-              role="list"
-              className="text-lg pt-16 lg:mt-0 lg:w-1/2 lg:pl-4 lg:min-w-[33rem]"
-            >
-              {items.map((item, idx) => (
-                <li key={idx} className="group mt-10 first:mt-0">
-                  <div>
-                    <div className="pt-10 group-first:pt-0 group-first:before:hidden group-first:after:hidden relative before:absolute after:absolute before:bg-zinc-950 before:dark:bg-zinc-50 after:bg-zinc-950/10 after:dark:bg-zinc-50/20 before:left-0 before:top-0 before:h-px before:w-6 after:left-8 after:right-0 after:top-0 after:h-px">
-                      <strong className="font-semibold">{item.heading}</strong>{' '}
-                      {item.description}
+            <div>
+              <ul
+                role="list"
+                className="text-lg pt-16 lg:mt-0 lg:w-1/2 lg:px-4 lg:min-w-[33rem]"
+              >
+                {items.map((item, idx) => (
+                  <li key={idx} className="group mt-10 first:mt-0">
+                    <div>
+                      <div className="pt-10 group-first:pt-0 group-first:before:hidden group-first:after:hidden relative before:absolute after:absolute before:bg-zinc-950 before:dark:bg-zinc-50 after:bg-zinc-950/10 after:dark:bg-zinc-50/20 before:left-0 before:top-0 before:h-px before:w-6 after:left-8 after:right-0 after:top-0 after:h-px">
+                        <strong className="font-semibold">{item.heading}</strong>{' '}
+                        {item.description}
+                      </div>
                     </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -341,7 +343,7 @@ export default function Home({ articles, articleCount }) {
       </Container>
 
       <Container className="bg-zinc-50 dark:bg-black sm:pl-8">
-        <div className="py-2 md:py-14 max-w-2xl">
+        <div className="py-14 max-w-2xl">
           <Caption>What I do</Caption>
           <Title>Launch Startups, Build Solutions</Title>
           <Paragraph>
@@ -382,7 +384,7 @@ export default function Home({ articles, articleCount }) {
       </Container>
 
       <Container className="bg-zinc-50 dark:bg-black sm:pl-8">
-        <div className="py-2 md:py-14 max-w-2xl">
+        <div className="py-14 max-w-2xl">
           <Caption>How I Work</Caption>
           <Title>A Partner, Not Just a Developer</Title>
           <Paragraph>
@@ -400,7 +402,7 @@ export default function Home({ articles, articleCount }) {
       ]} />
 
       <Container className="bg-zinc-50 dark:bg-black sm:pl-8">
-        <div className="py-2 md:py-14 max-w-2xl">
+        <div className="py-14 max-w-2xl">
           <Caption>Why Choose Me?</Caption>
           <Title>An Innovator Who Understands Startups</Title>
           <Paragraph>
