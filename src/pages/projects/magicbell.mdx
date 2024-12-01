@@ -1,0 +1,55 @@
+---
+title: MagicBell
+description: A notification infrastructure platform delivering personalized, cross-channel notifications for global brands.
+date: 2024-04-12
+---
+
+**MagicBell** is a leading notification infrastructure platform powering user notifications for high-profile clients like Disney, Pitch, and GitBook. It simplifies notification delivery across channels like SMS, email, in-app, Slack, and more, ensuring end-users only receive notifications on their preferred channels.
+
+---
+
+![magicbell](/projects/magicbell.png)
+
+## Challenge
+Modern applications require sophisticated notification systems to keep users informed without overwhelming them. The core challenges MagicBell solves include:
+- Ensuring users only receive notifications once, on their preferred channels (e.g., reading a notification in-app prevents duplicate emails or SMS).
+- Providing developers with an intuitive API to integrate notifications into their applications seamlessly.
+- Scaling notification delivery for high-profile clients with complex requirements and large user bases.
+- Building a powerful, user-friendly dashboard to manage notifications, projects, and analytics.
+
+---
+
+## Solution
+As the **Founding Frontend Engineer**, I played a pivotal role in shaping MagicBell’s platform. Key contributions included:
+- **Frontend Migration**: Migrated the frontend from React-on-Rails to **Remix**, allowing the frontend and backend to be developed independently. This improved developer productivity and frontend performance.
+- **SDK Development**: Created multiple JavaScript SDKs to streamline integration for developers, including:
+  - **`magicbell`**: The core JavaScript API client.
+  - **`@magicbell/cli`**: A CLI tool for developers.
+  - **`@magicbell/embeddable`**: A hosted inbox
+  - **`@magicbell/react`**: React components to easily built customized inboxes
+
+- **Code Generators**: Automated SDK creation based on the OpenAPI specification, reducing manual effort and ensuring consistency across SDKs.
+- **Smart Delivery**: Implemented "smart delivery" using **Sidekiq** for scheduling notification pipelines. This allowed customers to configure complex delivery plans, such as:
+- **Split Inbox**: Added advanced features like split inboxes to the React SDK, enabling users to organize notifications by category or topic.
+- **Dashboard Development**: Built a robust dashboard for configuring projects, exploring analytics, and managing users, broadcasts, and deliveries.
+
+---
+
+## Results
+MagicBell’s platform delivered measurable value to its clients:
+- **High Adoption**: Major clients like Disney (Hulu), Pitch, and WinAmp adopted MagicBell to handle their notification needs.
+- **Scalability**: The infrastructure efficiently handled large-scale notification pipelines across multiple channels.
+- **Developer Productivity**: The APIs, SDKs, and CLI tools significantly reduced the time and effort required for developers to integrate notifications into their applications.
+
+---
+
+## Lessons Learned
+1. **Focus on Primitives**: Getting the foundational building blocks right is essential for building a scalable and flexible platform.
+2. **Team Insights**: Working with developers from renowned companies like reinforced that good engineering practices and collaboration are universal, regardless of company size or fame.
+3. **Value of Automation**: Automating SDK generation saved significant development time while maintaining quality and consistency.
+
+---
+
+## Conclusion
+MagicBell redefines how notifications are managed, enabling its clients to deliver user-centric notifications effortlessly. By focusing on scalability, flexibility, and developer experience, the platform became a trusted partner for some of the most recognizable names in tech and entertainment.
+

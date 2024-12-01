@@ -11,8 +11,8 @@ import {
   GitHubIcon,
   InstagramIcon,
   LinkedInIcon,
-  BlueSkyIcon,
-} from '@/components/social-icons'
+  BlueSkyIcon, TwitterIcon
+} from "@/components/social-icons";
 import { ComponentType, Fragment, ReactNode } from "react";
 import { SocialHead } from "@/components/social-head";
 
@@ -80,13 +80,14 @@ export default function About() {
             <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
               {profile.about.title}
             </h1>
-            <div className="prose mt-6 space-y-7 text-base text-zinc-600 dark:text-zinc-400">
+            <div className="prose mt-6 space-y-7 text-lg text-zinc-600 dark:text-zinc-400">
               <Markdown options={{ wrapper: Fragment }}>{stripIndent(profile.about.description)}</Markdown>
             </div>
           </div>
           <div className="lg:pl-20">
             <ul role="list" className="space-y-4">
               {profile.links.bluesky ? (<SocialLink href={profile.links.bluesky} icon={BlueSkyIcon}>Follow on BlueSky</SocialLink>) : null}
+              {profile.links.twitter ? (<SocialLink href={profile.links.twitter} icon={TwitterIcon}>Follow on Twitter</SocialLink>) : null}
               {profile.links.github ? (<SocialLink href={profile.links.github} icon={GitHubIcon}>Follow on GitHub</SocialLink>): null}
               {profile.links.linkedin ? (<SocialLink href={profile.links.linkedin} icon={LinkedInIcon}>Follow on LinkedIn</SocialLink>) : null}
               {profile.links.instagram ? (<SocialLink href={profile.links.instagram} icon={InstagramIcon}>Follow on Instagram</SocialLink>) : null}

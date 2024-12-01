@@ -1,0 +1,84 @@
+---
+title: Hypothetical Indexes on PostgreSQL
+published: false
+description:  Use hypothetical indexes to test the effect of new indexes without building them.
+tags: postgresql, database
+date: 2024-06-15
+---
+
+You're having slow queries, and all you know is that it might have something to do with indexes. Maybe you even got an idea of what index might help, but building one and then checking the new performance takes forever.
+
+If that feeling sounds familiar, keep on reading. I'm here to explain to you how to test an index, without creating it.
+
+[Hypopg][hypopg] is a postgresql extension that enables us to get query plans based on hypothetical indexes. Let's look at some SQL to see what that means, and how to use Hypopg to optimize our queries.
+
+First, let's take a slow query, and it's query plan.
+
+```sql
+Slow query
+```
+
+Use explain to get the query plan.
+
+```sql
+Explain query
+```
+
+```sql
+Query plan
+```
+
+Just for the sake of the conversation, let's assume that query takes forever. Now, we could add an index on say the `created_at` column, and then check the new query plan using `explain`. But building that index takes a while, and what if the new index doesn't help? Do we test 4 options, and call it a day? Is this the "my code is compiling" excuse for db admins?
+
+Not today. Instead of building a real index, we're going to create a hypothetical one. Let's start by installing the `hypopg` extension.
+
+```sql
+create extension if not exists hypopg
+```
+
+Done. Now, without hypopg we'd create an index using a statement like
+
+```sql
+CREATE INDEX...
+```
+
+To make that a hypothetical index, instead of the real thing, we feed that exact expression as a string to `hypopg_create_index`:
+
+```sql
+select hypopg_create_index('create index...')
+```
+
+Just for clarity, I like to give my hypothetical indexes a clear name, so I know it's working. Think `create index hypo_users_created` instead of `idx_users_created`.
+
+Please be aware, hypothetical indexes only exist in the current session. Be sure to either run the index creation and the explain query in the same run, or be sure that your db tool keeps the session open. To test this, run the following query. Things are good, if it returns records.
+
+```sql
+select * from hypopg_list_indexes
+```
+
+Once that's confirmed, you know if you have to run a single script, or if the session remains open.
+
+After creating the hypothetical index, it's time to get the new query plan.
+
+```sql
+explain select...
+```
+
+Don't run `explain analyze`. We don't have a real index, so analyzing will use the existing indexes. `Explain` is sufficient at this stage.
+
+If the index isn't what you're looking for, just create some new variants. Iterating indexes is now a matter of minutes.
+
+Sometimes, old hypothetical indexes might conflict with new ones. Either create a new postgres session to drop the hypothetical indexes, or run the following statement to do the same.
+
+```sql
+select drop(id)
+from hypopg_list_indexes
+```
+
+When you're at the stage that you like the query plan the hypothetical index supported, it's time to build the real thing, and run an `explain analyze` on that. But remember, it might take a while.
+
+Depending on your level of comfort, and urgency, you might also go for pasting it to hour migration script directly. Just don't forget to rename it if you also chose to prefix the index name with `hypo_`.
+
+That's it! Post your thoughts down below?
+
+[hypopg]: https://hypopg.readthedocs.io

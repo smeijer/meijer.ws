@@ -3,6 +3,7 @@ import gowionLogo from '@/images/logos/gowion.svg'
 import dmAppLogo from '@/images/logos/dm.svg'
 import kentcdoddsLogo from '@/images/logos/kentcdodds.png'
 import magicBellLogo from '@/images/logos/magicbell.svg'
+import eggheadLogo from '@/images/logos/egghead.svg'
 
 import image1 from '@/images/photos/image-1.jpg'
 import image2 from '@/images/photos/image-2.jpg'
@@ -16,6 +17,7 @@ import packages from '@/../data/packages.json';
 
 export const profile = {
   author: {
+    company: 'meijer.works',
     name: 'Stephan Meijer',
     callSign: 'Stephan',
     pitch: 'Product Engineer, Creator, and Open Source Maintainer.',
@@ -43,21 +45,21 @@ export const profile = {
     email: 'https://go.meijer.ws/email',
   },
   blog: {
-    title: 'Writing about code, growth, and world views.',
+    title: 'Writing about code, and personal growth.',
     intro: 'All of my long-form thoughts on programming, growth, world views and more, collected in chronological order.'
   },
   about: {
     title: 'I’m Stephan Meijer. I live in Leeuwarden, Netherlands, where I code in light mode.',
     description: `
-      I've loved writing software since I was a kid. I started writing DOS scripts, then moved on to Visual Basic, PHP, C#.net and JavaScript. I've been working as a software engineer for over 15 years. Made my entry in tech by launching my own SaaS, GoWion, which later served as a foundation for my career. 
+      I've loved writing software since I was a kid. I started writing DOS scripts, then moved on to Visual Basic, PHP, C#.net, JavaScript, TypeScript and Go. I've been working as a software engineer for over 15 years. Made my entry in tech by launching my own SaaS, GoWion, which later served as a foundation for my career. 
       
       I've traded GoWion for a share in an early startup that I joined, which then got rebranded to Clearly. I helped grow the product and the team around it. First with local engineers, later with a remote team in Ukraine, where I met my wife. After working for 7 years at the company, and for 10 years on the same product, it was time to trade my position as CTO for something new.
       
       I've freelanced, helped Kent C. Dodds launch his new website, helped early stage startups with their MVP while they were still in "stealth mode", and I've worked on my own projects.
       
-      One of Kent's tweets lead to me joining MagicBell, a YCombinator backed startup. As principal engineer, I'm helping them build the best notification product for SaaS applications, maintain their open-source SDKs, do some customer support, and work on product.
+      I currently work with MagicBell, a YCombinator backed startup. I'm helping them build the best notification product for SaaS applications, maintain their open-source SDKs, do some customer support, and work on product.
       
-      In my free time, I maintain open-source projects like [testing-playground.com](https://testing-playground.com), work on my own SaaS products like rake.red, updrafts.app, and metricmouse.com, and when there's time left, I work on my house using my hands instead of my keyboard.
+      In my free time, I maintain open-source projects like [testing-playground.com](https://testing-playground.com), work on my own SaaS products like [rake.red](https://rake.red), [updrafts.app](https://updrafts.app), and [metricmouse.com](https://metricmouse.com), and when there's time left, I work on my house using my hands instead of my keyboard.
     `,
   },
 
@@ -76,27 +78,54 @@ export const profile = {
       start: '2021',
       end: 'Present',
       link: 'https://magicbell.com',
+      caseStudy: {
+        excerpt: 'A notification infrastructure platform delivering personalized, cross-channel notifications for global brands.',
+        year: '2024',
+        link: '/projects/magicbell',
+        highlight: true,
+      }
     },
     {
       company: 'DM.app',
-      title: 'Freelance Fullstack',
+      title: 'Fullstack Engineer',
       logo: dmAppLogo,
       start: '2021',
       end: '2021',
+      link: 'https://dm.app',
+      caseStudy: {
+        excerpt: 'An SMS-based community platform enabling seamless communication without apps or ads.',
+        year: '2024',
+        link: '/projects/dmapp',
+        highlight: true,
+      }
     },
     {
       company: 'Kent C. Dodds',
-      title: 'Freelance Frontend',
-      logo: kentcdoddsLogo,
+      title: 'Frontend Engineer',
+      logo: eggheadLogo,
       start: '2021',
       end: '2021',
+      link: 'https://kentcdodds.com',
+      caseStudy: {
+        excerpt: '',
+        year: '2021',
+        link: '/projects/kentcdodds',
+      }
     },
     {
-      company: 'Clearly',
+      company: 'Future Insight',
       title: 'CTO - Product Owner',
       logo: clearlyLogo,
       start: '2014',
       end: '2021',
+      link: 'https://futureinsight.nl/clearly-projects',
+      caseStudy: {
+        title: 'Clearly.app',
+        excerpt: 'A collaboration platform transforming municipal workflows with geospatial insights and real-time task management.',
+        year: '2024',
+        link: '/projects/clearly',
+        highlight: true,
+      }
     },
     {
       company: 'GoWion',
@@ -104,6 +133,11 @@ export const profile = {
       logo: gowionLogo,
       start: '2011',
       end: '2014',
+      caseStudy: {
+        excerpt: '',
+        year: '2014',
+        link: '/projects/gowion'
+      }
     },
   ] },
   uses: {

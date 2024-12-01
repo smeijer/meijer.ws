@@ -4,6 +4,9 @@ module.exports = {
   darkMode: 'class',
   plugins: [require('@tailwindcss/typography')],
   theme: {
+    fontFamily: {
+      'sans': ['"Mona Sans"', 'sans-serif']
+    },
     fontSize: {
       xs: ['0.8125rem', { lineHeight: '1.5rem' }],
       sm: ['0.875rem', { lineHeight: '1.5rem' }],
@@ -102,6 +105,11 @@ module.exports = {
           'h2, h3': {
             color: 'var(--tw-prose-headings)',
             fontWeight: theme('fontWeight.semibold'),
+
+            // fontFamily: '"Mona Sans", sans-serif',
+            // fontOpticalSizing: 'auto',
+            // fontStyle: 'normal',
+            // fontVariationSettings: '"wdth" 100',
           },
           h2: {
             fontSize: theme('fontSize.xl')[0],
@@ -189,8 +197,8 @@ module.exports = {
             paddingLeft: theme('spacing.6'),
           },
           li: {
-            marginTop: theme('spacing.6'),
-            marginBottom: theme('spacing.6'),
+            marginTop: theme('spacing.3'),
+            marginBottom: theme('spacing.3'),
             paddingLeft: theme('spacing[3.5]'),
           },
           'li::marker': {

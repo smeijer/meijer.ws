@@ -404,7 +404,9 @@ export function Header() {
           >
             <div className="relative flex gap-4">
               <div className="pointer-events-auto flex flex-1 items-center font-bold 0">
-                <Link className="transition text-zinc-900 dark:text-zinc-100 hover:text-sky-500 dark:hover:text-sky-40" href="/">{profile.author.name}</Link>
+                <Link className="transition text-zinc-900 dark:text-zinc-100 hover:text-sky-500 dark:hover:text-sky-40 text-2xl" href="/">
+                  <span className="text-sky-500">meijer</span>.<span>works</span>
+                </Link>
               </div>
               <div className="flex flex-1 justify-end md:justify-center">
                 <MobileNavigation className="pointer-events-auto md:hidden" />

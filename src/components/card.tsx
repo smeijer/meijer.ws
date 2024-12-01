@@ -41,7 +41,7 @@ Card.Link = function CardLink({ children, ...props }: { children?: ReactNode } &
 
 Card.Title = function CardTitle({ as: Component = 'h2', href, children }: { children?: ReactNode, href?: string, as?: keyof JSX.IntrinsicElements | ComponentType<any>}) {
   return (
-    <Component className="text-base font-semibold tracking-tight text-zinc-800 dark:text-zinc-100">
+    <Component className="text-lg font-semibold tracking-tight text-zinc-800 dark:text-zinc-100">
       {href ? <Card.Link href={href}>{children}</Card.Link> : children}
     </Component>
   )
@@ -49,7 +49,7 @@ Card.Title = function CardTitle({ as: Component = 'h2', href, children }: { chil
 
 Card.Description = function CardDescription({ className, children }: { className?: string, children: ReactNode }) {
   return (
-    <p className={clsx(className, "relative z-10 mt-2 text-sm text-zinc-600 dark:text-zinc-400")}>
+    <p className={clsx(className, "relative z-10 mt-2 text-lg text-zinc-600 dark:text-zinc-400")}>
       {children}
     </p>
   )
@@ -59,7 +59,7 @@ Card.Cta = function CardCta({ children }) {
   return (
     <div
       aria-hidden="true"
-      className="relative z-10 mt-4 flex items-center text-sm font-medium text-sky-500"
+      className="relative z-10 mt-4 flex items-center text-base font-medium text-sky-500"
     >
       {children}
       <ChevronRightIcon className="ml-1 h-4 w-4 stroke-current" />
@@ -78,7 +78,7 @@ Card.Eyebrow = function CardEyebrow({
     <Component
       className={clsx(
         className,
-        'relative z-10 order-first mb-3 flex items-center text-sm text-zinc-400 dark:text-zinc-500',
+        'relative z-10 order-first mb-3 flex items-center text-base text-zinc-400 dark:text-zinc-500',
         decorate && 'pl-3.5'
       )}
       {...props}

@@ -33,12 +33,18 @@ const matterMore = () => (tree, file) => {
   const filepath = '/' + path.relative(path.join(process.cwd(), 'src', 'pages'), file.history[0]);
   const slug = filepath.split(/[\/.]/).filter(Boolean).reverse().find(x => x !== 'mdx' && x !== 'index');
 
-  frontMatter.cover = coverImageExtensions
-    .map(ext => `/articles/${slug}.${ext}`)
-    .find(file => fs.existsSync(path.join(process.cwd(), 'public', file))) || null;
+  const dir = filepath.split('/').filter(Boolean)[0];
 
-  if (!frontMatter.cover) {
-    console.warn(`WARN: No cover image found for ${slug}`);
+  const type = dir.replace(/s$/, '');
+
+  if (type === 'article') {
+    frontMatter.cover = coverImageExtensions
+      .map(ext => `/${dir}/${slug}.${ext}`)
+      .find(file => fs.existsSync(path.join(process.cwd(), 'public', file))) || null;
+
+    if (!frontMatter.cover) {
+      console.warn(`WARN: No cover image found for ${slug}`);
+    }
   }
 
   // remove frontmatter from tree
@@ -62,7 +68,8 @@ const matterMore = () => (tree, file) => {
   frontMatter.slug = slug;
   frontMatter.path = filepath;
 
-  const { layout: name = 'ArticleLayout', ...meta } = frontMatter
+  const defaultLayout = type[0].toUpperCase() + type.slice(1) + 'Layout';
+  const { layout: name = defaultLayout, ...meta } = frontMatter
   const layoutFileName = name.replace(/[A-Z]/g, m => "-" + m.toLowerCase()).replace(/^-/, "");
 
   const metaExport = `export const meta = ${stringify(frontMatter)};`;

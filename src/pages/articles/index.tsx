@@ -17,30 +17,33 @@ export const meta: PageMeta = {
   }
 }
 
-function Article({ article }) {
+function Article({ article, showDate = true}) {
   return (
     <article className="md:grid md:grid-cols-4 md:items-baseline">
       <Card className="md:col-span-3">
         <Card.Title href={article.path}>
           {article.title}
         </Card.Title>
-        <Card.Eyebrow
-          as="time"
-          className="md:hidden"
-          decorate
-        >
-          {date(article.date)}
-        </Card.Eyebrow>
+        {showDate ?
+          <Card.Eyebrow
+            as="time"
+            className="md:hidden"
+            decorate
+          >
+            {date(article.date)}
+          </Card.Eyebrow>
+        :null}
         <Card.Description>{article.description}</Card.Description>
         <Card.Cta>Read article</Card.Cta>
       </Card>
 
-      <Card.Eyebrow
-        as="time"
-        className="mt-1 hidden md:block"
-      >
-        {date(article.date)}
-      </Card.Eyebrow>
+      {showDate ?
+        <Card.Eyebrow
+          as="time"
+          className="mt-1 hidden md:block"
+        >
+          {date(article.date)}
+        </Card.Eyebrow> : null}
     </article>
   )
 }
@@ -48,7 +51,7 @@ function Article({ article }) {
 export default function ArticlesIndex({ articles }) {
   const tags = getTags(articles);
   const query = useQuery();
-  const entries = query ? articles.filter(x => x.tags.includes(query)) : articles;
+  const entries = query ? articles.filter(x => x.tags.includes(query)) : articles.filter(x => !x.tags.includes('personal'));
   const [animationParent] = useAutoAnimate();
 
   return (

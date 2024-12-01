@@ -22,7 +22,7 @@ function ArrowLeftIcon(props) {
   )
 }
 
-export function ArticleLayout({
+export function ProjectLayout({
   children,
   meta,
   isRssFeed = false,
@@ -40,7 +40,7 @@ export function ArticleLayout({
   return (
     <>
       <SocialHead
-        title={meta.title}
+        title={`Meijer.works on ${meta.company}`}
         description={meta.description}
       />
       <Container className="mt-16 lg:mt-32">
@@ -72,13 +72,11 @@ export function ArticleLayout({
                   className="order-first flex items-center text-base text-zinc-400 dark:text-zinc-500"
                 >
                   <span className="h-4 w-0.5 rounded-full bg-zinc-200 dark:bg-zinc-500" />
-                  <span className="ml-3">{date(meta.date)}</span>
+                  <span className="ml-3">{new Date(meta.date).getFullYear()} / Case study</span>
                 </time> : null}
               </header>
               <Prose className="mt-8">{children}</Prose>
             </article>
-
-            <Share className="mt-20" url={`${process.env.NEXT_PUBLIC_SITE_URL}${path}`} />
 
             {/*<ArticleComments*/}
             {/*  repo={process.env.NEXT_PUBLIC_GISCUS_REPO}*/}

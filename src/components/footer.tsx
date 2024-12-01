@@ -29,7 +29,7 @@ export function Footer() {
                 <NavLink href="/about">About</NavLink>
               </div>
               <p className="text-sm text-zinc-400 dark:text-zinc-500">
-                &copy; {new Date().getFullYear()} {profile.author.name}. All rights
+                &copy; {new Date().getFullYear()} {profile.author.company || profile.author.name}. all rights
                 reserved.
               </p>
             </div>

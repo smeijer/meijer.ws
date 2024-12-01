@@ -59,7 +59,12 @@ export default function Document() {
           href={`${process.env.NEXT_PUBLIC_SITE_URL}/rss/feed.json`}
         />
 
-        <link rel="icon" type="image/x-icon" href="/favicon.ico"  />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link href="https://fonts.googleapis.com/css2?family=Mona+Sans:ital,wght@0,200..900;1,200..900&display=swap"
+              rel="stylesheet" />
 
         {process.env.NEXT_PUBLIC_GA_TAG && (
           <>
@@ -69,8 +74,8 @@ export default function Document() {
         )}
       </Head>
       <body className="flex h-full flex-col bg-zinc-50 dark:bg-black">
-        <Main />
-        <NextScript />
+      <Main />
+      <NextScript />
       </body>
     </Html>
   )
