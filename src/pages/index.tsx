@@ -360,7 +360,7 @@ export default function Home({ articles, articleCount }) {
             {profile.resume.entries.filter(x => x.caseStudy?.highlight).map(((x, idx) => (
               <div key={idx} className="flex">
                 <article
-                  className="relative flex w-full flex-col rounded-3xl p-6 ring-1 ring-neutral-950/5 transition sm:p-8 hover:bg-zinc-100 hover:dark:bg-zinc-900">
+                  className="relative flex w-full flex-col rounded-3xl p-6 ring-1 ring-zinc-200 dark:ring-zinc-800 transition sm:p-8 hover:bg-zinc-100 hover:dark:bg-zinc-900">
                   <h3>
                     <Link href={x.caseStudy.link}>
                       <span className="absolute inset-0 rounded-3xl"></span>
