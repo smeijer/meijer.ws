@@ -187,7 +187,7 @@ function Projects({ title, projects, showDate = false }: { title: string, showDa
   )
 }
 
-function Title({ children, inverse }) {
+function Title({ children, inverse }: { children?: ReactNode, inverse?: boolean }) {
   return (
     <h2 className={clsx("text-2xl font-medium tracking-tight", inverse ? 'dark:text-zinc-900 text-zinc-100': 'text-zinc-900 dark:text-zinc-100' )}>
       {children}
@@ -195,7 +195,7 @@ function Title({ children, inverse }) {
   );
 }
 
-function Paragraph({ children, inverse }){
+function Paragraph({ children, inverse }: { children: ReactNode, inverse?: boolean }){
   return (
     <p className={clsx("mt-6 text-xl", inverse ? 'dark:text-zinc-600 text-zinc-400' : 'text-zinc-600 dark:text-zinc-400')}>
       {children}
