@@ -8,13 +8,13 @@ export const config = {
   runtime: 'edge',
 };
 
-const avatar = fetch(new URL('./smeijer.jpg', import.meta.url)).then((res) =>
-  res.arrayBuffer(),
-);
+const OgImageHandler = async (req: NextRequest) => {
+  const avatar = fetch(new URL('./smeijer.jpg', import.meta.url)).then((res) =>
+    res.arrayBuffer(),
+  );
 
-const pages = fetch(getPublicURL('/og/pages.json')).then(x => x.json());
+  const pages = fetch(getPublicURL('/og/pages.json')).then(x => x.json());
 
-const  OgImageHandler = async (req: NextRequest) => {
   // convertkit messes the url up like:                  ⌄⌄⌄
   //    /api/og?path=%2Farticles%2Fisomorphic-development%3Fck_subscriber_id%3D2020065464
   const search = new URL(req.url).search.replaceAll('%3F', '&');
