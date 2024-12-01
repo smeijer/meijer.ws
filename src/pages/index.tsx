@@ -17,14 +17,12 @@ import { getAllArticles } from '@/lib/articles'
 import { profile } from '@/../data/profile';
 import React, { ComponentType, ReactNode, useState } from "react";
 import { Newsletter } from "@/components/newsletter";
-import Markdown from "markdown-to-jsx";
-import stripIndent from "strip-indent";
 import { generatePageList } from "@/lib/open-graph";
 import { PageMeta, SocialHead } from "@/components/social-head";
 import clsx from "clsx";
 
 export const meta: PageMeta = {
-  title: profile.author.name,
+  title: profile.author.company,
   description: profile.author.bio,
   image: {
     words: `${profile.author.pitch}`,
