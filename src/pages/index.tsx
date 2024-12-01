@@ -312,7 +312,7 @@ export default function Home({ articles, articleCount }) {
               {`I'm `}<span className="text-zinc-900 dark:text-zinc-100">{profile.author.callSign}</span>
             </h2>
             <p className="prose mt-6 text-xl sm:text-2xl text-zinc-600 dark:text-zinc-400">
-              Product Engineer, innovator, and your dedicated partner in turning ideas into startups. With a proven
+              Engineer, innovator, and your dedicated partner in turning ideas into products. With a proven
               track record in building robust, scalable solutions, I specialize in bringing visions to life, using code.
             </p>
             <div className="mt-6 flex gap-6">
