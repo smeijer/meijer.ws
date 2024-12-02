@@ -249,7 +249,7 @@ function BulletList({ reverse, image, items }: { reverse?: boolean; image: strin
                 reverse ? 'lg:justify-start lg:pl-12' : 'lg:justify-end lg:pr-12'
               )}
             >
-              <div className="w-[33.75rem] flex-none lg:w-[45rem]">
+              <div className="w-[100vw] max-w-[33.75rem] flex-none lg:max-w-[45rem]">
                 <div className="justify-center lg:justify-end relative flex aspect-[719/680] w-full grayscale">
                   <MaskedImage src={image} />
                 </div>
@@ -285,7 +285,7 @@ function GridList({ items }: { items: { heading: string; description: string }[]
     <div className="mx-auto max-w-2xl lg:max-w-none text-zinc-600 dark:text-zinc-400">
       <ul
         role="list"
-        className="text-lg pt-16 lg:mt-0 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-12"
+        className="text-lg px-8 sm:px-0 lg:pt-16 lg:mt-0 grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-12"
       >
         {items.map((item, idx) => (
           <li key={idx}>
